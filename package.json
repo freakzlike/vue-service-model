@@ -2,6 +2,27 @@
   "name": "vue-service-model",
   "version": "0.1.0",
   "private": true,
+  "description": "Vue library for model definition and using for services",
+  "license": "MIT",
+  "author": {
+    "name": "Freakzlike"
+  },
+  "keywords": [
+    "vue",
+    "model",
+    "service",
+    "rest",
+    "library"
+  ],
+  "homepage": "https://github.com/freakzlike/vue-service-model",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freakzlike/vue-service-model.git"
+  },
+  "bugs": {
+    "url": "https://github.com/freakzlike/vue-service-model/issues"
+  },
+  "main": "./dist/vue-service-model.common.js",
   "scripts": {
     "build": "vue-cli-service build --target lib --name vue-service-model ./src/index.ts",
     "test:unit": "vue-cli-service test:unit",
@@ -35,5 +56,9 @@
     "eslint-plugin-vue": "^6.1.2",
     "typescript": "^3.7.5",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "files": [
+    "dist/*.js",
+    "src/*"
+  ]
 }
