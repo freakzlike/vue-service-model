@@ -1,6 +1,6 @@
 {
   "name": "vue-service-model",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vue library for model definition and using for services",
   "license": "MIT",
   "author": {
@@ -32,7 +32,7 @@
     "lint": "vue-cli-service lint --no-fix",
     "lint:autofix": "vue-cli-service lint",
     "prepare" : "npm run build",
-    "prepublishOnly" : "npm test && npm run lint",
+    "prepublishOnly" : "npm run test:unit && npm run lint",
     "preversion" : "npm run lint",
     "postversion" : "git push && git push --tags"
   },
