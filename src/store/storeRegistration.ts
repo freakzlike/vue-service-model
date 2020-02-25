@@ -1,5 +1,5 @@
-import store from '@/store'
-import { DefaultModule } from '@/store/types'
+import store from '../store'
+import { DefaultModule } from '../store/types'
 
 const registeredStores: Array<string> = []
 

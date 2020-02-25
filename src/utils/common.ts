@@ -1,4 +1,4 @@
-import Dictionary from '@/types/Dictionary'
+import Dictionary from '../types/Dictionary'
 
 const funcs = {
   /**

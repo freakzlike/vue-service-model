@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import Dictionary from '@/types/Dictionary'
+import Dictionary from '../types/Dictionary'
 import { ActionTree, MutationTree } from 'vuex/types'
-import { DefaultModule, DefaultState, RootState } from '@/store/types'
+import { DefaultModule, DefaultState, RootState } from '../store/types'
 
 /**
  * Internal cached data structure

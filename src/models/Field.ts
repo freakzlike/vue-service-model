@@ -1,6 +1,6 @@
-import LazyValue from '@/types/LazyValue'
-import cu from '@/utils/common'
-import { BaseClass } from '@/models/BaseClass'
+import LazyValue from '../types/LazyValue'
+import cu from '../utils/common'
+import { BaseClass } from '..//models/BaseClass'
 
 interface FieldDef {
   attributeName?: string;

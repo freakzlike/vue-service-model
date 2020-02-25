@@ -1,5 +1,5 @@
-import Dictionary from '@/types/Dictionary'
-import { BaseClass } from '@/models/BaseClass'
+import Dictionary from '../types/Dictionary'
+import { BaseClass } from '../models/BaseClass'
 import { Field } from './Field'
 
 class NotDeclaredFieldException extends Error {

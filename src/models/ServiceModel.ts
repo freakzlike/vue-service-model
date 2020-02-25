@@ -1,8 +1,8 @@
-import Dictionary from '@/types/Dictionary'
-import { BaseModel } from '@/models/BaseModel'
-import cu from '@/utils/common'
-import store from '@/store'
-import { ServiceStoreFactory, ServiceStore, ServiceStoreOptions } from '@/store/ServiceStoreFactory'
+import Dictionary from '../types/Dictionary'
+import { BaseModel } from './BaseModel'
+import cu from '../utils/common'
+import store from '../store'
+import { ServiceStoreFactory, ServiceStore, ServiceStoreOptions } from '../store/ServiceStoreFactory'
 import axios from 'axios'
 
 type ServiceParent = Dictionary<string | number>
