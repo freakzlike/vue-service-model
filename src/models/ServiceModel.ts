@@ -105,7 +105,7 @@ class ServiceModel extends BaseModel {
    * Manager class of model
    */
   public static ModelManager = class {
-    protected model: typeof ServiceModel
+    public model: typeof ServiceModel
 
     constructor (model: typeof ServiceModel) {
       this.model = model

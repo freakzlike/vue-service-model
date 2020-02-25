@@ -21,12 +21,20 @@
   "bugs": {
     "url": "https://github.com/freakzlike/vue-service-model/issues"
   },
-  "main": "./dist/vue-service-model.common.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
-    "build": "vue-cli-service build --target lib --name vue-service-model ./src/index.ts",
+    "build": "tsc -p ./src/tsconfig.json",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint --no-fix",
-    "lint:autofix": "vue-cli-service lint"
+    "lint:autofix": "vue-cli-service lint",
+    "prepare" : "npm run build",
+    "prepublishOnly" : "npm test && npm run lint",
+    "preversion" : "npm run lint",
+    "postversion" : "git push && git push --tags"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -55,9 +63,5 @@
     "eslint-plugin-vue": "^6.1.2",
     "typescript": "^3.7.5",
     "vue-template-compiler": "^2.6.11"
-  },
-  "files": [
-    "dist/*.js",
-    "src/*"
-  ]
+  }
 }

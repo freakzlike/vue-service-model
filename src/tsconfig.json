@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    /* Generates corresponding '.d.ts' file. */
+    "declaration": true,
+    /* Redirect output structure to the directory. */
+    "outDir": "../lib",
+    /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    "rootDir": "./"
+  }
+}
