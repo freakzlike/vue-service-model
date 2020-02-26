@@ -164,7 +164,7 @@ class ServiceModel extends BaseModel {
         }
       }
 
-      const dataList: Array<Dictionary<any>> = await await Model.storeDispatch('getData', options)
+      const dataList: Array<Dictionary<any>> = await Model.storeDispatch('getData', options)
       return dataList.map(data => new Model(data))
     }
   }
