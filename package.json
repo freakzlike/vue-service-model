@@ -27,14 +27,18 @@
     "lib/**/*"
   ],
   "scripts": {
-    "build": "tsc -p ./src/tsconfig.json",
+    "clean": "rimraf ./lib",
+    "build": "npm run clean && tsc -p ./src/tsconfig.json",
     "test:unit": "vue-cli-service test:unit",
+    "test:lib": "vue-cli-service test:unit --config=jest.lib.config.js",
+    "test:buildlib": "npm run build && npm run test:lib",
     "lint": "vue-cli-service lint --no-fix",
     "lint:autofix": "vue-cli-service lint",
-    "prepare" : "npm run build",
-    "prepublishOnly" : "npm run test:unit && npm run lint",
-    "preversion" : "npm run lint",
-    "postversion" : "git push && git push --tags"
+    "fullcheck": "npm run lint && npm run test:unit && npm run test:buildlib",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint && npm run test:unit && npm run test:lib",
+    "preversion": "npm run lint",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -61,6 +65,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.1.2",
+    "rimraf": "^3.0.2",
     "typescript": "^3.7.5",
     "vue-template-compiler": "^2.6.11"
   }

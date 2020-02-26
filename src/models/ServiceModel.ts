@@ -10,6 +10,10 @@ type ServiceParent = Dictionary<string | number>
 class MissingUrlException extends Error {
   constructor (modelName: string) {
     super('Missing url configuration in Model "' + modelName + '"')
+    this.constructor = MissingUrlException
+    // @ts-ignore
+    // eslint-disable-next-line no-proto
+    this.__proto__ = MissingUrlException.prototype
   }
 }
 

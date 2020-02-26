@@ -22,17 +22,22 @@ jobs:
       env:
         CI: true
 
+    - name: npm lint
+      run: npm run lint
+      env:
+        CI: true
+
+    - name: npm test unit
+      run: npm run test:unit
+      env:
+        CI: true
+
     - name: npm build
       run: npm run build
       env:
         CI: true
 
-    - name: npm test
-      run: npm run test:unit
-      env:
-        CI: true
-
-    - name: npm lint
-      run: npm run lint
+    - name: npm test lib
+      run: npm run test:lib
       env:
         CI: true

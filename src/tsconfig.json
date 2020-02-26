@@ -1,6 +1,9 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    /* Target build for es5 */
+    "target": "es5",
+    "module": "CommonJS",
     /* Generates corresponding '.d.ts' file. */
     "declaration": true,
     /* Redirect output structure to the directory. */
