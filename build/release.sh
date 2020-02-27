@@ -8,16 +8,25 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
   echo "Releasing $VERSION ..."
   npm run fullcheck
-  npm run clean
-  VERSION=$VERSION npm run build
+
+  echo
+  echo "Full check complete ..."
+  echo
+
+  npm run build
 
   # commit
+  npm version $VERSION --no-git-tag-version
   git add -A
   git commit -m "[build] $VERSION"
-  npm version $VERSION --message "[release] $VERSION"
+  git push
+
+  echo
+  echo "Version changed and pushed ..."
+  echo
 
   # publish
-  git push origin refs/tags/v$VERSION
-  git push
-  npm publish
+  npm publish --access=public
+
+  read -p "Publish successful"
 fi
