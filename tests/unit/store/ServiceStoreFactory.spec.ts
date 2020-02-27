@@ -2,7 +2,7 @@ import store from '@/store'
 import { Dictionary } from '@/types/Dictionary'
 import { ServiceStore, ServiceStoreFactory, ServiceStoreOptions } from '@/store/ServiceStoreFactory'
 
-describe('models/ServiceStoreFactory', () => {
+describe('store/ServiceStoreFactory', () => {
   const registerModule = (module: ServiceStore): string => {
     const moduleName = 'unitTest' + Math.random().toString(36).substring(2)
     store.registerModule(moduleName, module)

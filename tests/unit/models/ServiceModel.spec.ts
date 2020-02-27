@@ -2,7 +2,7 @@ import cu from '@/utils/common'
 import store from '@/store'
 import axios from 'axios'
 import { ServiceModel, MissingUrlException, ServiceParent } from '@/models/ServiceModel'
-import { Field } from '@/models/Field'
+import { Field } from '@/fields/Field'
 
 jest.mock('axios')
 

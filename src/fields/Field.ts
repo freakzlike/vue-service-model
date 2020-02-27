@@ -1,12 +1,6 @@
-import LazyValue from '../types/LazyValue'
 import cu from '../utils/common'
-import { BaseClass } from '../models/BaseClass'
-
-interface FieldDef {
-  attributeName?: string;
-  label?: LazyValue<string>;
-  hint?: LazyValue<string>;
-}
+import { BaseClass } from '../utils/BaseClass'
+import { FieldDef } from './FieldDef'
 
 class FieldNotBoundException extends Error {
   constructor (field: Field) {
@@ -36,7 +30,7 @@ class Field extends BaseClass {
   }
 
   public clone (): Field {
-    const FieldClass = this.constructor as typeof Field
+    const FieldClass = this.cls as typeof Field
     return new FieldClass(this._def, this._name)
   }
 
@@ -45,7 +39,7 @@ class Field extends BaseClass {
    * @param fieldName
    */
   public bind (fieldName: string): Field {
-    const FieldClass = this.constructor as typeof Field
+    const FieldClass = this.cls as typeof Field
     return new FieldClass(this._def, fieldName)
   }
 
@@ -116,16 +110,7 @@ class Field extends BaseClass {
   }
 }
 
-class UUIDField extends Field {
-}
-
-class CharField extends Field {
-}
-
 export {
-  FieldDef,
   FieldNotBoundException,
-  Field,
-  UUIDField,
-  CharField
+  Field
 }

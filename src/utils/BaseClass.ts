@@ -16,7 +16,7 @@ class BaseClass {
    * Getter to retrieve static class definition
    */
   public static get cls (): Dictionary<any> {
-    return this.constructor
+    return this
   }
 }
 

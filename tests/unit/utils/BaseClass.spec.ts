@@ -1,9 +1,9 @@
-import { BaseClass } from '@/models/BaseClass'
+import { BaseClass } from '@/utils/BaseClass'
 
-describe('models/BaseClass', () => {
+describe('utils/BaseClass', () => {
   describe('cls', () => {
     it('should return class on static', () => {
-      expect(BaseClass.cls).toBe(BaseClass.constructor)
+      expect(BaseClass.cls).toBe(BaseClass)
     })
 
     it('should return class on object', () => {

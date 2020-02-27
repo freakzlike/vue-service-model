@@ -1,6 +1,6 @@
 import Dictionary from '../types/Dictionary'
-import { BaseClass } from '../models/BaseClass'
-import { Field } from './Field'
+import { BaseClass } from '../utils/BaseClass'
+import { Field } from '../fields/Field'
 
 class NotDeclaredFieldException extends Error {
   constructor (model: BaseModel, fieldName: string) {

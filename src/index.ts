@@ -1,11 +1,9 @@
 import { BaseModel } from './models/BaseModel'
 import { ServiceModel } from './models/ServiceModel'
-import { Field, UUIDField, CharField } from './models/Field'
+import fields from './fields'
 
 export {
   BaseModel,
   ServiceModel,
-  Field,
-  UUIDField,
-  CharField
+  fields
 }
