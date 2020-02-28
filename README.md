@@ -12,6 +12,7 @@
 * Pass model data to REST requests and retrieve model data from them
 * Uses [Vuex](https://vuex.vuejs.org/) to cache responses from service
 * Handles multiple parallel requests to the same url and attach new requests to already [running requests](#running-requests), so the request will only made once
+* Uses [axios](https://github.com/axios/axios) for service request
 * ... [more later](#future)
 
 ## Installation
@@ -46,7 +47,7 @@ const allAlbums = await Album.objects.all()
 const userAlbums = await Album.objects.filter({userId: 1})
 
 // Retrieve specific album from /albums/1/
-const album = await Album.objects.get('1')
+const album = await Album.objects.get(1)
 ```
 
 You can easily access the data from a model instance
@@ -56,6 +57,16 @@ album.data
 ```
 
 ## Usage
+
+* [BaseModel](#basemodel)
+* [ServiceModel](#servicemodel)
+  * [Urls](#urls)
+  * [ModelManager (objects)](#modelmanager-objects)
+  * [Running requests](#running-requests)
+  * [Cache](#cache)
+  * [Parents](#parents)
+* [Fields](#fields)
+
 
 ### BaseModel
 A `BaseModel` can be used to handle data from any outer source.
@@ -137,7 +148,7 @@ static urls = {
 When doing a detail request your key will be automatically appended to the end of the `BASE` url.
 
 You can also define the `LIST` and `DETAIL` url separately:
-```
+```js
 static urls = {
   LIST: 'https://jsonplaceholder.typicode.com/albums/',
   // {pk} will be replaced with your value you provide to objects.get() 
@@ -150,9 +161,44 @@ There are currently 3 ways how you can define your url with the following priori
 1. Set the `LIST` or `DETAIL` url in your model `static urls = { LIST: <...>, DETAIL: <...> }`
 1. Set the `BASE` url in your model `static urls = { BASE: <...> }`
 
+If you got a nested RESTful service structure (e.g. `/albums/1/photos/`) have a look at [parents](#parents).
+
 #### ModelManager (objects)
 
-*TODO*
+The `ModelManager` provides the interface to perform the api requests.
+
+At the moment there are 3 default interface methods:
+* `objects.all()`
+  * Used to request a list of data (e.g. `/albums/`)
+  * Returns a list of model instances
+* `objects.filter({userId: 1)`
+  * Used to request a list of data with query parameter (e.g. `/albums/?userId=1`)
+  * Returns a list of model instances
+  * Most time used for  filtering a list
+  * Takes `filterParams` as first argument which must be plain object and will be converted to query parameters (`params` in [axios](https://github.com/axios/axios))
+  * `objects.filter({})` is equivalent to `objects.all()`
+* `objects.get(1)`
+  * Used to request a single instance (e.g. `/albums/1/`)
+  * Returns a single model instance
+  * Takes key as first argument which can either be a `string` or `number`
+
+Each method also takes [parents](#parents) as last argument.
+  
+You can extend the `ModelManager` and add your own methods
+```js
+class Album extends ServiceModel {
+  [...]
+
+  static ModelManager = class extends ServiceModel.ModelManager {
+    customMethod () {
+      const Model = this.model
+      return new Model({title: 'Custom Album'})
+    }
+  }
+}
+
+const customAlbum = Album.objects.customMethod()
+```
 
 #### Running requests
 
@@ -168,12 +214,6 @@ should be cached. The default value is 30 seconds
 * null: cache will not be removed
 * 0: no caching
 
-*Open features*:
-- [ ] API to cache clear cache
-- [ ] Define different cacheDuration for a specific request
-- [ ] Argument on [`ModelManager`](#modelmanager-objects) methods to not use cache
-- [ ] "garbage collector" to remove expired cache
-
 #### Parents
 
 *TODO*
@@ -188,6 +228,12 @@ should be cached. The default value is 30 seconds
   * Default support of model creation, update and delete with POST, PUT/PATCH and DELETE request
   * Easy extending or overwriting of the request function
   * Optional mapping of response data
+  * Cache
+    * API to cache clear cache
+    * Define different cacheDuration for a specific request
+    * Argument on [`ModelManager`](#modelmanager-objects) methods to not use cache
+    * Use cache from list response also for detail requests
+    * "garbage collector" to remove expired cache
 * Fields
   * Different field types
   * Methods to allow generation of input/display components according to field type
@@ -200,7 +246,9 @@ should be cached. The default value is 30 seconds
 
 Feel free to create an issue for bugs, feature requests, suggestions or any idea you have. You can also add a pull request with your implementation.
 
-It would would be happy to hear from your experience.
+It would please me to hear from your experience.
+
+I used some ideas and names from [django](https://www.djangoproject.com/) (e.g. `objects.filter()`).
 
 ## License
 
