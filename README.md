@@ -31,6 +31,7 @@
     * [Field definition (`fieldsDef`)](#field-definition-fieldsdef)
       * [Attribute name (`attributeName`)](#attribute-name-attributename)
       * [Field label and hint (`label`, `hint`)](#field-label-and-hint-label-hint)
+    * [Custom/Computed fields](#customcomputed-fields)
     * [Field types](#field-types)
 * [Future](#future)
 * [Contribution](#contribution)
@@ -341,9 +342,7 @@ await firstNameField.hint // output: First name of the employee
 
 #### Custom/Computed fields
 
-In case you want to define your own field class you just need to extend from `fields.Field`. 
-
-*TODO*
+In case you want to define your own field class you just need to extend from `fields.Field`. By overwriting the `valueGetter` method you are able to map the field value by yourself and create computed values.
 
 ```js
 class FullNameField extends fields.Field {
@@ -370,7 +369,7 @@ myObj.val.full_name // output: Joe Bloggs
 
 #### Field types
 
-*TODO*
+Different field types will be added with future releases.
 
 ## Future
 
