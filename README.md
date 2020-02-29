@@ -4,7 +4,7 @@
 [![Latest Version](https://img.shields.io/npm/v/vue-service-model.svg)](https://www.npmjs.com/package/vue-service-model)
 [![License](https://img.shields.io/npm/l/vue-service-model.svg)](https://github.com/freakzlike/vue-service-model/blob/master/LICENSE)
 
-[Vue.js](https://vuejs.org/) library for handling REST requests and models definitions.
+[Vue.js](https://vuejs.org/) library for handling REST requests and model definitions.
 
 ## Features
 
@@ -14,6 +14,27 @@
 * Handles multiple parallel requests to the same url and attach new requests to already [running requests](#running-requests), so the request will only made once
 * Uses [axios](https://github.com/axios/axios) for service request
 * ... [more later](#future)
+
+## Content
+
+* [Installation](#installation)
+* [Example](#installation)
+* [Usage](#installation)
+  * [BaseModel](#basemodel)
+  * [ServiceModel](#servicemodel)
+    * [Urls](#urls)
+    * [ModelManager (`objects`)](#modelmanager-objects)
+    * [Running requests](#running-requests)
+    * [Cache](#cache)
+    * [Parents](#parents)
+  * [Fields](#fields)
+    * [Field definition (`fieldsDef`)](#field-definition-fieldsdef)
+      * [Attribute name (`attributeName`)](#attribute-name-attributename)
+      * [Field label and hint (`label`, `hint`)](#field-label-and-hint-label-hint)
+    * [Field types](#field-types)
+* [Future](#future)
+* [Contribution](#contribution)
+* [License](#license)
 
 ## Installation
 ```sh
@@ -58,16 +79,6 @@ album.data
 
 ## Usage
 
-* [BaseModel](#basemodel)
-* [ServiceModel](#servicemodel)
-  * [Urls](#urls)
-  * [ModelManager (objects)](#modelmanager-objects)
-  * [Running requests](#running-requests)
-  * [Cache](#cache)
-  * [Parents](#parents)
-* [Fields](#fields)
-
-
 ### BaseModel
 A `BaseModel` can be used to handle data from any outer source.
 
@@ -75,11 +86,13 @@ A `BaseModel` can be used to handle data from any outer source.
 import {BaseModel, fields} from 'vue-service-model'
 
 class MyModel extends BaseModel {
-    static keyName = 'MyModel'
+  // Unique name
+  static keyName = 'MyModel'
     
-    static fieldsDef = {
-      title: new fields.Field()
-    }
+  // Definition of model fields (optional)
+  static fieldsDef = {
+    title: new fields.Field()
+  }
 }
 
 const obj = new MyModel({title: 'My title'})
@@ -126,7 +139,7 @@ class Album extends ServiceModel {
 
   static fieldsDef = {
     id: new fields.Field(),
-    title: new fields.CharField({label: 'Title'})
+    title: new fields.Field()
   }
 }
 ```
@@ -163,7 +176,7 @@ There are currently 3 ways how you can define your url with the following priori
 
 If you got a nested RESTful service structure (e.g. `/albums/1/photos/`) have a look at [parents](#parents).
 
-#### ModelManager (objects)
+#### ModelManager (`objects`)
 
 The `ModelManager` provides the interface to perform the api requests.
 
@@ -182,7 +195,7 @@ At the moment there are 3 default interface methods:
   * Returns a single model instance
   * Takes key as first argument which can either be a `string` or `number`
 
-Each method also takes [parents](#parents) as last argument.
+Each method also takes a plain object with [parents](#parents) as last argument.
   
 You can extend the `ModelManager` and add your own methods
 ```js
@@ -209,16 +222,153 @@ then this request will be attached to the first request which has not been compl
 #### Cache
 
 With the static property `cacheDuration` it is possible to set the duration in seconds how long the result of a response 
-should be cached. The default value is 30 seconds
+should be cached. The default value is 30 seconds. Currently the expired data will only be removed by requesting the same data again.
+The `keyName` of your model will be used to access the specific cache so keep them unqiue to avoid having models using the same cache.
 
 * null: cache will not be removed
 * 0: no caching
 
 #### Parents
 
-*TODO*
+When using a nested RESTful service it is necessary to not only use the primary key to identify a resource. These can be defined by using `parents` in your `ServiceModel`.
+
+```js
+class Photo extends ServiceModel {
+  [...]
+
+  // Define name of parents
+  static parents = ['album']
+
+  static urls = {
+    // Add placeholder for parent in your url
+    BASE: 'https://jsonplaceholder.typicode.com/albums/{album}/photos/'
+  }
+}
+
+// Retrieve all photos from album 1: /albums/1/photos/
+const photos = await Photo.objects.all({album: 1})
+
+// Retrieve photo 2 from album 1: /albums/1/photos/2/
+const photo = await Photo.objects.get(2, {album: 1})
+```
+
+It is necessary to set the exact parents otherwise a warning will be printed to the console. You can also add some custom
+validation of the parents by extending the `checkServiceParents` of your `ServiceModel`. This will be called on default [`ModelManager`](#modelmanager-objects) interfaces and when retrieving the service url from [`getListUrl`](#urls) or [`getDetailUrl`](#urls).
 
 ### Fields
+
+Fields will be one of the main features of this library.
+
+#### Field definition (`fieldsDef`)
+You can set your model fields with the static property `fieldsDef` with a plain object with your fieldname as key and the field instance as value. 
+Nested `fieldsDef` is currently not supported.
+
+```js
+class MyModel extends BaseModel {
+  [...]
+
+  static fieldsDef = {
+    first_name: new fields.Field(),
+    last_name: new fields.Field()
+  }
+}
+
+const myObj = new MyModel({
+  first_name: 'Joe',
+  last_name: 'Bloggs'
+})
+
+myObj.val.first_name // output: Joe
+myObj.val.last_name // output: Bloggs
+```
+
+##### Attribute name (`attributeName`)
+
+By default the key of your field in your `fieldsDef` (e.g. `first_name`) will be used to retrieve the value from the model data.
+You can also set the `attributeName` when instantiating the field. It is also possible to access nested data when using dot-notation in `attributeName`.
+If you need a more specific way to retrieve the value of a field from your data then have a look at [Custom/Computed fields](#customcomputed-fields).
+
+```js
+class MyModel extends BaseModel {
+  [...]
+
+  static fieldsDef = {
+    name: new fields.Field({attributeName: 'username'}),
+    address_city: new fields.Field({attributeName: 'address.city'}),
+    address_street: new fields.Field({attributeName: 'address.street.name'})
+  }
+}
+
+const myObj = new MyModel({
+  username: 'joe_bloggs',
+  address: {
+    city: 'New York',
+    street: {
+      name: 'Fifth Avenue'
+    } 
+  }
+})
+
+myObj.val.name // output: joe_bloggs
+myObj.val.address_city // output: New York
+myObj.val.address_street // output: Fifth Avenue
+```
+
+##### Field label and hint (`label`, `hint`)
+
+With the `label` property you can set a descriptive name of your field. `hint` is used to provide a detail description of your field. `label` and `hint` can either be a `string` or a `function` which should return a `string` or a `Promise`.
+You can access your label/hint with the `label`/`hint` property of your field instance which will always return a `Promise`.
+
+```js
+class MyModel extends BaseModel {
+  [...]
+
+  static fieldsDef = {
+    first_name: new fields.Field({
+      label: 'First name',
+      hint: () => 'First name of the employee'
+    })
+  }
+}
+
+[...]
+
+const firstNameField = myObj.getField('first_name')
+
+await firstNameField.label // output: First name
+await firstNameField.hint // output: First name of the employee
+```
+
+#### Custom/Computed fields
+
+In case you want to define your own field class you just need to extend from `fields.Field`. 
+
+*TODO*
+
+```js
+class FullNameField extends fields.Field {
+  valueGetter (data) {
+    return data ? data.first_name + ' ' + data.last_name : null
+  }
+}
+
+class MyModel extends BaseModel {
+  [...]
+
+  static fieldsDef = {
+    full_name: new FullNameField()
+  }
+}
+
+const myObj = new MyModel({
+  first_name: 'Joe',
+  last_name: 'Bloggs'
+})
+
+myObj.val.full_name // output: Joe Bloggs
+```
+
+#### Field types
 
 *TODO*
 
@@ -236,6 +386,7 @@ should be cached. The default value is 30 seconds
     * "garbage collector" to remove expired cache
 * Fields
   * Different field types
+  * Standalone field instances
   * Methods to allow generation of input/display components according to field type
   * Accessing foreign key fields and retrieving foreign model instances
 * Global configuration with hooks
@@ -248,7 +399,7 @@ Feel free to create an issue for bugs, feature requests, suggestions or any idea
 
 It would please me to hear from your experience.
 
-I used some ideas and names from [django](https://www.djangoproject.com/) (e.g. `objects.filter()`).
+I used some ideas and names from [django](https://www.djangoproject.com/) (e.g. `objects.filter()`) and other libraries and frameworks.
 
 ## License
 
