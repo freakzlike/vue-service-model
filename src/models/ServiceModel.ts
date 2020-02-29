@@ -132,8 +132,13 @@ class ServiceModel extends BaseModel {
       const Model = this.model
       Model.checkServiceParents(parents)
 
+      const keyBuilder = ['detail', pk.toString()]
+      if (parents && Object.keys(parents).length > 0) {
+        keyBuilder.push(JSON.stringify(parents))
+      }
+
       const options: ServiceStoreOptions = {
-        key: 'detail#' + pk.toString(),
+        key: keyBuilder.join('#'),
         sendRequest: async (options: ServiceStoreOptions): Promise<Array<Dictionary<any>>> => {
           const url = await this.model.getDetailUrl(pk, parents)
           const response = await axios.get(url)
@@ -155,10 +160,16 @@ class ServiceModel extends BaseModel {
       const Model = this.model
       Model.checkServiceParents(parents)
 
-      const filterKey = Object.keys(filterParams).length ? 'list#' + JSON.stringify(filterParams) : 'list'
+      const keyBuilder = ['list']
+      if (filterParams && Object.keys(filterParams).length > 0) {
+        keyBuilder.push(JSON.stringify(filterParams))
+      }
+      if (parents && Object.keys(parents).length > 0) {
+        keyBuilder.push(JSON.stringify(parents))
+      }
 
       const options: ServiceStoreOptions = {
-        key: filterKey,
+        key: keyBuilder.join('#'),
         sendRequest: async (options: ServiceStoreOptions): Promise<Array<Dictionary<any>>> => {
           const url = await this.model.getListUrl(parents)
           const config = Object.keys(filterParams).length ? { params: filterParams } : {}
