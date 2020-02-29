@@ -106,7 +106,12 @@ class Field extends BaseClass {
       }
     }
 
-    return !cu.isNull(currentObject) ? currentObject : null
+    /* istanbul ignore else */
+    if (!cu.isNull(currentObject)) {
+      return currentObject
+    } else {
+      return null
+    }
   }
 }
 

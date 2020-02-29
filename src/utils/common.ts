@@ -54,6 +54,7 @@ const funcs = {
     if (!sources.length) return target
     const source = sources.shift()
 
+    /* istanbul ignore else */
     if (source && funcs.isObject(target) && funcs.isObject(source)) {
       for (const key of Object.keys(source)) {
         const value: any = source[key]
