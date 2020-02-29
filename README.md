@@ -4,22 +4,22 @@
 [![Latest Version](https://img.shields.io/npm/v/vue-service-model.svg)](https://www.npmjs.com/package/vue-service-model)
 [![License](https://img.shields.io/npm/l/vue-service-model.svg)](https://github.com/freakzlike/vue-service-model/blob/master/LICENSE)
 
-[Vue.js](https://vuejs.org/) library for handling REST requests and model definitions.
+[Vue.js](https://vuejs.org/) library for handling REST service requests and model definitions.
 
 ## Features
 
-* Define models and easily handle REST requests
-* Pass model data to REST requests and retrieve model data from them
-* Uses [Vuex](https://vuex.vuejs.org/) to cache responses from service
+* Define models and easily handle REST service requests
+* Pass model data to REST service requests and retrieve model data from them
 * Handles multiple parallel requests to the same url and attach new requests to already [running requests](#running-requests), so the request will only made once
+* Uses [Vuex](https://vuex.vuejs.org/) to cache responses from service
 * Uses [axios](https://github.com/axios/axios) for service request
 * ... [more later](#future)
 
 ## Content
 
 * [Installation](#installation)
-* [Example](#installation)
-* [Usage](#installation)
+* [Example](#example)
+* [Usage](#usage)
   * [BaseModel](#basemodel)
   * [ServiceModel](#servicemodel)
     * [Urls](#urls)
@@ -59,7 +59,7 @@ class Album extends ServiceModel {
 }
 ```
 
-Retrieve data from a service. `objects.get()` will return a model instance. `objects.all()` and `objects.filter()` will return a list of model instances. Filter fields will be passes as URL parameters.
+Retrieve data from a service. `objects.get()` will return a model instance. `objects.all()` and `objects.filter()` will return a list of model instances. Filter fields will be passed as URL query parameters.
 
 ```js
 // Retrieve all albums from /albums/
@@ -72,7 +72,7 @@ const userAlbums = await Album.objects.filter({userId: 1})
 const album = await Album.objects.get(1)
 ```
 
-You can easily access the data from a model instance
+You can easily access the data from a model instance or define model [fields](#fields).
 
 ```js
 album.data
@@ -81,7 +81,7 @@ album.data
 ## Usage
 
 ### BaseModel
-A `BaseModel` can be used to handle data from any outer source.
+A `BaseModel` can be used to handle data from any source by passing the data when instantiating the model.
 
 ```js
 import {BaseModel, fields} from 'vue-service-model'
@@ -99,9 +99,9 @@ class MyModel extends BaseModel {
 const obj = new MyModel({title: 'My title'})
 ```
 
-Retrieve data of a model instance.
+Retrieve data of the model instance.
 ```js
-obj.data
+obj.data // output: {title: 'My title'}
 ```
 
 Retrieve a list of all fields.
@@ -112,7 +112,7 @@ obj.fields
 Retrieve value from a single field.
 ```js
 // Retrieve value for field 'title'
-obj.val.title
+obj.val.title // output: My title
 ```
 
 Retrieve field instance of given field name
@@ -123,7 +123,7 @@ obj.getField('title')
 ### ServiceModel
 
 A `ServiceModel` extends from [`BaseModel`](#basemodel) and adds the [`ModelManager`](#modelmanager-objects) with a vuex
-store to keep track of [running requests](#running-requests) and optionally caching the result of a service.
+store to keep track of [running requests](#running-requests) and optionally caching the result of the services.
 
 ```js
 import {ServiceModel, fields} from 'vue-service-model'
@@ -171,7 +171,7 @@ static urls = {
 ```
 
 There are currently 3 ways how you can define your url with the following priority
-1. Overwrite `getListUrl` or `getDetailUrl` method and a return a Promise which will resolve the url as a string
+1. Overwrite `getListUrl` or `getDetailUrl` method and a return a `Promise` which will resolve the url as a string
 1. Set the `LIST` or `DETAIL` url in your model `static urls = { LIST: <...>, DETAIL: <...> }`
 1. Set the `BASE` url in your model `static urls = { BASE: <...> }`
 
@@ -186,7 +186,7 @@ At the moment there are 3 default interface methods:
   * Used to request a list of data (e.g. `/albums/`)
   * Returns a list of model instances
 * `objects.filter({userId: 1)`
-  * Used to request a list of data with query parameter (e.g. `/albums/?userId=1`)
+  * Used to request a list of data with query parameters (e.g. `/albums/?userId=1`)
   * Returns a list of model instances
   * Most time used for  filtering a list
   * Takes `filterParams` as first argument which must be plain object and will be converted to query parameters (`params` in [axios](https://github.com/axios/axios))
@@ -216,7 +216,7 @@ const customAlbum = Album.objects.customMethod()
 
 #### Running requests
 
-When you start to request data from a service for example `Album.objects.get('1')` then the Promise of the request will 
+When you start to request data from a service for example `Album.objects.get('1')` then the `Promise` of the request will 
 be saved as long as the request has not been completed. So when requesting `Album.objects.get('1')` again (e.g from another component)
 then this request will be attached to the first request which has not been completed yet and the request of the service will only made once.
 
@@ -231,7 +231,7 @@ The `keyName` of your model will be used to access the specific cache so keep th
 
 #### Parents
 
-When using a nested RESTful service it is necessary to not only use the primary key to identify a resource. These can be defined by using `parents` in your `ServiceModel`.
+When using a nested RESTful service it is necessary to not only use the key to identify a resource. These can be defined by using `parents` in your `ServiceModel`.
 
 ```js
 class Photo extends ServiceModel {
@@ -254,7 +254,7 @@ const photo = await Photo.objects.get(2, {album: 1})
 ```
 
 It is necessary to set the exact parents otherwise a warning will be printed to the console. You can also add some custom
-validation of the parents by extending the `checkServiceParents` of your `ServiceModel`. This will be called on default [`ModelManager`](#modelmanager-objects) interfaces and when retrieving the service url from [`getListUrl`](#urls) or [`getDetailUrl`](#urls).
+validation of the parents by extending the `checkServiceParents` method of your `ServiceModel`. This will be called on default [`ModelManager`](#modelmanager-objects) interfaces and when retrieving the service url from [`getListUrl`](#urls) or [`getDetailUrl`](#urls).
 
 ### Fields
 
