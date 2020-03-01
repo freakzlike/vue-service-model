@@ -24,6 +24,7 @@
   * [ServiceModel](#servicemodel)
     * [Urls](#urls)
     * [ModelManager (`objects`)](#modelmanager-objects)
+      * [Custom ModelManager](#custom-modelmanager)
     * [Running requests](#running-requests)
     * [Cache](#cache)
     * [Parents](#parents)
@@ -197,8 +198,10 @@ At the moment there are 3 default interface methods:
   * Takes key as first argument which can either be a `string` or `number`
 
 Each method also takes a plain object with [parents](#parents) as last argument.
+
+##### Custom ModelManager
   
-You can extend the `ModelManager` and add your own methods
+You can extend the `ModelManager` and add your own methods.
 ```js
 class Album extends ServiceModel {
   [...]
@@ -213,6 +216,17 @@ class Album extends ServiceModel {
 
 const customAlbum = Album.objects.customMethod()
 ```
+
+It is also possible to overwrite some methods to do the `list`/`detail` request by yourself or map the response data before it gets cached and used for the model instance.
+
+* `sendListRequest`
+  * Gets called when doing a list request with `objects.all()` or `objects.filter()`
+* `sendDetailRequest`
+  * Gets called when doing a detail with `objects.get()`
+* `mapListResponseBeforeCache`
+  * Gets called from `sendListRequest` with the response data before the data will be cached
+* `mapDetailResponseBeforeCache`
+  * Gets called from `sendDetailRequest` with the response data before the data will be cached
 
 #### Running requests
 
