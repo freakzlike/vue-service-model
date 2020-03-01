@@ -39,7 +39,7 @@ class ModelManager {
     const options: ServiceStoreOptions = {
       key: url,
       sendRequest: this.sendDetailRequest.bind(this),
-      args: [url]
+      args: [url, pk, parents]
     }
 
     const data: Dictionary<any> = await Model.storeDispatch('getData', options)
@@ -64,7 +64,7 @@ class ModelManager {
     const options: ServiceStoreOptions = {
       key: keyBuilder.join('?'),
       sendRequest: this.sendListRequest.bind(this),
-      args: [url, filterParams]
+      args: [url, filterParams, parents]
     }
 
     const dataList: Array<ResponseData> = await Model.storeDispatch('getData', options)
@@ -75,11 +75,18 @@ class ModelManager {
    * Send actual detail service request and map data before caching
    * @param options
    * @param url
+   * @param pk
+   * @param parents
    */
-  public async sendDetailRequest (options: ServiceStoreOptions, url: string): Promise<ResponseData> {
+  public async sendDetailRequest (
+    options: ServiceStoreOptions,
+    url: string,
+    pk: string | number,
+    parents?: ServiceParent
+  ): Promise<ResponseData> {
     const response = await axios.get(url)
 
-    return this.mapDetailResponseBeforeCache(options, response.data, url)
+    return this.mapDetailResponseBeforeCache(options, response.data, url, pk, parents)
   }
 
   /**
@@ -87,11 +94,15 @@ class ModelManager {
    * @param options
    * @param data
    * @param url
+   * @param pk
+   * @param parents
    */
   public async mapDetailResponseBeforeCache (
     options: ServiceStoreOptions,
     data: Array<ResponseData>,
-    url: string
+    url: string,
+    pk: string | number,
+    parents?: ServiceParent
   ): Promise<ResponseData> {
     return data
   }
@@ -101,16 +112,18 @@ class ModelManager {
    * @param options
    * @param url
    * @param filterParams
+   * @param parents
    */
   public async sendListRequest (
     options: ServiceStoreOptions,
     url: string,
-    filterParams: FilterParams
+    filterParams: FilterParams,
+    parents?: ServiceParent
   ): Promise<Array<ResponseData>> {
     const config = Object.keys(filterParams).length ? { params: filterParams } : {}
     const response = await axios.get(url, config)
 
-    return this.mapListResponseBeforeCache(options, response.data, url, filterParams)
+    return this.mapListResponseBeforeCache(options, response.data, url, filterParams, parents)
   }
 
   /**
@@ -119,12 +132,15 @@ class ModelManager {
    * @param data
    * @param url
    * @param filterParams
+   * @param parents
    */
   public async mapListResponseBeforeCache (
     options: ServiceStoreOptions,
     data: Array<ResponseData>,
     url: string,
-    filterParams: FilterParams): Promise<Array<ResponseData>> {
+    filterParams: FilterParams,
+    parents?: ServiceParent
+  ): Promise<Array<ResponseData>> {
     return data
   }
 }
