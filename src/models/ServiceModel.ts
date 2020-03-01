@@ -6,6 +6,8 @@ import { ServiceStoreFactory, ServiceStore, ServiceStoreOptions } from '../store
 import axios from 'axios'
 
 type ServiceParent = Dictionary<string | number>
+type FilterParams = Dictionary<any>
+type ResponseData = Dictionary<any>
 
 class MissingUrlException extends Error {
   constructor (modelName: string) {
@@ -46,6 +48,11 @@ class ServiceModel extends BaseModel {
    * Vuex store module factory to use
    */
   protected static storeFactory: typeof ServiceStoreFactory = ServiceStoreFactory
+
+  /**
+   * Saved instance of ModelManager
+   */
+  private static __modelManager: any
 
   /**
    * Function to return list url of model according to parents
@@ -99,10 +106,14 @@ class ServiceModel extends BaseModel {
    * Retrieve instance of ModelManager
    */
   public static get objects () {
-    this.register()
+    if (!Object.prototype.hasOwnProperty.call(this, '__modelManager')) {
+      this.register()
 
-    const ServiceClass = this.ModelManager
-    return new ServiceClass(this)
+      const ServiceClass = this.ModelManager
+      this.__modelManager = new ServiceClass(this)
+    }
+
+    return this.__modelManager
   }
 
   /**
@@ -132,19 +143,12 @@ class ServiceModel extends BaseModel {
       const Model = this.model
       Model.checkServiceParents(parents)
 
-      const keyBuilder = ['detail', pk.toString()]
-      if (parents && Object.keys(parents).length > 0) {
-        keyBuilder.push(JSON.stringify(parents))
-      }
+      const url = await this.model.getDetailUrl(pk, parents)
 
       const options: ServiceStoreOptions = {
-        key: keyBuilder.join('#'),
-        sendRequest: async (options: ServiceStoreOptions): Promise<Array<Dictionary<any>>> => {
-          const url = await this.model.getDetailUrl(pk, parents)
-          const response = await axios.get(url)
-
-          return response.data
-        }
+        key: url,
+        sendRequest: this.sendDetailRequest.bind(this),
+        args: [url]
       }
 
       const data: Dictionary<any> = await Model.storeDispatch('getData', options)
@@ -156,31 +160,81 @@ class ServiceModel extends BaseModel {
      * @param filterParams
      * @param parents
      */
-    public async filter (filterParams: Dictionary<any>, parents?: ServiceParent): Promise<Array<ServiceModel>> {
+    public async filter (filterParams: FilterParams, parents?: ServiceParent): Promise<Array<ServiceModel>> {
       const Model = this.model
       Model.checkServiceParents(parents)
 
-      const keyBuilder = ['list']
+      const url = await this.model.getListUrl(parents)
+      const keyBuilder = [url]
       if (filterParams && Object.keys(filterParams).length > 0) {
         keyBuilder.push(JSON.stringify(filterParams))
       }
-      if (parents && Object.keys(parents).length > 0) {
-        keyBuilder.push(JSON.stringify(parents))
-      }
 
       const options: ServiceStoreOptions = {
-        key: keyBuilder.join('#'),
-        sendRequest: async (options: ServiceStoreOptions): Promise<Array<Dictionary<any>>> => {
-          const url = await this.model.getListUrl(parents)
-          const config = Object.keys(filterParams).length ? { params: filterParams } : {}
-          const response = await axios.get(url, config)
-
-          return response.data
-        }
+        key: keyBuilder.join('?'),
+        sendRequest: this.sendListRequest.bind(this),
+        args: [url, filterParams]
       }
 
-      const dataList: Array<Dictionary<any>> = await Model.storeDispatch('getData', options)
+      const dataList: Array<ResponseData> = await Model.storeDispatch('getData', options)
       return dataList.map(data => new Model(data))
+    }
+
+    /**
+     * Send actual detail service request and map data before caching
+     * @param options
+     * @param url
+     */
+    public async sendDetailRequest (options: ServiceStoreOptions, url: string): Promise<ResponseData> {
+      const response = await axios.get(url)
+
+      return this.mapDetailResponseBeforeCache(options, response.data, url)
+    }
+
+    /**
+     * Map raw response data from detail service request before cache
+     * @param options
+     * @param data
+     * @param url
+     */
+    public async mapDetailResponseBeforeCache (
+      options: ServiceStoreOptions,
+      data: Array<ResponseData>,
+      url: string
+    ): Promise<ResponseData> {
+      return data
+    }
+
+    /**
+     * Send actual list service request and map data before caching
+     * @param options
+     * @param url
+     * @param filterParams
+     */
+    public async sendListRequest (
+      options: ServiceStoreOptions,
+      url: string,
+      filterParams: FilterParams
+    ): Promise<Array<ResponseData>> {
+      const config = Object.keys(filterParams).length ? { params: filterParams } : {}
+      const response = await axios.get(url, config)
+
+      return this.mapListResponseBeforeCache(options, response.data, url, filterParams)
+    }
+
+    /**
+     * Map raw response data from list service request before cache
+     * @param options
+     * @param data
+     * @param url
+     * @param filterParams
+     */
+    public async mapListResponseBeforeCache (
+      options: ServiceStoreOptions,
+      data: Array<ResponseData>,
+      url: string,
+      filterParams: FilterParams): Promise<Array<ResponseData>> {
+      return data
     }
   }
 
@@ -244,4 +298,4 @@ class ServiceModel extends BaseModel {
   }
 }
 
-export { ServiceModel, ServiceParent, MissingUrlException }
+export { ServiceModel, ServiceParent, FilterParams, ResponseData, MissingUrlException }
