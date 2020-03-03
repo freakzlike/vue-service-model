@@ -4,13 +4,13 @@
 [![Latest Version](https://img.shields.io/npm/v/vue-service-model.svg)](https://www.npmjs.com/package/vue-service-model)
 [![License](https://img.shields.io/npm/l/vue-service-model.svg)](https://github.com/freakzlike/vue-service-model/blob/master/LICENSE)
 
-[Vue.js](https://vuejs.org/) library for handling REST service requests and model definitions.
+[Vue.js](https://vuejs.org/) library for handling REST service requests with caching, aggregation and model definitions.
 
 ## Features
 
 * Define models and easily handle REST service requests
 * Pass model data to REST service requests and retrieve model data from them
-* Handles multiple parallel requests to the same url and attach new requests to already [running requests](#running-requests), so the request will only made once
+* Aggregation for multiple parallel requests to the same url to avoid redundant requests. See [aggregation](#aggregation)
 * Uses [Vuex](https://vuex.vuejs.org/) to cache responses from service
 * Uses [axios](https://github.com/axios/axios) for service request
 * ... [more later](#future)
@@ -25,7 +25,7 @@
     * [Urls](#urls)
     * [ModelManager (`objects`)](#modelmanager-objects)
       * [Custom ModelManager](#custom-modelmanager)
-    * [Running requests](#running-requests)
+    * [Aggregation](#aggregation)
     * [Cache](#cache)
     * [Parents](#parents)
   * [Fields](#fields)
@@ -124,7 +124,7 @@ obj.getField('title')
 ### ServiceModel
 
 A `ServiceModel` extends from [`BaseModel`](#basemodel) and adds the [`ModelManager`](#modelmanager-objects) with a vuex
-store to keep track of [running requests](#running-requests) and optionally caching the result of the services.
+store to keep track of [aggregation](#aggregation) of running requests and optionally caching the result of the services.
 
 ```js
 import {ServiceModel, fields} from 'vue-service-model'
@@ -148,7 +148,7 @@ class Album extends ServiceModel {
 
 #### Urls
 
-Urls are currently divided up in 2 different types `LIST` and `DETAIL` (same like in [Django REST framework](https://www.django-rest-framework.org/api-guide/routers/#simplerouter)).
+Urls are currently divided into 2 different types. `LIST` and `DETAIL` (same like in [Django REST framework](https://www.django-rest-framework.org/api-guide/routers/#simplerouter)).
 
 * `LIST`: (e.g. `/albums/`) used for `objects.all()` and `objects.filter()`
 * `DETAIL`: (e.g. `/albums/1/`) used for `objects.get(1)`
@@ -160,7 +160,7 @@ static urls = {
   BASE: 'https://jsonplaceholder.typicode.com/albums/'
 }
 ```
-When doing a detail request your key will be automatically appended to the end of the `BASE` url.
+When performing a detail request your key will be automatically appended to the end of the `BASE` url.
 
 You can also define the `LIST` and `DETAIL` url separately:
 ```js
@@ -171,7 +171,7 @@ static urls = {
 }
 ```
 
-There are currently 3 ways how you can define your url with the following priority
+There are currently 3 ways to define your url with the following priority
 1. Overwrite `getListUrl` or `getDetailUrl` method and a return a `Promise` which will resolve the url as a string
 1. Set the `LIST` or `DETAIL` url in your model `static urls = { LIST: <...>, DETAIL: <...> }`
 1. Set the `BASE` url in your model `static urls = { BASE: <...> }`
@@ -189,7 +189,7 @@ At the moment there are 3 default interface methods:
 * `objects.filter({userId: 1)`
   * Used to request a list of data with query parameters (e.g. `/albums/?userId=1`)
   * Returns a list of model instances
-  * Most time used for  filtering a list
+  * Usually used for filtering a list
   * Takes `filterParams` as first argument which must be plain object and will be converted to query parameters (`params` in [axios](https://github.com/axios/axios))
   * `objects.filter({})` is equivalent to `objects.all()`
 * `objects.get(1)`
@@ -228,15 +228,15 @@ It is also possible to overwrite some methods to do the `list`/`detail` request 
 * `mapDetailResponseBeforeCache`
   * Gets called from `sendDetailRequest` with the response data before the data will be cached
 
-#### Running requests
+#### Aggregation
 
-When you start to request data from a service for example `Album.objects.get('1')` then the `Promise` of the request will 
+When you start to request data from a service, for example `Album.objects.get('1')`, then the `Promise` of the request will 
 be saved as long as the request has not been completed. So when requesting `Album.objects.get('1')` again (e.g from another component)
-then this request will be attached to the first request which has not been completed yet and the request of the service will only made once.
+this request will be attached to the first request which has not been completed yet and the request of the service will only made once.
 
 #### Cache
 
-With the static property `cacheDuration` it is possible to set the duration in seconds how long the result of a response 
+With the static property `cacheDuration` it is possible to set the duration (in seconds) of how long the result of a response 
 should be cached. The default value is 30 seconds. Currently the expired data will only be removed by requesting the same data again.
 The `keyName` of your model will be used to access the specific cache so keep them unqiue to avoid having models using the same cache.
 
@@ -245,7 +245,7 @@ The `keyName` of your model will be used to access the specific cache so keep th
 
 #### Parents
 
-When using a nested RESTful service it is necessary to not only use the key to identify a resource. These can be defined by using `parents` in your `ServiceModel`.
+When using a nested RESTful service more information is necessary to uniquely identify a resource. You need to define `parents` in your `ServiceModel`.
 
 ```js
 class Photo extends ServiceModel {
@@ -267,7 +267,7 @@ const photos = await Photo.objects.all({album: 1})
 const photo = await Photo.objects.get(2, {album: 1})
 ```
 
-It is necessary to set the exact parents otherwise a warning will be printed to the console. You can also add some custom
+It is necessary to set exact parents otherwise a warning will be printed to the console. You can also add some custom
 validation of the parents by extending the `checkServiceParents` method of your `ServiceModel`. This will be called on default [`ModelManager`](#modelmanager-objects) interfaces and when retrieving the service url from [`getListUrl`](#urls) or [`getDetailUrl`](#urls).
 
 ### Fields
@@ -331,7 +331,7 @@ myObj.val.address_street // output: Fifth Avenue
 
 ##### Field label and hint (`label`, `hint`)
 
-With the `label` property you can set a descriptive name of your field. `hint` is used to provide a detail description of your field. `label` and `hint` can either be a `string` or a `function` which should return a `string` or a `Promise`.
+With the `label` property you can set a descriptive name for your field. `hint` is used to provide a detail description of your field. `label` and `hint` can either be a `string` or a `function` which should return a `string` or a `Promise`.
 You can access your label/hint with the `label`/`hint` property of your field instance which will always return a `Promise`.
 
 ```js
@@ -392,8 +392,8 @@ Different field types will be added with future releases.
   * Easy extending or overwriting of the request function
   * Optional mapping of response data
   * Cache
-    * API to cache clear cache
-    * Define different cacheDuration for a specific request
+    * API to clear cache
+    * Define a different cacheDuration for a specific request
     * Argument on [`ModelManager`](#modelmanager-objects) methods to not use cache
     * Use cache from list response also for detail requests
     * "garbage collector" to remove expired cache
