@@ -24,6 +24,10 @@
   * [ServiceModel](#servicemodel)
     * [Urls](#urls)
     * [ModelManager (`objects`)](#modelmanager-objects)
+      * [Retrieve list of data (`objects.list()`)](#retrieve-list-of-data-objectslist)
+      * [Retrieve single entry of data (`objects.detail()`)](#retrieve-single-entry-of-data-objectsdetail)
+      * [RetrieveInterfaceParams](#retrieveinterfaceparams)
+      * [Custom ModelManager](#custom-modelmanager)
     * [Aggregation](#aggregation)
     * [Cache](#cache)
     * [Parents](#parents)
@@ -59,17 +63,17 @@ class Album extends ServiceModel {
 }
 ```
 
-Retrieve data from a service. `objects.get()` will return a model instance. `objects.all()` and `objects.filter()` will return a list of model instances. Filter fields will be passed as URL query parameters.
+Retrieve data from a service. `objects.detail()` will return a model instance. `objects.list()` will return a list of model instances.
 
 ```js
 // Retrieve all albums from /albums/
-const allAlbums = await Album.objects.all()
-
-// Retrieve filtered list from /albums/?userId=1
-const userAlbums = await Album.objects.filter({userId: 1})
+const allAlbums = await Album.objects.list()
 
 // Retrieve specific album from /albums/1/
-const album = await Album.objects.get(1)
+const album = await Album.objects.detail(1)
+
+// Retrieve filtered list from /albums/?userId=1
+const userAlbums = await Album.objects.list({userId: 1})
 ```
 
 You can easily access the data from a model instance or define model [fields](#fields).
@@ -149,8 +153,8 @@ class Album extends ServiceModel {
 
 Urls are currently divided into 2 different types. `LIST` and `DETAIL` (same like in [Django REST framework](https://www.django-rest-framework.org/api-guide/routers/#simplerouter)).
 
-* `LIST`: (e.g. `/albums/`) used for `objects.all()` and `objects.filter()`
-* `DETAIL`: (e.g. `/albums/1/`) used for `objects.get(1)`
+* `LIST`: (e.g. `/albums/`) used for `objects.list()`
+* `DETAIL`: (e.g. `/albums/1/`) used for `objects.detail(1)`
 
 
 The simplest way to define the urls is to set the static property `urls.BASE` in your `ServiceModel`.
@@ -165,7 +169,7 @@ You can also define the `LIST` and `DETAIL` url separately:
 ```js
 static urls = {
   LIST: 'https://jsonplaceholder.typicode.com/albums/',
-  // {pk} will be replaced with your value you provide to objects.get() 
+  // {pk} will be replaced with your value you provide to objects.detail() 
   DETAIL: 'https://jsonplaceholder.typicode.com/albums/{pk}/'
 }
 ```
@@ -179,26 +183,51 @@ If you got a nested RESTful service structure (e.g. `/albums/1/photos/`) have a 
 
 #### ModelManager (`objects`)
 
-The `ModelManager` provides the interface to perform the api requests.
+The `ModelManager` provides the interface to perform the api requests. At the moment there are 2 default interface methods.
 
-At the moment there are 3 default interface methods:
-* `objects.all()`
-  * Used to request a list of data (e.g. `/albums/`)
-  * Returns a list of model instances
-* `objects.filter({userId: 1)`
-  * Used to request a list of data with query parameters (e.g. `/albums/?userId=1`)
-  * Returns a list of model instances
-  * Usually used for filtering a list
-  * Takes `filterParams` as first argument which must be plain object and will be converted to query parameters (`params` in [axios](https://github.com/axios/axios))
-  * `objects.filter({})` is equivalent to `objects.all()`
-* `objects.get(1)`
-  * Used to request a single instance (e.g. `/albums/1/`)
-  * Returns a single model instance
-  * Takes key as first argument which can either be a `string` or `number`
+##### Retrieve list of data (`objects.list()`)
 
-Each method also takes a plain object with [parents](#parents) as last argument.
+`objects.list()` is used to request a list of data (e.g. `/albums/`) and will return a list of model instances.
+You can optionally set [`RetrieveInterfaceParams`](#retrieveinterfaceparams) as only argument.
+The method will use [`getListUrl`](#urls), [`sendListRequest`](#custom-modelmanager) and [`mapListResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
+
+Examples:
+```js
+Album.objects.list() // Request: GET /albums/
+Photo.objects.list({parents: {album: 1}}) // Request: GET /albums/1/photos/
+Album.objects.list({filter: {userId: 1}}) // Request: GET /albums/?userId=1
+```
+
+##### Retrieve single entry of data (`objects.detail()`)
+
+`objects.detail()` is used to request a single entry (e.g. `/albums/1/`) and will return a model instance.
+The first argument is the primary key which can either be a `string` or `number`. You can optionally set [`RetrieveInterfaceParams`](#retrieveinterfaceparams) as second argument.
+The method will use [`getDetailUrl`](#urls), [`sendDetailRequest`](#custom-modelmanager) and [`mapDetailResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
+
+Examples:
+```js
+Album.objects.detail(1) // Request: GET /albums/1/
+Photo.objects.detail(5, {parents: {album: 1}}) // Request: GET /albums/1/photos/5/
+```
+
+##### RetrieveInterfaceParams
+
+With `RetrieveInterfaceParams` you can provide additional parameters for `objects.list()` and `objects.detail()` e.g. for using query parameters or [parents](#parents).
+
+Full structure example:
+```js
+{
+  // Optional service parents to handle nested RESTful services
+  parents: {album: 1},
+
+  // Filter params as plain object which will be converted to query parameters (params in axios)
+  filter: {userId: 1}
+}
+```
+
+##### Custom ModelManager
   
-You can extend the `ModelManager` and add your own methods
+You can extend the `ModelManager` and add your own methods.
 ```js
 class Album extends ServiceModel {
   [...]
@@ -214,10 +243,23 @@ class Album extends ServiceModel {
 const customAlbum = Album.objects.customMethod()
 ```
 
+It is also possible to overwrite some methods to do the `list`/`detail` request by yourself or map the response data before it gets cached and used for the model instance.
+
+* `sendListRequest`
+  * Gets called when doing a list request with `objects.list()`
+* `sendDetailRequest`
+  * Gets called when doing a detail with `objects.detail()`
+* `buildRetrieveRequestConfig`
+  * Gets called from `sendListRequest` and `sendDetailRequest` and uses [`RetrieveInterfaceParams`](#retrieveinterfaceparams) to return the [request configuration](https://github.com/axios/axios#request-config) for [axios](https://github.com/axios/axios).
+* `mapListResponseBeforeCache`
+  * Gets called from `sendListRequest` with the response data before the data will be cached
+* `mapDetailResponseBeforeCache`
+  * Gets called from `sendDetailRequest` with the response data before the data will be cached
+
 #### Aggregation
 
-When you start to request data from a service, for example `Album.objects.get('1')`, then the `Promise` of the request will 
-be saved as long as the request has not been completed. So when requesting `Album.objects.get('1')` again (e.g from another component)
+When you start to request data from a service, for example `Album.objects.detail('1')`, then the `Promise` of the request will 
+be saved as long as the request has not been completed. So when requesting `Album.objects.detail('1')` again (e.g from another component)
 this request will be attached to the first request which has not been completed yet and the request of the service will only made once.
 
 #### Cache
@@ -247,10 +289,10 @@ class Photo extends ServiceModel {
 }
 
 // Retrieve all photos from album 1: /albums/1/photos/
-const photos = await Photo.objects.all({album: 1})
+const photos = await Photo.objects.list({parents: {album: 1}})
 
 // Retrieve photo 2 from album 1: /albums/1/photos/2/
-const photo = await Photo.objects.get(2, {album: 1})
+const photo = await Photo.objects.detail(2, {parents: {album: 1}})
 ```
 
 It is necessary to set exact parents otherwise a warning will be printed to the console. You can also add some custom
@@ -375,8 +417,6 @@ Different field types will be added with future releases.
 
 * Models
   * Default support of model creation, update and delete with POST, PUT/PATCH and DELETE request
-  * Easy extending or overwriting of the request function
-  * Optional mapping of response data
   * Cache
     * API to clear cache
     * Define a different cacheDuration for a specific request
@@ -398,7 +438,7 @@ Feel free to create an issue for bugs, feature requests, suggestions or any idea
 
 It would please me to hear from your experience.
 
-I used some ideas and names from [django](https://www.djangoproject.com/) (e.g. `objects.filter()`) and other libraries and frameworks.
+I used some ideas and names from [django](https://www.djangoproject.com/), [django REST framework](https://www.django-rest-framework.org/), [ag-Grid](https://www.ag-grid.com/) and other libraries and frameworks.
 
 ## License
 

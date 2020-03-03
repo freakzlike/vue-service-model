@@ -1,11 +1,9 @@
-import Dictionary from '../types/Dictionary'
 import { BaseModel } from './BaseModel'
+import { ModelManager } from './ModelManager'
 import cu from '../utils/common'
 import store from '../store'
-import { ServiceStoreFactory, ServiceStore, ServiceStoreOptions } from '../store/ServiceStoreFactory'
-import axios from 'axios'
-
-type ServiceParent = Dictionary<string | number>
+import { ServiceStoreFactory, ServiceStore } from '../store/ServiceStoreFactory'
+import { ServiceParent } from '../types/models/ServiceModel'
 
 class MissingUrlException extends Error {
   constructor (modelName: string) {
@@ -46,6 +44,11 @@ class ServiceModel extends BaseModel {
    * Vuex store module factory to use
    */
   protected static storeFactory: typeof ServiceStoreFactory = ServiceStoreFactory
+
+  /**
+   * Saved instance of ModelManager
+   */
+  private static __modelManager: any
 
   /**
    * Function to return list url of model according to parents
@@ -99,101 +102,33 @@ class ServiceModel extends BaseModel {
    * Retrieve instance of ModelManager
    */
   public static get objects () {
-    this.register()
+    if (!Object.prototype.hasOwnProperty.call(this, '__modelManager')) {
+      this.register()
 
-    const ServiceClass = this.ModelManager
-    return new ServiceClass(this)
+      const ServiceClass = this.ModelManager
+      this.__modelManager = new ServiceClass(this)
+    }
+
+    return this.__modelManager
   }
 
   /**
    * Manager class of model
    */
-  public static ModelManager = class {
-    public model: typeof ServiceModel
-
-    constructor (model: typeof ServiceModel) {
-      this.model = model
-    }
-
-    /**
-     * Retrieve list of all model instances
-     * @param parents
-     */
-    public async all (parents?: ServiceParent): Promise<Array<ServiceModel>> {
-      return this.filter({}, parents)
-    }
-
-    /**
-     * Retrieve specific model instance
-     * @param pk
-     * @param parents
-     */
-    public async get (pk: string | number, parents?: ServiceParent): Promise<ServiceModel> {
-      const Model = this.model
-      Model.checkServiceParents(parents)
-
-      const keyBuilder = ['detail', pk.toString()]
-      if (parents && Object.keys(parents).length > 0) {
-        keyBuilder.push(JSON.stringify(parents))
-      }
-
-      const options: ServiceStoreOptions = {
-        key: keyBuilder.join('#'),
-        sendRequest: async (options: ServiceStoreOptions): Promise<Array<Dictionary<any>>> => {
-          const url = await this.model.getDetailUrl(pk, parents)
-          const response = await axios.get(url)
-
-          return response.data
-        }
-      }
-
-      const data: Dictionary<any> = await Model.storeDispatch('getData', options)
-      return new Model(data)
-    }
-
-    /**
-     * Retrieve filtered list of all model instances
-     * @param filterParams
-     * @param parents
-     */
-    public async filter (filterParams: Dictionary<any>, parents?: ServiceParent): Promise<Array<ServiceModel>> {
-      const Model = this.model
-      Model.checkServiceParents(parents)
-
-      const keyBuilder = ['list']
-      if (filterParams && Object.keys(filterParams).length > 0) {
-        keyBuilder.push(JSON.stringify(filterParams))
-      }
-      if (parents && Object.keys(parents).length > 0) {
-        keyBuilder.push(JSON.stringify(parents))
-      }
-
-      const options: ServiceStoreOptions = {
-        key: keyBuilder.join('#'),
-        sendRequest: async (options: ServiceStoreOptions): Promise<Array<Dictionary<any>>> => {
-          const url = await this.model.getListUrl(parents)
-          const config = Object.keys(filterParams).length ? { params: filterParams } : {}
-          const response = await axios.get(url, config)
-
-          return response.data
-        }
-      }
-
-      const dataList: Array<Dictionary<any>> = await Model.storeDispatch('getData', options)
-      return dataList.map(data => new Model(data))
-    }
-  }
+  public static ModelManager = ModelManager
 
   /**
    * Check whether all required parent values have been given
    * @param parents
    */
-  public static checkServiceParents (parents: ServiceParent = {}): boolean {
-    if (this.parents.length < Object.keys(parents).length) {
-      console.warn('Too much parents given', this.name, parents)
+  public static checkServiceParents (parents?: ServiceParent): boolean {
+    const _parents = parents || {}
+
+    if (this.parents.length < Object.keys(_parents).length) {
+      console.warn('Too much parents given', this.name, _parents)
       return false
     } else if (this.parents.length > 0) {
-      const missingParents = this.parents.filter(name => !parents[name])
+      const missingParents = this.parents.filter(name => !_parents[name])
       if (missingParents.length) {
         console.warn('Missing parents', this.name, missingParents)
         return false

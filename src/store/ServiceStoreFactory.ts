@@ -48,11 +48,11 @@ interface ServiceStoreOptions {
   /**
    * Callback to perform actual service request. Should return result data which will be cached
    */
-  sendRequest: (options: ServiceStoreOptions) => Promise<any>;
+  sendRequest: (options: ServiceStoreOptions, ...args: Array<any>) => Promise<any>;
   /**
-   * Additional optional arguments
+   * Additional arguments for the sendRequest callback
    */
-  args?: Dictionary<any>;
+  args?: Array<any>;
 }
 
 type ServiceStore = DefaultModule<ServiceStoreState>
@@ -108,7 +108,7 @@ const ServiceStoreFactory = (cacheDuration: number | null): ServiceStore => {
       }
 
       // Actual request and save result in cache
-      const request = options.sendRequest(options).then(data => {
+      const request = options.sendRequest(options, ...(options.args || [])).then(data => {
         commit('_setData', { data, key })
 
         return data
