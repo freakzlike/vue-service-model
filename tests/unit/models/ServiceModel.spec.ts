@@ -370,18 +370,39 @@ describe('models/ServiceModel', () => {
     }
 
     /**
-     * objects.all()
+     * objects.list()
      */
-    describe('all', () => {
+    describe('list', () => {
       it('should request all', async () => {
         const responseData = [{ text: 'Entry 1' }, { text: 'Entry 2' }]
         await withMockedAxios(responseData, async mockedAxios => {
           const mockSendListRequest = jest.spyOn(TestModel.objects, 'sendListRequest')
           const mockMapListResponseBeforeCache = jest.spyOn(TestModel.objects, 'mapListResponseBeforeCache')
 
-          const resultData = await TestModel.objects.all()
+          const resultData = await TestModel.objects.list()
           expect(mockedAxios.get.mock.calls).toHaveLength(1)
           expect(mockedAxios.get.mock.calls).toEqual([[BASE_URL, {}]])
+
+          expect(mockSendListRequest).toBeCalledTimes(1)
+          expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
+
+          checkListResponseData(responseData, resultData, TestModel)
+          mockSendListRequest.mockRestore()
+          mockMapListResponseBeforeCache.mockRestore()
+        })
+      })
+
+      it('should request filter list', async () => {
+        const responseData = [{ text: 'Entry 1' }, { text: 'Entry 2' }]
+        await withMockedAxios(responseData, async mockedAxios => {
+          const mockSendListRequest = jest.spyOn(TestModel.objects, 'sendListRequest')
+          const mockMapListResponseBeforeCache = jest.spyOn(TestModel.objects, 'mapListResponseBeforeCache')
+
+          const filterParams = { name: 'text' }
+          const resultData = await TestModel.objects.list(filterParams)
+
+          expect(mockedAxios.get.mock.calls).toHaveLength(1)
+          expect(mockedAxios.get.mock.calls).toEqual([[BASE_URL, { params: filterParams }]])
 
           expect(mockSendListRequest).toBeCalledTimes(1)
           expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
@@ -400,7 +421,7 @@ describe('models/ServiceModel', () => {
           const mockMapListResponseBeforeCache = jest.spyOn(ParentTestModel.objects, 'mapListResponseBeforeCache')
 
           const parents: ServiceParent = { parent1: 'parent-1', parent2: 8 }
-          const resultData = await ParentTestModel.objects.all(parents)
+          const resultData = await ParentTestModel.objects.list(null, parents)
 
           expect(mockCheckServiceParents).toBeCalledTimes(2)
           expect(mockedAxios.get.mock.calls).toHaveLength(1)
@@ -416,64 +437,6 @@ describe('models/ServiceModel', () => {
         })
       })
 
-      it('should request all from different parents', async () => {
-        const responseData = [{ text: 'Entry 1' }]
-        await withMockedAxios(responseData, async mockedAxios => {
-          const mockSendListRequest = jest.spyOn(CachedTestModel.objects, 'sendListRequest')
-          const mockMapListResponseBeforeCache = jest.spyOn(CachedTestModel.objects, 'mapListResponseBeforeCache')
-
-          const parents1: ServiceParent = { parent: 1 }
-          await CachedTestModel.objects.all(parents1)
-          expect(mockedAxios.get.mock.calls).toHaveLength(1)
-          expect(mockedAxios.get.mock.calls[0]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents1), {}])
-          expect(mockSendListRequest).toBeCalledTimes(1)
-          expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
-
-          // Check if cached
-          await CachedTestModel.objects.all(parents1)
-          expect(mockedAxios.get.mock.calls).toHaveLength(1)
-          expect(mockSendListRequest).toBeCalledTimes(1)
-          expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
-
-          // Check with other parent
-          const parents2: ServiceParent = { parent: 2 }
-          await CachedTestModel.objects.all(parents2)
-          expect(mockedAxios.get.mock.calls).toHaveLength(2)
-          expect(mockedAxios.get.mock.calls[1]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents2), {}])
-          expect(mockSendListRequest).toBeCalledTimes(2)
-          expect(mockMapListResponseBeforeCache).toBeCalledTimes(2)
-
-          mockSendListRequest.mockRestore()
-          mockMapListResponseBeforeCache.mockRestore()
-        })
-      })
-    })
-
-    /**
-     * objects.filter()
-     */
-    describe('filter', () => {
-      it('should request filter list', async () => {
-        const responseData = [{ text: 'Entry 1' }, { text: 'Entry 2' }]
-        await withMockedAxios(responseData, async mockedAxios => {
-          const mockSendListRequest = jest.spyOn(TestModel.objects, 'sendListRequest')
-          const mockMapListResponseBeforeCache = jest.spyOn(TestModel.objects, 'mapListResponseBeforeCache')
-
-          const filterParams = { name: 'text' }
-          const resultData = await TestModel.objects.filter(filterParams)
-
-          expect(mockedAxios.get.mock.calls).toHaveLength(1)
-          expect(mockedAxios.get.mock.calls).toEqual([[BASE_URL, { params: filterParams }]])
-
-          expect(mockSendListRequest).toBeCalledTimes(1)
-          expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
-
-          checkListResponseData(responseData, resultData, TestModel)
-          mockSendListRequest.mockRestore()
-          mockMapListResponseBeforeCache.mockRestore()
-        })
-      })
-
       it('should request filter list with parents', async () => {
         const responseData = [{ text: 'Entry 1' }, { text: 'Entry 2' }]
         await withMockedAxios(responseData, async mockedAxios => {
@@ -484,7 +447,7 @@ describe('models/ServiceModel', () => {
           const filterParams = { name: 'text' }
 
           const parents: ServiceParent = { parent1: 'parent-1', parent2: 8 }
-          const resultData = await ParentTestModel.objects.filter(filterParams, parents)
+          const resultData = await ParentTestModel.objects.list(filterParams, parents)
 
           expect(mockCheckServiceParents).toBeCalledTimes(2)
           expect(mockedAxios.get.mock.calls).toHaveLength(1)
@@ -511,27 +474,27 @@ describe('models/ServiceModel', () => {
           const filter1 = { name: 1 }
           const filter2 = { name: 2 }
 
-          await CachedTestModel.objects.filter(filter1, parents1)
+          await CachedTestModel.objects.list(filter1, parents1)
           expect(mockedAxios.get.mock.calls).toHaveLength(1)
           expect(mockedAxios.get.mock.calls[0]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents1), { params: filter1 }])
           expect(mockSendListRequest).toBeCalledTimes(1)
           expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
           // Check if cached
-          await CachedTestModel.objects.filter(filter1, parents1)
+          await CachedTestModel.objects.list(filter1, parents1)
           expect(mockedAxios.get.mock.calls).toHaveLength(1)
           expect(mockSendListRequest).toBeCalledTimes(1)
           expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
           // Check with other filter
-          await CachedTestModel.objects.filter(filter2, parents1)
+          await CachedTestModel.objects.list(filter2, parents1)
           expect(mockedAxios.get.mock.calls).toHaveLength(2)
           expect(mockedAxios.get.mock.calls[1]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents1), { params: filter2 }])
           expect(mockSendListRequest).toBeCalledTimes(2)
           expect(mockMapListResponseBeforeCache).toBeCalledTimes(2)
 
           // Check with other parent
-          await CachedTestModel.objects.filter(filter1, parents2)
+          await CachedTestModel.objects.list(filter1, parents2)
           expect(mockedAxios.get.mock.calls).toHaveLength(3)
           expect(mockedAxios.get.mock.calls[2]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents2), { params: filter1 }])
           expect(mockSendListRequest).toBeCalledTimes(3)
@@ -544,9 +507,9 @@ describe('models/ServiceModel', () => {
     })
 
     /**
-     * objects.get()
+     * objects.detail()
      */
-    describe('get', () => {
+    describe('detail', () => {
       it('should request detail', async () => {
         const responseData = { text: 'Entry 1' }
         await withMockedAxios(responseData, async mockedAxios => {
@@ -554,7 +517,7 @@ describe('models/ServiceModel', () => {
           const mockMapDetailResponseBeforeCache = jest.spyOn(TestModel.objects, 'mapDetailResponseBeforeCache')
 
           const pk = 1
-          const entry = await TestModel.objects.get(pk)
+          const entry = await TestModel.objects.detail(pk)
 
           const url = BASE_URL + pk + '/'
           expect(mockedAxios.get.mock.calls).toHaveLength(1)
@@ -578,7 +541,7 @@ describe('models/ServiceModel', () => {
           const pk = 1
 
           const parents: ServiceParent = { parent1: 'parent-1', parent2: 8 }
-          const entry = await ParentTestModel.objects.get(pk, parents)
+          const entry = await ParentTestModel.objects.detail(pk, parents)
 
           const url = cu.format(PARENT_BASE_URL, parents) + pk + '/'
           expect(mockCheckServiceParents).toBeCalledTimes(2)
@@ -604,7 +567,7 @@ describe('models/ServiceModel', () => {
           const pk = 1
           const parents1: ServiceParent = { parent: 1 }
           const parents2: ServiceParent = { parent: 2 }
-          await CachedTestModel.objects.get(pk, parents1)
+          await CachedTestModel.objects.detail(pk, parents1)
           expect(mockedAxios.get.mock.calls).toHaveLength(1)
           let url = cu.format(CACHED_TEST_MODEL_URL, parents1) + pk.toString() + '/'
           expect(mockedAxios.get.mock.calls[0]).toEqual([url])
@@ -612,13 +575,13 @@ describe('models/ServiceModel', () => {
           expect(mockMapDetailResponseBeforeCache).toBeCalledTimes(1)
 
           // Check if cached
-          await CachedTestModel.objects.get(pk, parents1)
+          await CachedTestModel.objects.detail(pk, parents1)
           expect(mockedAxios.get.mock.calls).toHaveLength(1)
           expect(mockSendDetailRequest).toBeCalledTimes(1)
           expect(mockMapDetailResponseBeforeCache).toBeCalledTimes(1)
 
           // Check with other parent
-          await CachedTestModel.objects.get(pk, parents2)
+          await CachedTestModel.objects.detail(pk, parents2)
           expect(mockedAxios.get.mock.calls).toHaveLength(2)
           url = cu.format(CACHED_TEST_MODEL_URL, parents2) + pk.toString() + '/'
           expect(mockedAxios.get.mock.calls[1]).toEqual([url])

@@ -18,19 +18,11 @@ class ModelManager {
   }
 
   /**
-   * Retrieve list of all model instances
-   * @param parents
-   */
-  public async all (parents?: ServiceParent): Promise<Array<ServiceModel>> {
-    return this.filter({}, parents)
-  }
-
-  /**
    * Retrieve specific model instance
    * @param pk
    * @param parents
    */
-  public async get (pk: string | number, parents?: ServiceParent): Promise<ServiceModel> {
+  public async detail (pk: string | number, parents?: ServiceParent): Promise<ServiceModel> {
     const Model = this.model
     Model.checkServiceParents(parents)
 
@@ -47,11 +39,11 @@ class ModelManager {
   }
 
   /**
-   * Retrieve filtered list of all model instances
+   * Retrieve list of all model instances
    * @param filterParams
    * @param parents
    */
-  public async filter (filterParams: FilterParams, parents?: ServiceParent): Promise<Array<ServiceModel>> {
+  public async list (filterParams?: FilterParams, parents?: ServiceParent): Promise<Array<ServiceModel>> {
     const Model = this.model
     Model.checkServiceParents(parents)
 
@@ -120,7 +112,7 @@ class ModelManager {
     filterParams: FilterParams,
     parents?: ServiceParent
   ): Promise<Array<ResponseData>> {
-    const config = Object.keys(filterParams).length ? { params: filterParams } : {}
+    const config = filterParams && Object.keys(filterParams).length ? { params: filterParams } : {}
     const response = await axios.get(url, config)
 
     return this.mapListResponseBeforeCache(options, response.data, url, filterParams, parents)
