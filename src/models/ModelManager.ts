@@ -1,10 +1,8 @@
 import Dictionary from '../types/Dictionary'
-import { ServiceModel, ServiceParent } from './ServiceModel'
+import { ServiceModel } from './ServiceModel'
 import { ServiceStoreOptions } from '../store/ServiceStoreFactory'
-import axios from 'axios'
-
-type FilterParams = Dictionary<any>
-type ResponseData = Dictionary<any>
+import axios, { AxiosRequestConfig } from 'axios'
+import { FilterParams, ResponseData, RetrieveInterfaceParams } from '../types/models/ModelManager'
 
 /**
  * ModelManager
@@ -20,18 +18,20 @@ class ModelManager {
   /**
    * Retrieve specific model instance
    * @param pk
-   * @param parents
+   * @param params
    */
-  public async detail (pk: string | number, parents?: ServiceParent): Promise<ServiceModel> {
+  public async detail (pk: string | number, params?: RetrieveInterfaceParams): Promise<ServiceModel> {
+    const parents = params && params.parents
+
     const Model = this.model
     Model.checkServiceParents(parents)
 
-    const url = await this.model.getDetailUrl(pk, parents)
+    const url = await Model.getDetailUrl(pk, parents)
 
     const options: ServiceStoreOptions = {
       key: url,
       sendRequest: this.sendDetailRequest.bind(this),
-      args: [url, pk, parents]
+      args: [url, pk, params]
     }
 
     const data: Dictionary<any> = await Model.storeDispatch('getData', options)
@@ -40,10 +40,12 @@ class ModelManager {
 
   /**
    * Retrieve list of all model instances
-   * @param filterParams
-   * @param parents
+   * @param params
    */
-  public async list (filterParams?: FilterParams, parents?: ServiceParent): Promise<Array<ServiceModel>> {
+  public async list (params?: RetrieveInterfaceParams): Promise<Array<ServiceModel>> {
+    const parents = params && params.parents
+    const filterParams = params && params.filter
+
     const Model = this.model
     Model.checkServiceParents(parents)
 
@@ -56,7 +58,7 @@ class ModelManager {
     const options: ServiceStoreOptions = {
       key: keyBuilder.join('?'),
       sendRequest: this.sendListRequest.bind(this),
-      args: [url, filterParams, parents]
+      args: [url, params]
     }
 
     const dataList: Array<ResponseData> = await Model.storeDispatch('getData', options)
@@ -64,21 +66,36 @@ class ModelManager {
   }
 
   /**
+   * Build config for axios retrieve request
+   * @param params
+   */
+  public async buildRetrieveRequestConfig (params?: RetrieveInterfaceParams): Promise<any> {
+    if (!params) return {}
+
+    const config: AxiosRequestConfig = {}
+    if (params.filter && Object.keys(params.filter).length) {
+      config.params = params.filter
+    }
+    return config
+  }
+
+  /**
    * Send actual detail service request and map data before caching
    * @param options
    * @param url
    * @param pk
-   * @param parents
+   * @param params
    */
   public async sendDetailRequest (
     options: ServiceStoreOptions,
     url: string,
     pk: string | number,
-    parents?: ServiceParent
+    params?: RetrieveInterfaceParams
   ): Promise<ResponseData> {
-    const response = await axios.get(url)
+    const config = await this.buildRetrieveRequestConfig(params)
+    const response = await axios.get(url, config)
 
-    return this.mapDetailResponseBeforeCache(options, response.data, url, pk, parents)
+    return this.mapDetailResponseBeforeCache(options, response.data, url, pk, params)
   }
 
   /**
@@ -87,14 +104,14 @@ class ModelManager {
    * @param data
    * @param url
    * @param pk
-   * @param parents
+   * @param params
    */
   public async mapDetailResponseBeforeCache (
     options: ServiceStoreOptions,
     data: Array<ResponseData>,
     url: string,
     pk: string | number,
-    parents?: ServiceParent
+    params?: RetrieveInterfaceParams
   ): Promise<ResponseData> {
     return data
   }
@@ -103,19 +120,17 @@ class ModelManager {
    * Send actual list service request and map data before caching
    * @param options
    * @param url
-   * @param filterParams
-   * @param parents
+   * @param params
    */
   public async sendListRequest (
     options: ServiceStoreOptions,
     url: string,
-    filterParams: FilterParams,
-    parents?: ServiceParent
+    params?: RetrieveInterfaceParams
   ): Promise<Array<ResponseData>> {
-    const config = filterParams && Object.keys(filterParams).length ? { params: filterParams } : {}
+    const config = await this.buildRetrieveRequestConfig(params)
     const response = await axios.get(url, config)
 
-    return this.mapListResponseBeforeCache(options, response.data, url, filterParams, parents)
+    return this.mapListResponseBeforeCache(options, response.data, url, params)
   }
 
   /**
@@ -123,15 +138,13 @@ class ModelManager {
    * @param options
    * @param data
    * @param url
-   * @param filterParams
-   * @param parents
+   * @param params
    */
   public async mapListResponseBeforeCache (
     options: ServiceStoreOptions,
     data: Array<ResponseData>,
     url: string,
-    filterParams: FilterParams,
-    parents?: ServiceParent
+    params?: RetrieveInterfaceParams
   ): Promise<Array<ResponseData>> {
     return data
   }

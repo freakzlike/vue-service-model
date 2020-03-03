@@ -1,11 +1,9 @@
-import Dictionary from '../types/Dictionary'
 import { BaseModel } from './BaseModel'
 import { ModelManager } from './ModelManager'
 import cu from '../utils/common'
 import store from '../store'
 import { ServiceStoreFactory, ServiceStore } from '../store/ServiceStoreFactory'
-
-type ServiceParent = Dictionary<string | number>
+import { ServiceParent } from '../types/models/ServiceModel'
 
 class MissingUrlException extends Error {
   constructor (modelName: string) {
@@ -123,12 +121,14 @@ class ServiceModel extends BaseModel {
    * Check whether all required parent values have been given
    * @param parents
    */
-  public static checkServiceParents (parents: ServiceParent = {}): boolean {
-    if (this.parents.length < Object.keys(parents).length) {
-      console.warn('Too much parents given', this.name, parents)
+  public static checkServiceParents (parents?: ServiceParent): boolean {
+    const _parents = parents || {}
+
+    if (this.parents.length < Object.keys(_parents).length) {
+      console.warn('Too much parents given', this.name, _parents)
       return false
     } else if (this.parents.length > 0) {
-      const missingParents = this.parents.filter(name => !parents[name])
+      const missingParents = this.parents.filter(name => !_parents[name])
       if (missingParents.length) {
         console.warn('Missing parents', this.name, missingParents)
         return false

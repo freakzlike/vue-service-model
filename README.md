@@ -180,19 +180,47 @@ If you got a nested RESTful service structure (e.g. `/albums/1/photos/`) have a 
 
 #### ModelManager (`objects`)
 
-The `ModelManager` provides the interface to perform the api requests.
+The `ModelManager` provides the interface to perform the api requests. At the moment there are 2 default interface methods.
 
-At the moment there are 3 default interface methods:
-* `objects.list()`
-  * Used to request a list of data (e.g. `/albums/`)
-  * Optionally takes `filterParams` as first argument which must be plain object and will be converted to query parameters (`params` in [axios](https://github.com/axios/axios))
-  * Returns a list of model instances
-* `objects.detail(1)`
-  * Used to request a single instance (e.g. `/albums/1/`)
-  * Returns a single model instance
-  * Takes key as first argument which can either be a `string` or `number`
+##### Retrieve list of data (`objects.list()`)
 
-Each method also takes a plain object with [parents](#parents) as last argument.
+`objects.list()` is used to request a list of data (e.g. `/albums/`) will return a list of model instances.
+You can optionally set [`RetrieveInterfaceParams`](#retrieveinterfaceparams) as only argument.
+The method will use [`getListUrl`](#urls), [`sendListRequest`](#custom-modelmanager) and [`mapListResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
+
+Examples:
+```js
+Album.objects.list() // Request: GET /albums/
+Photo.objects.list({parents: {album: 1}}) // Request: GET /albums/1/photos/
+Album.objects.list({filter: {userId: 1}}) // Request: GET /albums/?userId=1
+```
+
+##### Retrieve single entry of data (`objects.detail()`)
+
+`objects.detail()` is used to request a single entry (e.g. `/albums/1/`) and will a model instance.
+The first argument is the primary key which can either be a `string` or `number`. You can optionally set [`RetrieveInterfaceParams`](#retrieveinterfaceparams) as second argument.
+The method will use [`getDetailUrl`](#urls), [`sendDetailRequest`](#custom-modelmanager) and [`mapDetailResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
+
+Examples:
+```js
+Album.objects.detail(1) // Request: GET /albums/1/
+Photo.objects.detail(5, {parents: {album: 1}}) // Request: GET /albums/1/photos/5/
+```
+
+##### RetrieveInterfaceParams
+
+With `RetrieveInterfaceParams` you can provide additional parameters for `objects.list()` and `objects.detail()` e.g. for using query parameters or [parents](#parents).
+
+Full example structure:
+```js
+{
+  // Optional service parents to handle nested RESTful services
+  parents: {album: 1},
+
+  // Filter params as plain object which will be converted to query parameters (params in axios)
+  filter: {userId: 1}
+}
+```
 
 ##### Custom ModelManager
   
@@ -218,6 +246,8 @@ It is also possible to overwrite some methods to do the `list`/`detail` request 
   * Gets called when doing a list request with `objects.list()`
 * `sendDetailRequest`
   * Gets called when doing a detail with `objects.detail()`
+* `buildRetrieveRequestConfig`
+  * Gets called from `sendListRequest` and `sendDetailRequest` and uses [`RetrieveInterfaceParams`](#retrieveinterfaceparams) to return the [request configuration](https://github.com/axios/axios#request-config) for [axios](https://github.com/axios/axios).
 * `mapListResponseBeforeCache`
   * Gets called from `sendListRequest` with the response data before the data will be cached
 * `mapDetailResponseBeforeCache`
@@ -256,10 +286,10 @@ class Photo extends ServiceModel {
 }
 
 // Retrieve all photos from album 1: /albums/1/photos/
-const photos = await Photo.objects.list(null, {album: 1})
+const photos = await Photo.objects.list({parents: {album: 1}})
 
 // Retrieve photo 2 from album 1: /albums/1/photos/2/
-const photo = await Photo.objects.detail(2, {album: 1})
+const photo = await Photo.objects.detail(2, {parents: {album: 1}})
 ```
 
 It is necessary to set exact parents otherwise a warning will be printed to the console. You can also add some custom
