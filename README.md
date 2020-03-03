@@ -24,6 +24,9 @@
   * [ServiceModel](#servicemodel)
     * [Urls](#urls)
     * [ModelManager (`objects`)](#modelmanager-objects)
+      * [Retrieve list of data (`objects.list()`)](#retrieve-list-of-data-objectslist)
+      * [Retrieve single entry of data (`objects.detail()`)](#retrieve-single-entry-of-data-objectsdetail)
+      * [RetrieveInterfaceParams](#retrieveinterfaceparams)
       * [Custom ModelManager](#custom-modelmanager)
     * [Aggregation](#aggregation)
     * [Cache](#cache)
@@ -184,7 +187,7 @@ The `ModelManager` provides the interface to perform the api requests. At the mo
 
 ##### Retrieve list of data (`objects.list()`)
 
-`objects.list()` is used to request a list of data (e.g. `/albums/`) will return a list of model instances.
+`objects.list()` is used to request a list of data (e.g. `/albums/`) and will return a list of model instances.
 You can optionally set [`RetrieveInterfaceParams`](#retrieveinterfaceparams) as only argument.
 The method will use [`getListUrl`](#urls), [`sendListRequest`](#custom-modelmanager) and [`mapListResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
 
@@ -197,7 +200,7 @@ Album.objects.list({filter: {userId: 1}}) // Request: GET /albums/?userId=1
 
 ##### Retrieve single entry of data (`objects.detail()`)
 
-`objects.detail()` is used to request a single entry (e.g. `/albums/1/`) and will a model instance.
+`objects.detail()` is used to request a single entry (e.g. `/albums/1/`) and will return a model instance.
 The first argument is the primary key which can either be a `string` or `number`. You can optionally set [`RetrieveInterfaceParams`](#retrieveinterfaceparams) as second argument.
 The method will use [`getDetailUrl`](#urls), [`sendDetailRequest`](#custom-modelmanager) and [`mapDetailResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
 
@@ -211,7 +214,7 @@ Photo.objects.detail(5, {parents: {album: 1}}) // Request: GET /albums/1/photos/
 
 With `RetrieveInterfaceParams` you can provide additional parameters for `objects.list()` and `objects.detail()` e.g. for using query parameters or [parents](#parents).
 
-Full example structure:
+Full structure example:
 ```js
 {
   // Optional service parents to handle nested RESTful services

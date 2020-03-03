@@ -8,7 +8,6 @@ const funcs = {
    * @param {Boolean} arrayIsObject
    * @returns {Boolean}
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   isObject (item: any, arrayIsObject = false): boolean {
     if (item && typeof item === 'object') {
       return !Array.isArray(item) || arrayIsObject
