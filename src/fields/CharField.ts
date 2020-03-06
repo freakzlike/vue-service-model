@@ -1,6 +1,1 @@
-import { Field } from './Field'
-
-class CharField extends Field {
-}
-
-export { CharField }
+export * from 'js-service-model/lib/fields/CharField'

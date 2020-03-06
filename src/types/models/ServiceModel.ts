@@ -1,7 +1,1 @@
-import Dictionary from '../Dictionary'
-
-type ServiceParent = Dictionary<string | number>
-
-export {
-  ServiceParent
-}
+export * from 'js-service-model/lib/types/models/ServiceModel'

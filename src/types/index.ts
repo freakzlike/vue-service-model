@@ -1,5 +1,2 @@
-import { Dictionary } from './Dictionary'
-import { LazyValue } from './LazyValue'
-
-export { Dictionary }
-export { LazyValue }
+export { Dictionary } from 'js-service-model/lib/types/Dictionary'
+export { LazyValue } from 'js-service-model/lib/types/LazyValue'

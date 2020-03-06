@@ -1,5 +1,2 @@
-import { FilterParams, ResponseData, RetrieveInterfaceParams } from './ModelManager'
-import { ServiceParent } from './ServiceModel'
-
-export { FilterParams, ResponseData, RetrieveInterfaceParams }
-export { ServiceParent }
+export { FilterParams, ResponseData, RetrieveInterfaceParams } from './ModelManager'
+export { ServiceParent } from './ServiceModel'

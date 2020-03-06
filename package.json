@@ -40,9 +40,8 @@
     "fullcheck": "npm run lint && npm run test:unit && npm run test:buildlib"
   },
   "dependencies": {
-    "axios": "^0.19.2",
-    "vue": "^2.6.10",
-    "vuex": "^3.1.2"
+    "js-service-model": "^0.4.0",
+    "vue": "^2.6.10"
   },
   "devDependencies": {
     "@types/jest": "^25.1.3",
