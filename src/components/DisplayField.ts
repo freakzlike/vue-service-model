@@ -19,8 +19,8 @@ export default Vue.extend({
      * Model instance
      */
     model: {
-      type: BaseModel,
-      required: true
+      required: true,
+      validator: prop => prop instanceof BaseModel || prop === null
     },
 
     /**
@@ -38,8 +38,13 @@ export default Vue.extend({
   }),
 
   computed: {
-    field (): Field {
-      return this.model.getField(this.fieldName) as Field
+    field (): Field | null {
+      if (this.model) {
+        const model = this.model as BaseModel
+        return model.getField(this.fieldName) as Field
+      } else {
+        return null
+      }
     }
   },
 
@@ -52,6 +57,8 @@ export default Vue.extend({
 
   methods: {
     getDisplayComponent (): object | null {
+      if (!this.field) return null
+
       if (!this.displayComponentPromise) {
         const field = this.field
         this.displayComponentPromise = field.displayComponent.then(module => {

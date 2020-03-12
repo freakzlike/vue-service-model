@@ -53,4 +53,16 @@ describe('components/DisplayField', () => {
 
     expect(wrapper.vm.displayComponent).toBeNull()
   })
+
+  it('should not render without model', async () => {
+    const wrapper = mount(DisplayField, {
+      propsData: {
+        model: null,
+        fieldName: 'name'
+      }
+    })
+    expect(wrapper.vm.displayComponent).toBeNull()
+    expect(wrapper.vm.displayComponentPromise).toBeNull()
+    expect(wrapper.html()).toBeUndefined()
+  })
 })
