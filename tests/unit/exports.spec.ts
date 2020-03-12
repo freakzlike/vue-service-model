@@ -1,23 +1,45 @@
 describe('exports', () => {
+  const exceptionsExports = [
+    'NotDeclaredFieldException', 'MissingUrlException', 'FieldNotBoundException', 'APIException',
+    'BadRequestAPIException', 'UnauthorizedAPIException', 'ForbiddenAPIException', 'NotFoundAPIException',
+    'InternalServerErrorAPIException'
+  ]
+  const fieldsExports = ['Field']
+  const modelsExports = ['BaseModel', 'ServiceModel', 'ModelManager']
+  const storeExports = ['ServiceStore']
+  const componentsExports = ['BaseDisplayFieldRender', 'DisplayField']
+
+  const checkExports = (modules: object, expectedExports: string[]) => {
+    expect(Object.keys(modules).sort()).toEqual(expectedExports.sort())
+  }
+
   it('should import correct from index', async () => {
-    const modules = await import('@/index')
-    expect(Object.keys(modules).sort()).toEqual(['BaseModel', 'ServiceModel', 'fields'].sort())
+    checkExports(await import('@/index'), [
+      ...exceptionsExports,
+      ...fieldsExports,
+      ...modelsExports,
+      ...storeExports,
+      ...componentsExports
+    ])
+  })
+
+  it('should import correct from exceptions', async () => {
+    checkExports(await import('@/exceptions'), exceptionsExports)
   })
 
   it('should import correct from fields', async () => {
-    const modules = await import('@/fields')
-    expect(Object.keys(modules).sort()).toEqual(['Field', 'FieldNotBoundException', 'CharField', 'default'].sort())
+    checkExports(await import('@/fields'), fieldsExports)
   })
 
-  it('should import correct from models', async () => {
-    const modules = await import('@/models')
-    expect(Object.keys(modules).sort()).toEqual([
-      'BaseModel', 'NotDeclaredFieldException', 'ServiceModel', 'MissingUrlException', 'ModelManager', 'default'
-    ].sort())
+  it('should import correct from model', async () => {
+    checkExports(await import('@/models'), modelsExports)
   })
 
   it('should import correct from store', async () => {
-    const modules = await import('@/store')
-    expect(Object.keys(modules).sort()).toEqual(['ServiceStore'].sort())
+    checkExports(await import('@/store'), storeExports)
+  })
+
+  it('should import correct from components', async () => {
+    checkExports(await import('@/components'), componentsExports)
   })
 })
