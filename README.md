@@ -36,9 +36,6 @@ Definition of a simple `ServiceModel` without using fields. https://jsonplacehol
 import {ServiceModel} from 'vue-service-model'
 
 class Album extends ServiceModel {
-  // Unique name to handle caching
-  static keyName = 'Album'
-
   // Define service url
   static urls = {
     BASE: 'https://jsonplaceholder.typicode.com/albums/'
