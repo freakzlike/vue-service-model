@@ -7,6 +7,7 @@ describe('exports', () => {
   const fieldsExports = ['Field']
   const modelsExports = ['BaseModel', 'ServiceModel', 'ModelManager']
   const storeExports = ['ServiceStore']
+  const componentsExports = ['BaseDisplayFieldRender', 'DisplayField']
 
   const checkExports = (modules: object, expectedExports: string[]) => {
     expect(Object.keys(modules).sort()).toEqual(expectedExports.sort())
@@ -17,7 +18,8 @@ describe('exports', () => {
       ...exceptionsExports,
       ...fieldsExports,
       ...modelsExports,
-      ...storeExports
+      ...storeExports,
+      ...componentsExports
     ])
   })
 
@@ -35,5 +37,9 @@ describe('exports', () => {
 
   it('should import correct from store', async () => {
     checkExports(await import('@/store'), storeExports)
+  })
+
+  it('should import correct from components', async () => {
+    checkExports(await import('@/components'), componentsExports)
   })
 })

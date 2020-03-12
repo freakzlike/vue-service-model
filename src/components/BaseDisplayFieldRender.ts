@@ -1,4 +1,4 @@
-import Vue, { VNode } from 'vue'
+import Vue, { VNode, CreateElement } from 'vue'
 import { Field } from '../fields/Field'
 
 export default Vue.extend({
@@ -12,8 +12,7 @@ export default Vue.extend({
     }
   },
 
-  render (h): VNode {
-    const field = this.field
-    return field.displayRender(h)
+  render (h: CreateElement): VNode {
+    return this.field.displayRender(h)
   }
 })

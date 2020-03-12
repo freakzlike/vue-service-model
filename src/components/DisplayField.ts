@@ -1,11 +1,10 @@
 import Vue, { CreateElement, VNode } from 'vue'
 import { BaseModel } from '../models/BaseModel'
 import { Field } from '../fields/Field'
-import { FieldMixinInterface } from '../types/fields/Field'
 
 interface ComponentData {
-  lazyLoadDisplayComponent: boolean,
-  displayComponent: object | null
+  displayComponent: object | null,
+  displayComponentPromise: Promise<object> | null
 }
 
 /**
@@ -34,8 +33,8 @@ export default Vue.extend({
   },
 
   data: (): ComponentData => ({
-    lazyLoadDisplayComponent: false,
-    displayComponent: null
+    displayComponent: null,
+    displayComponentPromise: null
   }),
 
   computed: {
@@ -47,17 +46,17 @@ export default Vue.extend({
   watch: {
     field () {
       this.displayComponent = null
-      this.lazyLoadDisplayComponent = false
+      this.displayComponentPromise = null
     }
   },
 
   methods: {
     getDisplayComponent (): object | null {
-      if (!this.lazyLoadDisplayComponent) {
-        this.lazyLoadDisplayComponent = true
-        const field = this.field as unknown as FieldMixinInterface
-        field.displayComponent.then(module => {
+      if (!this.displayComponentPromise) {
+        const field = this.field
+        this.displayComponentPromise = field.displayComponent.then(module => {
           this.displayComponent = module.default
+          return this.displayComponent
         })
       }
 
