@@ -13,6 +13,7 @@
 * Aggregation for multiple parallel requests to the same url to avoid redundant requests. See [aggregation](https://github.com/freakzlike/js-service-model#aggregation)
 * Caches response from services
 * Uses [axios](https://github.com/axios/axios) for service request
+* Field specific [rendering](#rendering)
 * ... [more later](#future)
 
 ## Content
@@ -20,6 +21,11 @@
 * [Installation](#installation)
 * [Example](#example)
 * [Usage](#usage)
+  * [Core Usage](#core-usage)
+  * [Fields](#fields)
+    * [Rendering](#rendering)
+  * [Components](#components)
+    * [DisplayField](#displayfield)
 * [Future](#future)
 * [Contribution](#contribution)
 * [License](#license)
@@ -64,14 +70,104 @@ album.data
 
 ## Usage
 
+### Core Usage
 The Core functionality has been moved to [js-service-model](https://github.com/freakzlike/js-service-model). You can still use same imports with `vue-service-model`.
-* [Core usage](https://github.com/freakzlike/js-service-model#javascript-service-model)
+See [Core usage](https://github.com/freakzlike/js-service-model).
+
+### Fields
+
+#### Rendering
+
+By using the [`DisplayField`](#displayfield) component you can render the value of a field. To customize the different 
+output which should be rendered you can either set a `displayRender` or a custom `displayComponent`.
+
+The `displayRender` can be used for small changes of the output and is a simple render function (See [Vue.js render function](https://vuejs.org/v2/guide/render-function.html)).
+
+```js
+class RedTextField extends Field {
+  displayRender (h) {
+    return h('span', {
+      style: {
+        color: 'red'
+      }
+    }, this.value)
+  }
+}
+```
+
+In case you need to do more specific rendering you can also set your own component which will be rendered when using [`DisplayField`](#displayfield) on your custom field.
+
+```js
+// CustomField.js
+class CustomField extends Field {
+  get displayComponent () {
+    return import('./CustomFieldComponent')
+  }
+}
+
+// CustomFieldComponent.vue
+<template>
+  <span>{{ fieldValue }}</span>
+</template>
+
+<script>
+  import {BaseDisplayFieldRender} from 'vue-service-model'
+
+  export default {
+    extends: BaseDisplayFieldRender,
+    computed: {
+      fieldValue () {
+        return this.field.value      
+      }  
+    }
+  }
+</script>
+```
+
+### Components
+
+#### DisplayField
+
+The `DisplayField` component can be used to display the value of the given field. The property `model` can either be a 
+model instance or `null` to allow async loading of the model instance. The component will not render when `null` has 
+been passed as `model`. To change the output for specific fields see [Fields rendering](#rendering). 
+
+```vue
+<template>
+  [...]
+    <display-field :model="album" field-name="title"/>
+  [...]
+</template>
+
+<script>
+  import {DisplayField} from 'vue-service-model'
+
+  export default {
+    components: {DisplayField},
+    data () {
+      return {
+        album: null
+      }  
+    },
+    mounted () {
+      this.loadAlbum()    
+    },
+    methods: {
+      async loadAlbum () {
+        this.album = await Album.objects.detail(1)
+      }
+    }
+  }
+</script>
+```
+
 
 ## Future
 
 * [Core](https://github.com/freakzlike/js-service-model#future)
 * Fields
   * Methods to allow generation of input/display components according to field type
+  * Loading slot for `DisplayField`
 
 ## Contribution
 
