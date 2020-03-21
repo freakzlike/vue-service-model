@@ -6,5 +6,5 @@ export * from 'js-service-model/lib/types/fields/Field'
 export interface FieldMixinInterface {
   displayComponent: Promise<ComponentModule>
 
-  displayRender (h: CreateElement): VNode
+  displayRender (h: CreateElement, resolvedValue: any): VNode
 }

@@ -11,7 +11,7 @@ export const FieldMixin: FieldMixin = (superclass) => class extends superclass i
     return import('../components/BaseDisplayFieldRender')
   }
 
-  displayRender (h: CreateElement): VNode {
-    return h('span', this.value)
+  displayRender (h: CreateElement, resolvedValue: any): VNode {
+    return h('span', resolvedValue)
   }
 }

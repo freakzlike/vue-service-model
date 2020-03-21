@@ -33,6 +33,9 @@ describe('components/DisplayField', () => {
     await wrapper.vm.displayComponentPromise
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
+
+    await wrapper.vm.$nextTick()
+
     expect(wrapper.html()).toMatchSnapshot()
   })
 

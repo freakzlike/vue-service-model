@@ -1,6 +1,11 @@
 import Vue, { VNode, CreateElement } from 'vue'
 import { Field } from '../fields/Field'
 
+interface ComponentData {
+  resolved: boolean,
+  resolvedValue: any
+}
+
 export default Vue.extend({
   name: 'BaseDisplayFieldRender',
   inheritAttrs: false,
@@ -12,7 +17,24 @@ export default Vue.extend({
     }
   },
 
+  data: (): ComponentData => ({
+    resolved: false,
+    resolvedValue: null
+  }),
+
+  methods: {
+    async resolveValue () {
+      this.resolvedValue = await this.field.value
+      this.resolved = true
+    }
+  },
+
   render (h: CreateElement): VNode {
-    return this.field.displayRender(h)
+    this.resolveValue()
+    if (this.resolved) {
+      return this.field.displayRender(h, this.resolvedValue)
+    } else {
+      return undefined as any
+    }
   }
 })

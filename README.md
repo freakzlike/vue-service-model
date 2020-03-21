@@ -60,6 +60,15 @@ const album = await Album.objects.detail(1)
 
 // Retrieve filtered list from /albums/?userId=1
 const userAlbums = await Album.objects.list({filter: {userId: 1}})
+
+// Create new album
+await Album.objects.create({title: 'New album'})
+
+// Update an album
+await Album.objects.update(1, {title: 'Updated album'})
+
+// Delete specific album
+await Album.objects.delete(1)
 ```
 
 You can easily access the data from a model instance or define model [fields](https://github.com/freakzlike/js-service-model#fields).
@@ -85,17 +94,18 @@ The `displayRender` can be used for small changes of the output and is a simple 
 
 ```js
 class RedTextField extends Field {
-  displayRender (h) {
+  displayRender (h, resolvedValue) {
     return h('span', {
       style: {
         color: 'red'
       }
-    }, this.value)
+    }, resolvedValue)
   }
 }
 ```
 
 In case you need to do more specific rendering you can also set your own component which will be rendered when using [`DisplayField`](#displayfield) on your custom field.
+For easy usage with async values if recommend you to take a look at [vue-async-computed](https://github.com/foxbenjaminfox/vue-async-computed).
 
 ```js
 // CustomField.js
@@ -115,7 +125,7 @@ class CustomField extends Field {
 
   export default {
     extends: BaseDisplayFieldRender,
-    computed: {
+    asyncComputed: {
       fieldValue () {
         return this.field.value      
       }  

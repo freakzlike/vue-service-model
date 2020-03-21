@@ -40,7 +40,7 @@
     "fullcheck": "npm run lint && npm run test:unit && npm run test:buildlib"
   },
   "dependencies": {
-    "js-service-model": "^0.5.0",
+    "js-service-model": "^0.6.0",
     "vue": "^2.6.10"
   },
   "devDependencies": {
