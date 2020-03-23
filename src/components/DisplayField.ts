@@ -1,10 +1,13 @@
-import Vue, { CreateElement, VNode } from 'vue'
+import AsyncComputed from 'vue-async-computed'
+import Vue, { CreateElement, VNode, Component } from 'vue'
 import { BaseModel } from '../models/BaseModel'
 import { Field } from '../fields/Field'
 
+Vue.use(AsyncComputed)
+
 interface ComponentData {
-  displayComponent: object | null,
-  displayComponentPromise: Promise<object> | null
+  // AsyncComputed
+  displayComponent?: Component | null
 }
 
 /**
@@ -32,10 +35,7 @@ export default Vue.extend({
     }
   },
 
-  data: (): ComponentData => ({
-    displayComponent: null,
-    displayComponentPromise: null
-  }),
+  data: (): ComponentData => ({}),
 
   computed: {
     field (): Field | null {
@@ -48,33 +48,21 @@ export default Vue.extend({
     }
   },
 
-  watch: {
-    field () {
-      this.displayComponent = null
-      this.displayComponentPromise = null
-    }
-  },
-
-  methods: {
-    getDisplayComponent (): object | null {
-      if (!this.field) return null
-
-      if (!this.displayComponentPromise) {
-        const field = this.field
-        this.displayComponentPromise = field.displayComponent.then(module => {
-          this.displayComponent = module.default
-          return this.displayComponent
-        })
+  asyncComputed: {
+    async displayComponent () {
+      if (this.field) {
+        const field = this.field as Field
+        const componentModule = await field.displayComponent
+        return componentModule.default
+      } else {
+        return null
       }
-
-      return this.displayComponent
     }
   },
 
   render (h: CreateElement): VNode {
-    const displayComponent = this.getDisplayComponent()
-    if (displayComponent) {
-      return h(displayComponent, {
+    if (this.displayComponent) {
+      return h(this.displayComponent, {
         props: {
           field: this.field
         }

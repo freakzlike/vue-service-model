@@ -1,6 +1,7 @@
 # Vue service model
 
 [![Build](https://github.com/freakzlike/vue-service-model/workflows/Build/badge.svg)](https://github.com/freakzlike/vue-service-model/actions)
+[![codecov](https://codecov.io/gh/freakzlike/vue-service-model/branch/master/graph/badge.svg)](https://codecov.io/gh/freakzlike/vue-service-model)
 [![Latest Version](https://img.shields.io/npm/v/vue-service-model.svg)](https://www.npmjs.com/package/vue-service-model)
 [![License](https://img.shields.io/npm/l/vue-service-model.svg)](https://github.com/freakzlike/vue-service-model/blob/master/LICENSE)
 
@@ -373,6 +374,14 @@ class Field {
   // Set value to data by using attributeName
   // Will create nested structure from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
   public valueSetter (value: any, data: Dictionary<any>): void
+
+  // Display component to render when displaying value with <display-field/>
+  // For more information see Field - Rendering 
+  public get displayComponent (): Promise<ComponentModule>
+
+  // Simple Vue render function when using default displayComponent when displaying value with <display-field/>
+  // For more information see Field - Rendering 
+  public displayRender (h: CreateElement, resolvedValue: any): VNode
 }
 ```
 
@@ -532,7 +541,8 @@ Full structure example:
   // Filter params as plain object which will be converted to query parameters (params in axios)
   filter: {userId: 1},
 
-  // Do not use and set response cache. Requests will still be aggregated. Already cached data will not be cleared
+  // Do not use and set response cache. Requests will still be aggregated.
+  // Already cached data will not be cleared
   // Optional: default = false
   noCache: false,
 
