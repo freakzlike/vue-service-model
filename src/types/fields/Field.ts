@@ -1,10 +1,13 @@
-import { CreateElement, VNode } from 'vue'
-import { ComponentModule } from '../components'
+import LazyValue from '../LazyValue'
+import { BaseModel } from '../../models'
 
-export * from 'js-service-model/lib/types/fields/Field'
+export interface FieldDef {
+  attributeName?: string
+  label?: LazyValue<string>
+  hint?: LazyValue<string>
+}
 
-export interface FieldMixinInterface {
-  displayComponent: Promise<ComponentModule>
-
-  displayRender (h: CreateElement): VNode
+export interface FieldBind {
+  name: string
+  model?: BaseModel
 }

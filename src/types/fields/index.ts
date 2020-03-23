@@ -1,1 +1,1 @@
-export { FieldDef, FieldBind, FieldMixinInterface } from './Field'
+export { FieldDef, FieldBind } from './Field'

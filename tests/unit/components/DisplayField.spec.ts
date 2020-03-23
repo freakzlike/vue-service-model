@@ -26,32 +26,17 @@ describe('components/DisplayField', () => {
       }
     })
     expect(wrapper.vm.displayComponent).toBeNull()
-    expect(wrapper.vm.displayComponentPromise).not.toBeNull()
 
     expect(wrapper.html()).toBeUndefined()
 
-    await wrapper.vm.displayComponentPromise
+    await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
+
+    await wrapper.vm.$nextTick()
+
     expect(wrapper.html()).toMatchSnapshot()
-  })
-
-  it('should reset displayComponent when field changes', async () => {
-    const wrapper = mount(DisplayField, {
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
-    })
-
-    expect(wrapper.vm.displayComponentPromise).not.toBeNull()
-    await wrapper.vm.displayComponentPromise
-
-    expect(wrapper.vm.displayComponent).not.toBeNull()
-
-    wrapper.setProps({ fieldName: 'description' })
-
-    expect(wrapper.vm.displayComponent).toBeNull()
   })
 
   it('should not render without model', async () => {
@@ -62,7 +47,6 @@ describe('components/DisplayField', () => {
       }
     })
     expect(wrapper.vm.displayComponent).toBeNull()
-    expect(wrapper.vm.displayComponentPromise).toBeNull()
     expect(wrapper.html()).toBeUndefined()
   })
 })
