@@ -1,1 +1,6 @@
-export * from 'js-service-model/lib/types/Dictionary'
+interface Dictionary<T> {
+  [Key: string]: T;
+}
+
+export { Dictionary }
+export default Dictionary

@@ -26,17 +26,22 @@ describe('components/BaseDisplayFieldRender', () => {
     expect(spyDisplayRender).toBeCalledTimes(0)
 
     await wrapper.vm.$nextTick()
-    await wrapper.vm.$nextTick()
 
     expect(wrapper.text()).toBe(modelData.name)
     expect(spyDisplayRender).toBeCalledTimes(1)
+
+    field.value = 'New Name'
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.text()).toBe('New Name')
+    expect(spyDisplayRender).toBeCalledTimes(2)
   })
 
   it('should render correctly', async () => {
+    modelData.name = 'Name 1'
     const wrapper = shallowMount(BaseDisplayFieldRender, {
       propsData: { field: field }
     })
-    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).toMatchSnapshot()
   })

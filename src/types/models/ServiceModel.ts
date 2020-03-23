@@ -1,1 +1,3 @@
-export * from 'js-service-model/lib/types/models/ServiceModel'
+import Dictionary from '../Dictionary'
+
+export type ServiceParent = Dictionary<string | number>

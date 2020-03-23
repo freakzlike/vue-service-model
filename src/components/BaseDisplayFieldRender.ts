@@ -1,9 +1,15 @@
+import AsyncComputed from 'vue-async-computed'
 import Vue, { VNode, CreateElement } from 'vue'
 import { Field } from '../fields/Field'
+import cu from '../utils/common'
+
+Vue.use(AsyncComputed)
 
 interface ComponentData {
   resolved: boolean,
-  resolvedValue: any
+  resolvedValue: any,
+  // AsyncComputed
+  value?: Field
 }
 
 export default Vue.extend({
@@ -22,17 +28,19 @@ export default Vue.extend({
     resolvedValue: null
   }),
 
-  methods: {
-    async resolveValue () {
-      this.resolvedValue = await this.field.value
-      this.resolved = true
+  asyncComputed: {
+    value: {
+      default: cu.NO_VALUE,
+      get () {
+        const field = this.field as Field
+        return field.value
+      }
     }
   },
 
   render (h: CreateElement): VNode {
-    this.resolveValue()
-    if (this.resolved) {
-      return this.field.displayRender(h, this.resolvedValue)
+    if (this.value !== cu.NO_VALUE) {
+      return this.field.displayRender(h, this.value)
     } else {
       return undefined as any
     }
