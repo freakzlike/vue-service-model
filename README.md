@@ -14,7 +14,7 @@
 * Aggregation for multiple parallel requests to the same url to avoid redundant requests. See [aggregation](#aggregation)
 * Caches response from services
 * Uses [axios](https://github.com/axios/axios) for service request
-* Field specific [rendering](#rendering)
+* Field specific [rendering](#rendering) with common component for consistent display of field values
 * ... [more later](#future)
 
 ## Content
@@ -98,13 +98,18 @@ You can easily access the data from a model instance or define model [fields](#f
 album.data
 ```
 
+By using a common component [`DisplayField`](#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
+```js
+<display-field :model="album" field-name="title"/>
+```
+
 ## Usage
 
 ### BaseModel
 A `BaseModel` can be used to handle data from any source by passing the data when instantiating the model.
 
 ```js
-import {BaseModel, Field} from 'vue-service-mode'
+import {BaseModel, Field} from 'vue-service-model'
 
 class MyModel extends BaseModel {
   // Definition of model fields (optional)
@@ -148,7 +153,7 @@ A `ServiceModel` extends from [`BaseModel`](#basemodel) and adds the [`ModelMana
 store to keep track of [aggregation](#aggregation) of running requests and optionally caching the result of the services.
 
 ```js
-import {ServiceModel, Field} from 'vue-service-mode'
+import {ServiceModel, Field} from 'vue-service-model'
 
 class Album extends ServiceModel {
   static urls = {
@@ -561,7 +566,7 @@ Full structure example:
 Error codes from response (e.g. 401 - Unauthorized) will be mapped to an `APIException`. You can catch a specific error by checking with `instanceof` for your required exception.
 
 ```js
-import {APIException, UnauthorizedAPIException} from 'vue-service-mode'
+import {APIException, UnauthorizedAPIException} from 'vue-service-model'
 
 [...]
 
@@ -594,7 +599,7 @@ Other | `APIException`
   
 You can extend the `ModelManager` and add your own methods.
 ```js
-import {ModelManager} from 'vue-service-mode'
+import {ModelManager} from 'vue-service-model'
 
 class Album extends ServiceModel {
   [...]
@@ -672,6 +677,8 @@ been passed as `model`. To change the output for specific fields see [Fields ren
 ## Future
 
 * Models
+  * Model instance methods for saving/deleting data (`.save()`, `.delete()`)
+  * Synchronize mode to update model data 
   * Cache
     * Define a different cacheDuration for a specific request
     * Use cache from list response also for detail requests
@@ -680,7 +687,7 @@ been passed as `model`. To change the output for specific fields see [Fields ren
   * Different field types
   * Standalone field instances
   * Accessing foreign key fields and retrieving foreign model instances
-  * Methods to allow generation of input/display components according to field type
+  * Methods to allow generation of input components according to field type
   * Loading slot for `DisplayField`
 * Global configuration with hooks
 * ...
