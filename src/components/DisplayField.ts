@@ -61,7 +61,7 @@ export default Vue.extend({
   },
 
   render (h: CreateElement): VNode {
-    if (this.displayComponent) {
+    if (this.displayComponent && this.field) {
       return h(this.displayComponent, {
         props: {
           field: this.field
