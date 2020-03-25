@@ -1,7 +1,11 @@
 import BaseDisplayFieldRender from './BaseDisplayFieldRender'
+import BaseInputFieldRender from './BaseInputFieldRender'
 import DisplayField from './DisplayField'
+import InputField from './InputField'
 
 export {
   BaseDisplayFieldRender,
-  DisplayField
+  BaseInputFieldRender,
+  DisplayField,
+  InputField
 }

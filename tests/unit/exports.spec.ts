@@ -7,7 +7,7 @@ describe('exports', () => {
   const fieldsExports = ['Field']
   const modelsExports = ['BaseModel', 'ServiceModel', 'ModelManager']
   const storeExports = ['ServiceStore']
-  const componentsExports = ['BaseDisplayFieldRender', 'DisplayField']
+  const componentsExports = ['BaseDisplayFieldRender', 'BaseInputFieldRender', 'DisplayField', 'InputField']
 
   const checkExports = (modules: object, expectedExports: string[]) => {
     expect(Object.keys(modules).sort()).toEqual(expectedExports.sort())

@@ -47,6 +47,7 @@
     * [Custom ModelManager](#custom-modelmanager)
   * [Components](#components)
     * [DisplayField](#displayfield)
+    * [InputField](#inputfield)
 * [Future](#future)
 * [Contribution](#contribution)
 * [License](#license)
@@ -387,6 +388,15 @@ class Field {
   // Simple Vue render function when using default displayComponent when displaying value with <display-field/>
   // For more information see Field - Rendering 
   public displayRender (h: CreateElement, resolvedValue: any): VNode
+
+  // Input component to render when showing input for field with <input-field/>
+  // For more information see Field - Rendering 
+  public get inputComponent (): Promise<ComponentModule>
+
+  // Simple Vue render function when using default inputComponent for input of field value with <input-field/>
+  // For more information see Field - Rendering 
+  public inputRender (h: CreateElement, resolvedValue: any): VNode
+
 }
 ```
 
@@ -423,13 +433,15 @@ Different field types will be added with future releases.
 
 #### Rendering
 
-By using the [`DisplayField`](#displayfield) component you can render the value of a field. To customize the different 
-output which should be rendered you can either set a `displayRender` or a custom `displayComponent`.
+By using the [`DisplayField`](#displayfield) component you can render the value of a field for displaying purpose
+and [`InputField`](#inputfield) when you want to render the input component for this field.
+To customize the different output which should be rendered you can either set a `displayRender`/`inputRender` or a custom `displayComponent`/`inputComponent`.
 
-The `displayRender` can be used for small changes of the output and is a simple render function (See [Vue.js render function](https://vuejs.org/v2/guide/render-function.html)).
+The `displayRender`/`inputRender` can be used for small changes of the output and is a simple render function (See [Vue.js render function](https://vuejs.org/v2/guide/render-function.html)).
 
 ```js
 class RedTextField extends Field {
+  // Render a red text for display
   displayRender (h, resolvedValue) {
     return h('span', {
       style: {
@@ -437,10 +449,27 @@ class RedTextField extends Field {
       }
     }, resolvedValue)
   }
+
+  // Render an text input field for input
+  inputRender (h, resolvedValue) {
+    return h('input', {
+      attrs: {
+        type: 'text',
+        value: resolvedValue
+      },
+      on: {
+        input: (event) => {
+          // Set input value to field.value
+          this.value = event.target.value
+        }
+      }
+    })
+  }
 }
 ```
 
 In case you need to do more specific rendering you can also set your own component which will be rendered when using [`DisplayField`](#displayfield) on your custom field.
+If you want to change the input component you can extend from `BaseInputFieldRender` and overwrite the `inputComponent` method of your field.
 For easy usage with async values if recommend you to take a look at [vue-async-computed](https://github.com/foxbenjaminfox/vue-async-computed).
 
 ```js
@@ -656,6 +685,39 @@ been passed as `model`. To change the output for specific fields see [Fields ren
 
   export default {
     components: {DisplayField},
+    data () {
+      return {
+        album: null
+      }  
+    },
+    mounted () {
+      this.loadAlbum()    
+    },
+    methods: {
+      async loadAlbum () {
+        this.album = await Album.objects.detail(1)
+      }
+    }
+  }
+</script>
+```
+
+#### InputField
+
+The `InputField` component is equal to the `DisplayField`. The input value will directly change the data of your model (using the `valueSetter`). 
+
+```vue
+<template>
+  [...]
+    <input-field :model="album" field-name="title"/>
+  [...]
+</template>
+
+<script>
+  import {InputField} from 'vue-service-model'
+
+  export default {
+    components: {InputField},
     data () {
       return {
         album: null

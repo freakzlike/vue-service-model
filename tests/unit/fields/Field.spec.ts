@@ -3,6 +3,7 @@ import { BaseModel } from '@/models/BaseModel'
 import { FieldDef, FieldBind } from '@/types/fields/Field'
 import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
+import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 
 describe('fields/Field', () => {
   class TestModel extends BaseModel {
@@ -349,6 +350,14 @@ describe('fields/Field', () => {
       const field = new Field()
       const displayComponent = await field.displayComponent
       expect(displayComponent.default).toBe(BaseDisplayFieldRender)
+    })
+  })
+
+  describe('inputComponent', () => {
+    it('should return BaseInputFieldRender', async () => {
+      const field = new Field()
+      const inputComponent = await field.inputComponent
+      expect(inputComponent.default).toBe(BaseInputFieldRender)
     })
   })
 })
