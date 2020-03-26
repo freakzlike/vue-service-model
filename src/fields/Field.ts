@@ -131,6 +131,13 @@ export class Field extends BaseClass {
   }
 
   /**
+   * Returns boolean whether field is a primary key
+   */
+  public get isPrimaryKey (): boolean {
+    return Boolean(this.definition.primaryKey)
+  }
+
+  /**
    * Retrieve value from data structure according to attributeName
    * Uses nested syntax from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
    * Will return null if value is not available

@@ -23,13 +23,14 @@
 * [Example](#example)
 * [Usage](#usage)
   * [BaseModel](#basemodel)
+    * [Model fields](#model-fields-fieldsdef)
   * [ServiceModel](#servicemodel)
     * [Urls](#urls)
     * [Aggregation](#aggregation)
     * [Cache](#cache)
     * [Parents](#parents)
   * [Fields](#fields)
-    * [Field definition (`fieldsDef`)](#field-definition-fieldsdef)
+    * [Field definition](#field-definition)
       * [Attribute name (`attributeName`)](#attribute-name-attributename)
       * [Field label and hint (`label`, `hint`)](#field-label-and-hint-label-hint)
     * [Field API](#field-api)
@@ -148,6 +149,30 @@ Retrieve field instance of given field name
 obj.getField('title')
 ```
 
+#### Model fields (`fieldsDef`)
+
+You can set your model fields with the static property `fieldsDef` with a plain object with your fieldname as key and the field instance as value. 
+Nested `fieldsDef` is currently not supported.
+
+```js
+class MyModel extends BaseModel {
+  [...]
+
+  static fieldsDef = {
+    first_name: new Field(),
+    last_name: new Field()
+  }
+}
+
+const myObj = new MyModel({
+  first_name: 'Joe',
+  last_name: 'Bloggs'
+})
+
+await myObj.val.first_name // output: Joe
+await myObj.val.last_name // output: Bloggs
+```
+
 ### ServiceModel
 
 A `ServiceModel` extends from [`BaseModel`](#basemodel) and adds the [`ModelManager`](#modelmanager-objects) with a caching
@@ -165,7 +190,7 @@ class Album extends ServiceModel {
   static cacheDuration = 5
 
   static fieldsDef = {
-    id: new Field(),
+    id: new Field({primaryKey: true}),
     title: new Field()
   }
 }
@@ -254,29 +279,40 @@ validation of the parents by extending the `checkServiceParents` method of your 
 
 ### Fields
 
-Fields will be one of the main features of this library.
+#### Field definition
 
-#### Field definition (`fieldsDef`)
-You can set your model fields with the static property `fieldsDef` with a plain object with your fieldname as key and the field instance as value. 
-Nested `fieldsDef` is currently not supported.
+When instantiating a new field you can provide a specific definition for the field.
 
 ```js
-class MyModel extends BaseModel {
+class Album extends BaseModel {
   [...]
 
   static fieldsDef = {
-    first_name: new Field(),
-    last_name: new Field()
+    id: new Field({primaryKey: true}),
+    title: new Field({label: 'Album title'})
   }
 }
+```
 
-const myObj = new MyModel({
-  first_name: 'Joe',
-  last_name: 'Bloggs'
-})
+Field definition structure:
+```js
+{
+  // String which key should be used to retrieve value from. See Attribute name for more information
+  // Optional: default uses key from fieldsDef 
+  attributeName: 'title',
 
-await myObj.val.first_name // output: Joe
-await myObj.val.last_name // output: Bloggs
+  // Label of field. See Field label and hint for more information
+  // Optional: Can either be a string, function or promise
+  label: () => Promise.resolve('Title'),
+
+  // Hint of field. See Field label and hint for more information
+  // Optional: Can either be a string, function or promise
+  hint: 'Title of album',
+
+  // Boolean flag whether field is a primary key
+  // Optional: default is false
+  primaryKey: true
+}
 ```
 
 ##### Attribute name (`attributeName`)
@@ -371,6 +407,9 @@ class Field {
 
   // Returns async field hint from field definition
   public get hint (): Promise<string>
+
+  // Returns boolean whether field is a primary key
+  public get isPrimaryKey (): boolean
 
   // Retrieve value from data structure according to attributeName
   // Uses nested syntax from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})

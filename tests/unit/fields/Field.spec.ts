@@ -248,6 +248,18 @@ describe('fields/Field', () => {
     })
   })
 
+  describe('isPrimaryKey', () => {
+    it('should be primary key', () => {
+      const field = new Field({ primaryKey: true })
+      expect(field.isPrimaryKey).toBe(true)
+    })
+
+    it('should not be primary key', () => {
+      const field = new Field({})
+      expect(field.isPrimaryKey).toBe(false)
+    })
+  })
+
   describe('valueGetter', () => {
     it('should return null data', () => {
       const field = new Field({}, { name: 'field' })
