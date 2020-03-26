@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Dictionary from '../types/Dictionary'
+import cu from '../utils/common'
 import { BaseClass } from '../utils/BaseClass'
 import { Field } from '../fields/Field'
 import { NotDeclaredFieldException } from '../exceptions/ModelExceptions'
+import { PrimaryKey } from '../types/models/ModelManager'
 
 /**
  * BaseModel class
@@ -93,6 +95,17 @@ export class BaseModel extends BaseClass {
   }
 
   /**
+   * Return primary key of model instance or null if not set
+   */
+  public get pk (): PrimaryKey | null {
+    const primaryKeyField = this.getPrimaryKeyField()
+    if (!primaryKeyField) return null
+
+    const pk = primaryKeyField.valueGetter(this.data)
+    return !cu.isNull(pk) ? pk : null
+  }
+
+  /**
    * Return field by name.
    * Throws NotDeclaredFieldException if field name is not in fields
    */
@@ -102,6 +115,18 @@ export class BaseModel extends BaseClass {
     }
 
     return this.fields[fieldName]
+  }
+
+  /**
+   * Return primary key field or null of no primary key field exists
+   */
+  public getPrimaryKeyField (): Field | null {
+    const pkFields = Object.values(this.fields).filter(field => field.isPrimaryKey)
+    if (pkFields.length > 1) {
+      console.warn('Multiple primary key fields found in model', this.constructor.name)
+    }
+
+    return pkFields.length ? pkFields[0] : null
   }
 
   /**

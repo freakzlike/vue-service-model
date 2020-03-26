@@ -95,6 +95,39 @@ describe('models/BaseModel', () => {
     })
   })
 
+  describe('data', () => {
+    class TestModel extends BaseModel {
+    }
+
+    it('should return correct data', () => {
+      const modelData = { x: 1 }
+      expect(new TestModel().data).toEqual({})
+      expect(new TestModel(modelData).data).toBe(modelData)
+    })
+  })
+
+  describe('fields', () => {
+    class NameField extends Field {
+    }
+
+    class TestModel extends BaseModel {
+      protected static fieldsDef = {
+        name: new NameField(),
+        title: new Field()
+      }
+    }
+
+    it('should return correct fields', () => {
+      const model = new TestModel()
+      const fields = model.fields
+      expect(Object.keys(fields)).toEqual(['name', 'title'])
+      expect(fields.name).toBeInstanceOf(NameField)
+      expect(fields.title).toBeInstanceOf(Field)
+      expect(fields.name.name).toBe('name')
+      expect(fields.title.name).toBe('title')
+    })
+  })
+
   describe('val', () => {
     class TestModel extends BaseModel {
       protected static fieldsDef = {
@@ -128,6 +161,41 @@ describe('models/BaseModel', () => {
     })
   })
 
+  describe('getPrimaryKeyField', () => {
+    it('should return primary key', () => {
+      class TestModel extends BaseModel {
+        protected static fieldsDef = {
+          id: new Field({ primaryKey: true }),
+          title: new Field({})
+        }
+      }
+
+      const modelData = { id: 0 }
+      expect(new TestModel(modelData).pk).toBe(0)
+    })
+
+    it('should return null if primary key is not set', () => {
+      class TestModel extends BaseModel {
+        protected static fieldsDef = {
+          id: new Field({ primaryKey: true }),
+          title: new Field()
+        }
+      }
+
+      expect(new TestModel({ title: 'Title' }).pk).toBeNull()
+    })
+
+    it('should return no primary key with no primary key field', () => {
+      class TestModel extends BaseModel {
+        protected static fieldsDef = {
+          id: new Field()
+        }
+      }
+
+      expect(new TestModel({ id: 1 }).pk).toBeNull()
+    })
+  })
+
   describe('getField', () => {
     class NameField extends Field {
     }
@@ -148,6 +216,66 @@ describe('models/BaseModel', () => {
 
     it('should throw NotDeclaredFieldException', () => {
       expect(() => model.getField('not_declared')).toThrow(NotDeclaredFieldException)
+    })
+  })
+
+  describe('getPrimaryKeyField', () => {
+    it('should return primary key field', () => {
+      const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+
+      class IDField extends Field {
+      }
+
+      class TestModel extends BaseModel {
+        protected static fieldsDef = {
+          id: new IDField({ primaryKey: true }),
+          title: new Field({})
+        }
+      }
+
+      const primaryKeyField = new TestModel().getPrimaryKeyField()
+      expect(primaryKeyField).not.toBeNull()
+      expect(primaryKeyField).toBeInstanceOf(IDField)
+      if (!primaryKeyField) return
+      expect(primaryKeyField.name).toBe('id')
+      expect(primaryKeyField.isPrimaryKey).toBe(true)
+      expect(mockConsoleWarn).not.toHaveBeenCalled()
+      mockConsoleWarn.mockRestore()
+    })
+
+    it('should return warn for multiple primary key fields', () => {
+      const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+
+      class TestModel extends BaseModel {
+        protected static fieldsDef = {
+          id: new Field({ primaryKey: true }),
+          title: new Field({ primaryKey: true })
+        }
+      }
+
+      const primaryKeyField = new TestModel().getPrimaryKeyField()
+      expect(primaryKeyField).not.toBeNull()
+      expect(primaryKeyField).toBeInstanceOf(Field)
+      if (!primaryKeyField) return
+      expect(primaryKeyField.isPrimaryKey).toBe(true)
+      expect(mockConsoleWarn).toHaveBeenCalledTimes(1)
+      mockConsoleWarn.mockRestore()
+    })
+
+    it('should return no primary key field', () => {
+      const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+
+      class TestModel extends BaseModel {
+        protected static fieldsDef = {
+          id: new Field(),
+          title: new Field({})
+        }
+      }
+
+      const primaryKeyField = new TestModel().getPrimaryKeyField()
+      expect(primaryKeyField).toBeNull()
+      expect(mockConsoleWarn).not.toHaveBeenCalled()
+      mockConsoleWarn.mockRestore()
     })
   })
 })

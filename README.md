@@ -128,11 +128,6 @@ Retrieve data of the model instance.
 obj.data // output: {title: 'My title'}
 ```
 
-Retrieve a list of all fields.
-```js
-obj.fields
-```
-
 Retrieve value from a single field.
 ```js
 // Retrieve value for field 'title'
@@ -142,11 +137,6 @@ await obj.val.title // output: My title
 Set value of a field
 ```js
 obj.val.title = 'New title'
-```
-
-Retrieve field instance of given field name
-```js
-obj.getField('title')
 ```
 
 #### Model fields (`fieldsDef`)
@@ -171,6 +161,38 @@ const myObj = new MyModel({
 
 await myObj.val.first_name // output: Joe
 await myObj.val.last_name // output: Bloggs
+```
+
+#### BaseModel API
+
+```typescript
+class BaseModel {
+  // Constructor takes model data
+  constructor (data: Dictionary<any> = {})
+
+  // Data containing values
+  public get data (): Dictionary<any>
+
+  // Bound dictionary of fields by field name
+  public get fields (): Dictionary<Field>
+
+  // Getter with values to return data of model
+  // Can be accessed as object (e.g. for field name 'description': val.description)
+  //
+  // Retrieve value of field title:
+  // await obj.val.title
+  // Set value of field title:
+  // obj.val.title = 'New title'
+  public get val (): Dictionary<any>
+
+  // Return primary key of model instance or null if not set
+  // Primary key field can be defined with FieldDef attribute 'primaryKey: true'
+  public get pk (): string | number | null
+
+  // Return field by name.
+  // Throws NotDeclaredFieldException if field name is not in fields
+  public getField (fieldName: string): Field
+}
 ```
 
 ### ServiceModel
