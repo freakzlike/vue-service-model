@@ -29,7 +29,7 @@ describe('models/ModelManager', () => {
   }
 
   class ParentTestModel extends BaseTestModel {
-    protected static parents = ['parent1', 'parent2']
+    protected static parentNames = ['parent1', 'parent2']
     protected static urls = {
       BASE: PARENT_BASE_URL
     }
@@ -38,7 +38,7 @@ describe('models/ModelManager', () => {
   const CACHED_TEST_MODEL_URL = '/parent/{parent}/model/'
 
   class CachedTestModel extends ServiceModel {
-    protected static parents = ['parent']
+    protected static parentNames = ['parent']
     protected static cacheDuration = null
     protected static urls = {
       BASE: CACHED_TEST_MODEL_URL

@@ -24,7 +24,7 @@ export class ServiceModel extends BaseModel {
   /**
    * List of parent names to be used in url
    */
-  protected static parents: Array<string> = []
+  protected static parentNames: Array<string> = []
 
   /**
    * Duration to cache requested data in seconds. 0: no cache. null: Cache forever
@@ -132,11 +132,11 @@ export class ServiceModel extends BaseModel {
   public static checkServiceParents (parents?: ServiceParent): boolean {
     const _parents = parents || {}
 
-    if (this.parents.length < Object.keys(_parents).length) {
+    if (this.parentNames.length < Object.keys(_parents).length) {
       console.warn('Too much parents given', this.name, _parents)
       return false
-    } else if (this.parents.length > 0) {
-      const missingParents = this.parents.filter(name => !_parents[name])
+    } else if (this.parentNames.length > 0) {
+      const missingParents = this.parentNames.filter(name => !_parents[name])
       if (missingParents.length) {
         console.warn('Missing parents', this.name, missingParents)
         return false

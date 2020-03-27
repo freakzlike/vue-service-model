@@ -28,7 +28,7 @@ describe('models/ServiceModel', () => {
       }
 
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
         protected static urls = {
           LIST: 'list-url/{parent1}/text/{parent2}/'
         }
@@ -85,7 +85,7 @@ describe('models/ServiceModel', () => {
       }
 
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
         protected static urls = {
           DETAIL: 'detail-url/{parent1}/text/{parent2}/{pk}/'
         }
@@ -125,7 +125,7 @@ describe('models/ServiceModel', () => {
 
     it('should check correct parents given', async () => {
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
       }
 
       const spy = jest.spyOn(console, 'warn').mockImplementation()
@@ -136,7 +136,7 @@ describe('models/ServiceModel', () => {
 
     it('should check parents not given', async () => {
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
       }
 
       const spy = jest.spyOn(console, 'warn').mockImplementation()
@@ -151,7 +151,7 @@ describe('models/ServiceModel', () => {
 
     it('should check missing parent', async () => {
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
       }
 
       const parents: ServiceParent = { parent1: 10 }
@@ -182,7 +182,7 @@ describe('models/ServiceModel', () => {
 
     it('should check parents too much parents given', async () => {
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1']
+        protected static parentNames = ['parent1']
       }
 
       const parents: ServiceParent = { parent1: 10, parent2: 'text' }
