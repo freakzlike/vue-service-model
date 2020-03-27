@@ -5,6 +5,7 @@ import { ServiceStore } from '../store/ServiceStore'
 import { ServiceParent } from '../types/models/ServiceModel'
 import { MissingUrlException } from '../exceptions/ModelExceptions'
 import { PrimaryKey } from '../types/models/ModelManager'
+import Dictionary from '../types/Dictionary'
 
 /**
  * ServiceModel
@@ -16,15 +17,15 @@ export class ServiceModel extends BaseModel {
    * Fill either LIST/DETAIL or BASE url or use other urls by overwriting getListUrl/getDetailUrl
    */
   protected static urls: {
-    BASE?: string | null;
-    LIST?: string | null;
-    DETAIL?: string | null;
+    BASE?: string | null
+    LIST?: string | null
+    DETAIL?: string | null
   } = {}
 
   /**
    * List of parent names to be used in url
    */
-  protected static parentNames: Array<string> = []
+  protected static parentNames: string[] = []
 
   /**
    * Duration to cache requested data in seconds. 0: no cache. null: Cache forever
@@ -47,6 +48,19 @@ export class ServiceModel extends BaseModel {
   private static __store: ServiceStore
 
   /**
+   * Parents of current model instance
+   */
+  protected _parents: ServiceParent
+
+  /**
+   * Constructor
+   */
+  constructor (data: Dictionary<any> = {}, parents: ServiceParent = {}) {
+    super(data)
+    this._parents = cu.clone(parents)
+  }
+
+  /**
    * Getter to simulate static class property with fixed inheritance
    */
   public static get store (): ServiceStore {
@@ -60,7 +74,6 @@ export class ServiceModel extends BaseModel {
 
   /**
    * Function to return list url of model according to parents
-   * @param parents
    */
   public static async getListUrl (parents?: ServiceParent): Promise<string> {
     this.checkServiceParents(parents)
@@ -84,8 +97,6 @@ export class ServiceModel extends BaseModel {
 
   /**
    * Function to return detail url of model according to parents
-   * @param pk
-   * @param parents
    */
   public static async getDetailUrl (pk: PrimaryKey, parents?: ServiceParent): Promise<string> {
     this.checkServiceParents(parents)
@@ -124,6 +135,20 @@ export class ServiceModel extends BaseModel {
    * Manager class of model
    */
   public static ModelManager = ModelManager
+
+  /**
+   * Return model parents
+   */
+  public get parents (): ServiceParent {
+    return this._parents
+  }
+
+  /**
+   * Set deep copy of model parents to avoid unwanted mutations
+   */
+  public set parents (parents: ServiceParent) {
+    this._parents = cu.clone(parents)
+  }
 
   /**
    * Check whether all required parent values have been given

@@ -62,15 +62,26 @@ describe('models/ModelManager', () => {
     }
   }
 
+  const checkModelParents = (model: BaseTestModel, parents?: ServiceParent) => {
+    if (parents) {
+      expect(model.parents).not.toBe(parents)
+      expect(model.parents).toEqual(parents)
+    } else {
+      expect(model.parents).toEqual({})
+    }
+  }
+
   const checkListResponseData = (
     responseData: Array<Dictionary<any>>,
     resultData: Array<BaseTestModel>,
-    model: typeof BaseTestModel
+    model: typeof BaseTestModel,
+    parents?: ServiceParent
   ) => {
     expect(resultData).toHaveLength(responseData.length)
     resultData.forEach((entry: BaseTestModel, index: number) => {
       expect(entry).toBeInstanceOf(model)
       expect(entry.data).toEqual(responseData[index])
+      checkModelParents(entry, parents)
     })
   }
 
@@ -135,7 +146,7 @@ describe('models/ModelManager', () => {
         expect(mockSendListRequest).toBeCalledTimes(1)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
-        checkListResponseData(responseData, resultData, ParentTestModel)
+        checkListResponseData(responseData, resultData, ParentTestModel, parents)
         mockCheckServiceParents.mockRestore()
         mockSendListRequest.mockRestore()
         mockMapListResponseBeforeCache.mockRestore()
@@ -161,7 +172,7 @@ describe('models/ModelManager', () => {
         expect(mockSendListRequest).toBeCalledTimes(1)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
-        checkListResponseData(responseData, resultData, ParentTestModel)
+        checkListResponseData(responseData, resultData, ParentTestModel, parents)
         mockCheckServiceParents.mockRestore()
         mockSendListRequest.mockRestore()
         mockMapListResponseBeforeCache.mockRestore()
@@ -245,6 +256,7 @@ describe('models/ModelManager', () => {
 
         expect(entry).toBeInstanceOf(TestModel)
         expect(entry.data).toEqual(responseData)
+        checkModelParents(entry)
         mockSendDetailRequest.mockRestore()
         mockMapDetailResponseBeforeCache.mockRestore()
       })
@@ -270,6 +282,7 @@ describe('models/ModelManager', () => {
 
         expect(entry).toBeInstanceOf(ParentTestModel)
         expect(entry.data).toEqual(responseData)
+        checkModelParents(entry, parents)
         mockCheckServiceParents.mockRestore()
         mockSendDetailRequest.mockRestore()
         mockMapDetailResponseBeforeCache.mockRestore()
@@ -285,26 +298,30 @@ describe('models/ModelManager', () => {
         const pk = 1
         const parents1: ServiceParent = { parent: 1 }
         const parents2: ServiceParent = { parent: 2 }
-        await CachedTestModel.objects.detail(pk, { parents: parents1 })
+
+        let entry = await CachedTestModel.objects.detail(pk, { parents: parents1 })
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
         let url = cu.format(CACHED_TEST_MODEL_URL, parents1) + pk.toString() + '/'
         expect(mockedAxios.get.mock.calls[0]).toEqual([url, {}])
         expect(mockSendDetailRequest).toBeCalledTimes(1)
         expect(mockMapDetailResponseBeforeCache).toBeCalledTimes(1)
+        checkModelParents(entry, parents1)
 
         // Check if cached
-        await CachedTestModel.objects.detail(pk, { parents: parents1 })
+        entry = await CachedTestModel.objects.detail(pk, { parents: parents1 })
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
         expect(mockSendDetailRequest).toBeCalledTimes(1)
         expect(mockMapDetailResponseBeforeCache).toBeCalledTimes(1)
+        checkModelParents(entry, parents1)
 
         // Check with other parent
-        await CachedTestModel.objects.detail(pk, { parents: parents2 })
+        entry = await CachedTestModel.objects.detail(pk, { parents: parents2 })
         expect(mockedAxios.get.mock.calls).toHaveLength(2)
         url = cu.format(CACHED_TEST_MODEL_URL, parents2) + pk.toString() + '/'
         expect(mockedAxios.get.mock.calls[1]).toEqual([url, {}])
         expect(mockSendDetailRequest).toBeCalledTimes(2)
         expect(mockMapDetailResponseBeforeCache).toBeCalledTimes(2)
+        checkModelParents(entry, parents2)
 
         mockSendDetailRequest.mockRestore()
         mockMapDetailResponseBeforeCache.mockRestore()

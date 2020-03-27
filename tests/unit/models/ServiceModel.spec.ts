@@ -1,8 +1,41 @@
 import { ServiceModel } from '@/models/ServiceModel'
+import { BaseModel } from '@/models/BaseModel'
 import { ServiceParent } from '@/types/models/ServiceModel'
 import { MissingUrlException } from '@/exceptions/ModelExceptions'
 
 describe('models/ServiceModel', () => {
+  describe('constructor', () => {
+    class TestModel extends ServiceModel {
+    }
+
+    it('should create ServiceModel with default values', () => {
+      const model = new TestModel()
+      expect(model).toBeInstanceOf(TestModel)
+      expect(model).toBeInstanceOf(ServiceModel)
+      expect(model).toBeInstanceOf(BaseModel)
+
+      expect(model.data).toEqual({})
+      expect(model.parents).toEqual({})
+    })
+
+    it('should create ServiceModel with no parents', () => {
+      const data = { x: 1 }
+      const model = new TestModel(data)
+
+      expect(model.data).toBe(data)
+      expect(model.parents).toEqual({})
+    })
+
+    it('should create ServiceModel with only parents', () => {
+      const parents = { x: 1 }
+      const model = new TestModel(undefined, parents)
+
+      expect(model.data).toEqual({})
+      expect(model.parents).not.toBe(parents)
+      expect(model.parents).toEqual(parents)
+    })
+  })
+
   describe('getListUrl', () => {
     it('should return urls.LIST', async () => {
       const listUrl = 'list-url/'
@@ -219,6 +252,28 @@ describe('models/ServiceModel', () => {
       expect(modelManager).toBeInstanceOf(TestModel.ModelManager)
       expect(modelManager).toBeInstanceOf(CustomModelManager)
       expect(TestModel.objects).toBe(modelManager)
+    })
+  })
+
+  describe('parents', () => {
+    class TestModel extends ServiceModel {
+    }
+
+    it('should return parents', () => {
+      const parents = { a: 1 }
+      const model = new TestModel(undefined, parents)
+      expect(model.parents).toEqual(parents)
+      expect(model.parents).not.toBe(parents)
+    })
+
+    it('should set copy of parents', () => {
+      const model = new TestModel()
+      const parents = { a: 1 }
+      expect(model.parents).toEqual({})
+
+      model.parents = parents
+      expect(model.parents).toEqual(parents)
+      expect(model.parents).not.toBe(parents)
     })
   })
 })

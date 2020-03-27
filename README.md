@@ -24,11 +24,13 @@
 * [Usage](#usage)
   * [BaseModel](#basemodel)
     * [Model fields](#model-fields-fieldsdef)
+    * [BaseModel API](#basemodel-api)
   * [ServiceModel](#servicemodel)
     * [Urls](#urls)
     * [Aggregation](#aggregation)
     * [Cache](#cache)
     * [Parents](#parents)
+    * [ServiceModel API](#servicemodel-api)
   * [Fields](#fields)
     * [Field definition](#field-definition)
       * [Attribute name (`attributeName`)](#attribute-name-attributename)
@@ -294,10 +296,57 @@ const photos = await Photo.objects.list({parents: {album: 1}})
 
 // Retrieve photo 2 from album 1: /albums/1/photos/2/
 const photo = await Photo.objects.detail(2, {parents: {album: 1}})
+
+// Access parents of photo
+photo.parents
 ```
 
 It is necessary to set exact parents otherwise a warning will be printed to the console. You can also add some custom
 validation of the parents by extending the `checkServiceParents` method of your `ServiceModel`. This will be called on default [`ModelManager`](#modelmanager-objects) interfaces and when retrieving the service url from [`getListUrl`](#urls) or [`getDetailUrl`](#urls).
+
+You can provide parents to your model instance via the constructor or manually set with `photo.parents = {album: 1}`.
+
+#### ServiceModel API
+
+```typescript
+class ServiceModel {
+  // Default URL definition for backend APIs
+  // Fill either LIST/DETAIL or BASE url or use other urls by overwriting getListUrl/getDetailUrl
+  protected static urls: {
+    BASE: string | null
+    LIST: string | null
+    DETAIL: string | null
+  }
+
+  // List of parent names to be used in url
+  // Required if using parents
+  protected static parentNames: string[] = []
+
+  // Duration to cache requested data in seconds. 0: no cache. null: Cache forever
+  protected static cacheDuration: number | null = 30
+
+  // Constructor optionally takes model data and/or parents
+  constructor (data: Dictionary<any> = {}, parents: ServiceParent = {})
+
+  // Returns instance of ServiceStore for caching
+  public static get store (): ServiceStore
+
+  // Function to return list url of model according to parents
+  public static async getListUrl (parents?: ServiceParent): Promise<string>
+
+  // Function to return detail url of model according to parents
+  public static async getDetailUrl (pk: PrimaryKey, parents?: ServiceParent): Promise<string>
+
+  // Returns instance of ModelManager
+  public static get objects (): ModelManager
+
+  // Return model parents 
+  public get parents (): ServiceParent
+
+  // Set deep copy of parents to model instance
+  public set parents (parents: ServiceParent)
+}
+```
 
 ### Fields
 

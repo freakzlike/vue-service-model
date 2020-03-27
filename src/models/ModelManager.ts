@@ -60,7 +60,7 @@ export class ModelManager {
     }, params)
 
     const data: Dictionary<any> = await Model.store.getData(options)
-    return new Model(data)
+    return new Model(data, parents)
   }
 
   /**
@@ -85,7 +85,7 @@ export class ModelManager {
     }, params)
 
     const dataList: Array<ResponseData> = await Model.store.getData(options)
-    return dataList.map(data => new Model(data))
+    return dataList.map(data => new Model(data, parents))
   }
 
   /**
