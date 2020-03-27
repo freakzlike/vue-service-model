@@ -1,3 +1,6 @@
 module.exports = {
-  preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel'
+  preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
+  collectCoverageFrom: [
+    'src/**/*.{!(json),}'
+  ]
 }
