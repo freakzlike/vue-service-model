@@ -43,9 +43,7 @@ export class ModelManager {
   }
 
   /**
-   * Retrieve specific model instance
-   * @param pk
-   * @param params
+   * Retrieve specific model instance from service
    */
   public async detail (pk: PrimaryKey, params?: RetrieveInterfaceParams): Promise<ServiceModel> {
     const parents = params && params.parents
@@ -64,8 +62,7 @@ export class ModelManager {
   }
 
   /**
-   * Retrieve list of all model instances
-   * @param params
+   * Retrieve list of model instances from service
    */
   public async list (params?: RetrieveInterfaceParams): Promise<Array<ServiceModel>> {
     const parents = params && params.parents
@@ -123,7 +120,6 @@ export class ModelManager {
 
   /**
    * Build config for axios retrieve request
-   * @param params
    */
   public async buildRetrieveRequestConfig (params?: RetrieveInterfaceParams): Promise<any> {
     if (!params) return {}
@@ -137,10 +133,6 @@ export class ModelManager {
 
   /**
    * Send actual detail service request and map data before caching
-   * @param options
-   * @param url
-   * @param pk
-   * @param params
    */
   public async sendDetailRequest (
     options: ServiceStoreOptions,
@@ -179,9 +171,6 @@ export class ModelManager {
 
   /**
    * Send actual list service request and map data before caching
-   * @param options
-   * @param url
-   * @param params
    */
   public async sendListRequest (
     options: ServiceStoreOptions,
@@ -216,7 +205,10 @@ export class ModelManager {
   }
 
   /**
-   * Send actual create service request
+   * Send actual create (POST) service request
+   * @param url
+   * @param data
+   * @param params
    */
   public async sendCreateRequest (url: string, data: any, params?: CreateInterfaceParams): Promise<any> {
     let response
@@ -229,7 +221,11 @@ export class ModelManager {
   }
 
   /**
-   * Send actual update service request
+   * Send actual update (PUT) service request
+   * @param url
+   * @param pk
+   * @param data
+   * @param params
    */
   public async sendUpdateRequest (url: string, pk: PrimaryKey, data: any, params?: UpdateInterfaceParams): Promise<any> {
     let response
@@ -242,7 +238,10 @@ export class ModelManager {
   }
 
   /**
-   * Send actual delete service request
+   * Send actual delete (DELETE) service request
+   * @param url
+   * @param pk
+   * @param params
    */
   public async sendDeleteRequest (url: string, pk: PrimaryKey, params?: DeleteInterfaceParams): Promise<null> {
     try {
