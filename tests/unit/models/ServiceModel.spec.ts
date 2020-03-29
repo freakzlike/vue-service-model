@@ -2,6 +2,7 @@ import { ServiceModel } from '@/models/ServiceModel'
 import { BaseModel } from '@/models/BaseModel'
 import { ServiceParent } from '@/types/models/ServiceModel'
 import { MissingUrlException } from '@/exceptions/ModelExceptions'
+import { Field } from '@/fields/Field'
 
 describe('models/ServiceModel', () => {
   describe('constructor', () => {
@@ -274,6 +275,60 @@ describe('models/ServiceModel', () => {
       model.parents = parents
       expect(model.parents).toEqual(parents)
       expect(model.parents).not.toBe(parents)
+    })
+  })
+
+  describe('reload', () => {
+    class TestModel extends ServiceModel {
+      protected static fieldsDef = {
+        id: new Field({ primaryKey: true }),
+        title: new Field()
+      }
+    }
+
+    it('should reload from service', async () => {
+      const modelData = { id: 1, title: 'Old title' }
+      const responseData = { id: 1, title: 'New Title' }
+      const mockServiceStoreGetData = jest.spyOn(TestModel.objects, 'retrieveDetailData').mockImplementation(async () => responseData)
+
+      const model = new TestModel(modelData)
+      expect(await model.reload()).toBe(true)
+
+      expect(model.data).toEqual(responseData)
+
+      expect(mockServiceStoreGetData).toBeCalledTimes(1)
+      expect(mockServiceStoreGetData.mock.calls[0]).toEqual([modelData.id, { refreshCache: true, parents: {} }])
+      mockServiceStoreGetData.mockRestore()
+    })
+
+    it('should reload from service with parents', async () => {
+      class ParentTestModel extends TestModel {
+        protected static parentNames: ['parent1', 'parent2']
+      }
+
+      const parents = { parent1: 8, parent2: 'key' }
+      const modelData = { id: 1, title: 'Old title' }
+      const responseData = { id: 1, title: 'New Title' }
+      const mockServiceStoreGetData = jest.spyOn(TestModel.objects, 'retrieveDetailData').mockImplementation(async () => responseData)
+
+      const model = new TestModel(modelData, parents)
+      expect(await model.reload()).toBe(true)
+
+      expect(model.data).toEqual(responseData)
+
+      expect(mockServiceStoreGetData).toBeCalledTimes(1)
+      expect(mockServiceStoreGetData.mock.calls[0]).toEqual([modelData.id, { refreshCache: true, parents }])
+      mockServiceStoreGetData.mockRestore()
+    })
+
+    it('should not reload without primary key', async () => {
+      const mockServiceStoreGetData = jest.spyOn(TestModel.objects, 'retrieveDetailData').mockImplementation()
+
+      const model = new TestModel()
+      expect(await model.reload()).toBe(false)
+
+      expect(mockServiceStoreGetData).not.toBeCalled()
+      mockServiceStoreGetData.mockRestore()
     })
   })
 })

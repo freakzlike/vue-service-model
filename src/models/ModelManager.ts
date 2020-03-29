@@ -47,17 +47,9 @@ export class ModelManager {
    */
   public async detail (pk: PrimaryKey, params?: RetrieveInterfaceParams): Promise<ServiceModel> {
     const parents = params && params.parents
-
     const Model = this.model
-    const url = await Model.getDetailUrl(pk, parents)
 
-    const options = this.getServiceStoreOptions({
-      key: url,
-      sendRequest: this.sendDetailRequest.bind(this),
-      args: [url, pk, params]
-    }, params)
-
-    const data: Dictionary<any> = await Model.store.getData(options)
+    const data: Dictionary<any> = await this.retrieveDetailData(pk, params)
     return new Model(data, parents)
   }
 
@@ -129,6 +121,22 @@ export class ModelManager {
       config.params = params.filter
     }
     return config
+  }
+
+  /**
+   * Retrieve detail data from ServiceStore
+   */
+  public async retrieveDetailData (pk: PrimaryKey, params?: RetrieveInterfaceParams): Promise<Dictionary<any>> {
+    const parents = params && params.parents
+    const Model = this.model
+
+    const url = await Model.getDetailUrl(pk, parents)
+    const options = this.getServiceStoreOptions({
+      key: url,
+      sendRequest: this.sendDetailRequest.bind(this),
+      args: [url, pk, params]
+    }, params)
+    return Model.store.getData(options)
   }
 
   /**

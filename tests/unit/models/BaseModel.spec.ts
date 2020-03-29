@@ -104,6 +104,14 @@ describe('models/BaseModel', () => {
       expect(new TestModel().data).toEqual({})
       expect(new TestModel(modelData).data).toBe(modelData)
     })
+
+    it('should set correct data', () => {
+      const modelData = { x: 1 }
+      const model = new TestModel()
+      expect(model.data).toEqual({})
+      model.data = modelData
+      expect(model.data).toBe(modelData)
+    })
   })
 
   describe('fields', () => {

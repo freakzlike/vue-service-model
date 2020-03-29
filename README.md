@@ -175,6 +175,7 @@ class BaseModel {
 
   // Data containing values
   public get data (): Dictionary<any>
+  public set data (value: Dictionary<any>)
 
   // Bound dictionary of fields by field name
   public get fields (): Dictionary<Field>
@@ -346,6 +347,10 @@ class ServiceModel {
 
   // Set deep copy of parents to model instance
   public set parents (parents: ServiceParent)
+
+  // Reload model data from service. Overwrites changes made to model data
+  // Returns true if successful
+  public async reload (): Promise<boolean>
 }
 ```
 

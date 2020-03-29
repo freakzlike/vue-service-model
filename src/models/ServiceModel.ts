@@ -53,6 +53,11 @@ export class ServiceModel extends BaseModel {
   protected _parents: ServiceParent
 
   /**
+   * Manager class of model
+   */
+  public static ModelManager = ModelManager
+
+  /**
    * Constructor
    */
   constructor (data: Dictionary<any> = {}, parents: ServiceParent = {}) {
@@ -120,7 +125,7 @@ export class ServiceModel extends BaseModel {
   /**
    * Retrieve instance of ModelManager
    */
-  public static get objects () {
+  public static get objects (): ModelManager {
     if (!Object.prototype.hasOwnProperty.call(this, '__modelManager')) {
       this.register()
 
@@ -130,11 +135,6 @@ export class ServiceModel extends BaseModel {
 
     return this.__modelManager
   }
-
-  /**
-   * Manager class of model
-   */
-  public static ModelManager = ModelManager
 
   /**
    * Return model parents
@@ -167,6 +167,23 @@ export class ServiceModel extends BaseModel {
         return false
       }
     }
+
+    return true
+  }
+
+  /**
+   * Reload model data from service. Overwrites changes made to model data
+   * Returns true if successful
+   */
+  public async reload (): Promise<boolean> {
+    const pk = this.pk
+    if (pk === null) return false
+
+    const cls = this.constructor as typeof ServiceModel
+    this.data = await cls.objects.retrieveDetailData(pk, {
+      refreshCache: true,
+      parents: this.parents
+    })
 
     return true
   }

@@ -242,6 +242,7 @@ describe('models/ModelManager', () => {
     it('should request detail', async () => {
       const responseData = { text: 'Entry 1' }
       await withMockedAxios(responseData, async mockedAxios => {
+        const mockRetrieveDetailData = jest.spyOn(TestModel.objects, 'retrieveDetailData')
         const mockSendDetailRequest = jest.spyOn(TestModel.objects, 'sendDetailRequest')
         const mockMapDetailResponseBeforeCache = jest.spyOn(TestModel.objects, 'mapDetailResponseBeforeCache')
 
@@ -251,12 +252,14 @@ describe('models/ModelManager', () => {
         const url = BASE_URL + pk + '/'
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
         expect(mockedAxios.get.mock.calls).toEqual([[url, {}]])
+        expect(mockRetrieveDetailData).toBeCalledTimes(1)
         expect(mockSendDetailRequest).toBeCalledTimes(1)
         expect(mockMapDetailResponseBeforeCache).toBeCalledTimes(1)
 
         expect(entry).toBeInstanceOf(TestModel)
         expect(entry.data).toEqual(responseData)
         checkModelParents(entry)
+        mockRetrieveDetailData.mockRestore()
         mockSendDetailRequest.mockRestore()
         mockMapDetailResponseBeforeCache.mockRestore()
       })

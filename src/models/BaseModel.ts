@@ -68,6 +68,10 @@ export class BaseModel extends BaseClass {
     return this._data
   }
 
+  public set data (value: Dictionary<any>) {
+    this._data = value
+  }
+
   /**
    * Bound dictionary of fields by field name
    */
