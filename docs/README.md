@@ -58,15 +58,36 @@ await Album.objects.update(1, {title: 'Updated album'})
 await Album.objects.delete(1)
 ```
 
-You can easily access the data from a model instance or define model [fields](/guide/fields/).
+You can also define [fields](/guide/fields.html) for your model.
 
 ```js
-album.data
+class Album extends ServiceModel {
+  [...]
+
+  static fieldsDef = {
+    id: new Field({primaryKey: true}),
+    title: new Field({label: 'Album title'})
+  }
+}
+
+const album = await Album.objects.detail(1)
+
+// Retrieve primary key
+album.pk // Output: 1
+
+// Retrieve value for field title
+await album.val.title // Output: 'Album title'
 ```
 
 By using a common component [`DisplayField`](/guide/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
-```js
+```vue
 <display-field :model="album" field-name="title"/>
+```
+
+Or [`InputField`](/guide/components.html#inputfield) for an input field.
+
+```vue
+<input-field :model="album" field-name="title"/>
 ```
 
 
