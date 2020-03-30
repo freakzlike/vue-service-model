@@ -17,6 +17,10 @@ module.exports = {
             link: '/guide/'
           },
           {
+            text: 'API Reference',
+            link: '/api/'
+          },
+          {
             text: 'Release Notes',
             link: 'https://github.com/freakzlike/vue-service-model/releases'
           }
@@ -32,6 +36,16 @@ module.exports = {
               '/guide/fields.md',
               '/guide/model-manager.md',
               '/guide/components.md'
+            ]
+          },
+          {
+            title: 'API',
+            collapsable: false,
+            children: [
+              '/api/base-model.md',
+              '/api/service-model.md',
+              '/api/fields.md',
+              '/api/model-manager.md'
             ]
           }
         ]
