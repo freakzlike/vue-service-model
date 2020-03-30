@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Components | vue-service-model</title>
+    <meta name="description" content="Vue.js library for handling REST service requests with caching, aggregation and model definitions">
+    <meta name="generator" content="VuePress 1.4.0">
+    
+    
+    <link rel="preload" href="/vue-service-model/assets/css/0.styles.e7557540.css" as="style"><link rel="preload" href="/vue-service-model/assets/js/app.77e8b7db.js" as="script"><link rel="preload" href="/vue-service-model/assets/js/2.7a847508.js" as="script"><link rel="preload" href="/vue-service-model/assets/js/7.40133f08.js" as="script"><link rel="prefetch" href="/vue-service-model/assets/js/10.afb5af99.js"><link rel="prefetch" href="/vue-service-model/assets/js/11.8d577d38.js"><link rel="prefetch" href="/vue-service-model/assets/js/3.40435c3e.js"><link rel="prefetch" href="/vue-service-model/assets/js/4.b6f91393.js"><link rel="prefetch" href="/vue-service-model/assets/js/5.b8a90ed8.js"><link rel="prefetch" href="/vue-service-model/assets/js/6.55a88bba.js"><link rel="prefetch" href="/vue-service-model/assets/js/8.3ddda01f.js"><link rel="prefetch" href="/vue-service-model/assets/js/9.63e3655e.js">
+    <link rel="stylesheet" href="/vue-service-model/assets/css/0.styles.e7557540.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/vue-service-model/" class="home-link router-link-active"><!----> <span class="site-name">vue-service-model</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/vue-service-model/guide/" class="nav-link router-link-active">
+  Guide
+</a></div><div class="nav-item"><a href="https://github.com/freakzlike/vue-service-model/releases" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Release Notes
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <a href="https://github.com/freakzlike/vue-service-model" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/vue-service-model/guide/" class="nav-link router-link-active">
+  Guide
+</a></div><div class="nav-item"><a href="https://github.com/freakzlike/vue-service-model/releases" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Release Notes
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <a href="https://github.com/freakzlike/vue-service-model" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/vue-service-model/" class="sidebar-link">vue-service-model</a></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Guide</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/vue-service-model/guide/base-model.html" class="sidebar-link">BaseModel</a></li><li><a href="/vue-service-model/guide/service-model.html" class="sidebar-link">ServiceModel</a></li><li><a href="/vue-service-model/guide/fields.html" class="sidebar-link">Fields</a></li><li><a href="/vue-service-model/guide/model-manager.html" class="sidebar-link">ModelManager (objects)</a></li><li><a href="/vue-service-model/guide/components.html" class="active sidebar-link">Components</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/vue-service-model/guide/components.html#displayfield" class="sidebar-link">DisplayField</a></li><li class="sidebar-sub-header"><a href="/vue-service-model/guide/components.html#inputfield" class="sidebar-link">InputField</a></li></ul></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="components"><a href="#components" class="header-anchor">#</a> Components</h1> <p></p><div class="table-of-contents"><ul><li><a href="#displayfield">DisplayField</a></li><li><a href="#inputfield">InputField</a></li></ul></div><p></p> <h2 id="displayfield"><a href="#displayfield" class="header-anchor">#</a> DisplayField</h2> <p>The <code>DisplayField</code> component can be used to display the value of the given field. The property <code>model</code> can either be a
+model instance or <code>null</code> to allow async loading of the model instance. The component will not render when <code>null</code> has
+been passed as <code>model</code>. To change the output for specific fields see <a href="/vue-service-model/guide/fields.html#rendering">Fields rendering</a>.</p> <div class="language-vue extra-class"><pre class="language-vue"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+  [...]
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>display-field</span> <span class="token attr-name">:model</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>album<span class="token punctuation">&quot;</span></span> <span class="token attr-name">field-name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>title<span class="token punctuation">&quot;</span></span><span class="token punctuation">/&gt;</span></span>
+  [...]
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+  <span class="token keyword">import</span> <span class="token punctuation">{</span>DisplayField<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'vue-service-model'</span>
+
+  <span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">{</span>
+    components<span class="token operator">:</span> <span class="token punctuation">{</span>DisplayField<span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function">data</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        album<span class="token operator">:</span> <span class="token keyword">null</span>
+      <span class="token punctuation">}</span>  
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function">mounted</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">loadAlbum</span><span class="token punctuation">(</span><span class="token punctuation">)</span>    
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    methods<span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token keyword">async</span> <span class="token function">loadAlbum</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>album <span class="token operator">=</span> <span class="token keyword">await</span> Album<span class="token punctuation">.</span>objects<span class="token punctuation">.</span><span class="token function">detail</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+</code></pre></div><h2 id="inputfield"><a href="#inputfield" class="header-anchor">#</a> InputField</h2> <p>The <code>InputField</code> component is equal to the <code>DisplayField</code>. The input value will directly change the data of your model (using the <code>valueSetter</code>).</p> <div class="language-vue extra-class"><pre class="language-vue"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+  [...]
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>input-field</span> <span class="token attr-name">:model</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>album<span class="token punctuation">&quot;</span></span> <span class="token attr-name">field-name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>title<span class="token punctuation">&quot;</span></span><span class="token punctuation">/&gt;</span></span>
+  [...]
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+  <span class="token keyword">import</span> <span class="token punctuation">{</span>InputField<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'vue-service-model'</span>
+
+  <span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">{</span>
+    components<span class="token operator">:</span> <span class="token punctuation">{</span>InputField<span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function">data</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        album<span class="token operator">:</span> <span class="token keyword">null</span>
+      <span class="token punctuation">}</span>  
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function">mounted</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">loadAlbum</span><span class="token punctuation">(</span><span class="token punctuation">)</span>    
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    methods<span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token keyword">async</span> <span class="token function">loadAlbum</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>album <span class="token operator">=</span> <span class="token keyword">await</span> Album<span class="token punctuation">.</span>objects<span class="token punctuation">.</span><span class="token function">detail</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/vue-service-model/guide/model-manager.html" class="prev">
+        ModelManager (objects)
+      </a></span> <!----></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/vue-service-model/assets/js/app.77e8b7db.js" defer></script><script src="/vue-service-model/assets/js/2.7a847508.js" defer></script><script src="/vue-service-model/assets/js/7.40133f08.js" defer></script>
+  </body>
+</html>
