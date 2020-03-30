@@ -49,3 +49,15 @@ jobs:
         flags: unittests
         name: codecov
         fail_ci_if_error: true
+
+    - name: Build docs
+      run: npm run docs:build
+      env:
+        CI: true
+
+    - name: Deploy docs
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: docs/.vuepress/dist

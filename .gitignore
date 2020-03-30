@@ -2,6 +2,7 @@
 node_modules
 coverage
 /dist
+/docs/.vuepress/dist
 /lib
 
 /tests/e2e/reports/

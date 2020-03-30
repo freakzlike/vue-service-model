@@ -1,4 +1,5 @@
 module.exports = {
+  base: '/vue-service-model/',
   title: 'vue-service-model',
   description: 'Vue.js library for handling REST service requests with caching, aggregation and model definitions',
   port: 8085,
