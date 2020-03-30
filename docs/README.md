@@ -1,4 +1,4 @@
-# Vue service model
+# vue-service-model
 
 [![Build](https://github.com/freakzlike/vue-service-model/workflows/Build/badge.svg)](https://github.com/freakzlike/vue-service-model/actions)
 [![codecov](https://codecov.io/gh/freakzlike/vue-service-model/branch/master/graph/badge.svg)](https://codecov.io/gh/freakzlike/vue-service-model)
@@ -12,20 +12,10 @@
 
 * Define models and easily handle REST service requests
 * Pass model data to REST service requests and retrieve model data from them
-* Aggregation for multiple parallel requests to the same url to avoid redundant requests. See [aggregation](https://freakzlike.github.io/vue-service-model/guide/service-model.html#aggregation)
+* Aggregation for multiple parallel requests to the same url to avoid redundant requests. See [aggregation](/guide/service-model.html#aggregation)
 * Caches response from services
 * Uses [axios](https://github.com/axios/axios) for service request
-* Field specific [rendering](https://freakzlike.github.io/vue-service-model/guide/fields.html#rendering) with common component for consistent display of field values
-* ... [more later](#future)
-
-## Content
-
-* [Installation](#installation)
-* [Example](#example)
-* [Documentation](https://freakzlike.github.io/vue-service-model/)
-* [Future](#future)
-* [Contribution](#contribution)
-* [License](#license)
+* Field specific [rendering](/guide/fields.html#rendering) with common component for consistent display of field values
 
 ## Installation
 ```sh
@@ -68,7 +58,7 @@ await Album.objects.update(1, {title: 'Updated album'})
 await Album.objects.delete(1)
 ```
 
-You can also define [fields](https://freakzlike.github.io/vue-service-model/guide/fields.html) for your model.
+You can also define [fields](/guide/fields.html) for your model.
 
 ```js
 class Album extends ServiceModel {
@@ -89,34 +79,17 @@ album.pk // Output: 1
 await album.val.title // Output: 'Album title'
 ```
 
-By using a common component [`DisplayField`](https://freakzlike.github.io/vue-service-model/guide/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
+By using a common component [`DisplayField`](/guide/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
 ```vue
 <display-field :model="album" field-name="title"/>
 ```
 
-Or [`InputField`](https://freakzlike.github.io/vue-service-model/guide/components.html#inputfield) for an input field.
+Or [`InputField`](/guide/components.html#inputfield) for an input field.
 
 ```vue
 <input-field :model="album" field-name="title"/>
 ```
 
-## Future
-
-* Models
-  * Model instance methods for saving/deleting data (`.save()`, `.delete()`)
-  * Synchronize mode to update model data 
-  * Cache
-    * Define a different cacheDuration for a specific request
-    * Use cache from list response also for detail requests
-    * "garbage collector" to remove expired cache
-* Fields
-  * Different field types
-  * Standalone field instances
-  * Accessing foreign key fields and retrieving foreign model instances
-  * Methods to allow generation of input components according to field type
-  * Loading slot for `DisplayField`
-* Global configuration with hooks
-* ...
 
 ## Contribution
 
@@ -125,7 +98,3 @@ Feel free to create an issue for bugs, feature requests, suggestions or any idea
 It would please me to hear from your experience.
 
 I used some ideas and names from [django](https://www.djangoproject.com/), [django REST framework](https://www.django-rest-framework.org/), [ag-Grid](https://www.ag-grid.com/) and other libraries and frameworks.
-
-## License
-
-[MIT](http://opensource.org/licenses/MIT)

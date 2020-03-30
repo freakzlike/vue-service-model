@@ -5,9 +5,7 @@ import cu from '../utils/common'
 
 Vue.use(AsyncComputed)
 
-interface ComponentData {
-  resolved: boolean,
-  resolvedValue: any,
+export interface ComponentData {
   // AsyncComputed
   value?: Field
 }
@@ -23,10 +21,13 @@ export default Vue.extend({
     }
   },
 
-  data: (): ComponentData => ({
-    resolved: false,
-    resolvedValue: null
-  }),
+  data: (): ComponentData => ({}),
+
+  computed: {
+    isValueLoaded () {
+      return this.value !== cu.NO_VALUE
+    }
+  },
 
   asyncComputed: {
     value: {
@@ -38,9 +39,15 @@ export default Vue.extend({
     }
   },
 
-  render (h: CreateElement): VNode {
-    if (this.value !== cu.NO_VALUE) {
+  methods: {
+    renderField (h: CreateElement): VNode {
       return this.field.displayRender(h, this.value)
+    }
+  },
+
+  render (h: CreateElement): VNode {
+    if (this.isValueLoaded) {
+      return this.renderField(h)
     } else {
       return undefined as any
     }

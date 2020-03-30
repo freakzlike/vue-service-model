@@ -3,6 +3,7 @@ import { BaseModel } from '@/models/BaseModel'
 import { FieldDef, FieldBind } from '@/types/fields/Field'
 import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
+import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 
 describe('fields/Field', () => {
   class TestModel extends BaseModel {
@@ -247,6 +248,18 @@ describe('fields/Field', () => {
     })
   })
 
+  describe('isPrimaryKey', () => {
+    it('should be primary key', () => {
+      const field = new Field({ primaryKey: true })
+      expect(field.isPrimaryKey).toBe(true)
+    })
+
+    it('should not be primary key', () => {
+      const field = new Field({})
+      expect(field.isPrimaryKey).toBe(false)
+    })
+  })
+
   describe('valueGetter', () => {
     it('should return null data', () => {
       const field = new Field({}, { name: 'field' })
@@ -349,6 +362,14 @@ describe('fields/Field', () => {
       const field = new Field()
       const displayComponent = await field.displayComponent
       expect(displayComponent.default).toBe(BaseDisplayFieldRender)
+    })
+  })
+
+  describe('inputComponent', () => {
+    it('should return BaseInputFieldRender', async () => {
+      const field = new Field()
+      const inputComponent = await field.inputComponent
+      expect(inputComponent.default).toBe(BaseInputFieldRender)
     })
   })
 })

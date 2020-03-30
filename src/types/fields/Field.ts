@@ -5,6 +5,7 @@ export interface FieldDef {
   attributeName?: string
   label?: LazyValue<string>
   hint?: LazyValue<string>
+  primaryKey?: boolean
 }
 
 export interface FieldBind {

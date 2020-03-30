@@ -38,7 +38,9 @@
     "test:buildlib": "npm run build && npm run test:lib",
     "lint": "vue-cli-service lint --no-fix",
     "lint:autofix": "vue-cli-service lint",
-    "fullcheck": "npm run lint && npm run test:unit && npm run test:buildlib"
+    "fullcheck": "npm run lint && npm run test:unit && npm run test:buildlib",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -59,13 +61,14 @@
     "@vue/eslint-config-typescript": "^5.0.2",
     "@vue/test-utils": "1.0.0-beta.29",
     "eslint": "^6.8.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.2.2",
     "rimraf": "^3.0.2",
     "typescript": "^3.8.3",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "vuepress": "^1.4.0"
   }
 }

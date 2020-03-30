@@ -131,6 +131,13 @@ export class Field extends BaseClass {
   }
 
   /**
+   * Returns boolean whether field is a primary key
+   */
+  public get isPrimaryKey (): boolean {
+    return Boolean(this.definition.primaryKey)
+  }
+
+  /**
    * Retrieve value from data structure according to attributeName
    * Uses nested syntax from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
    * Will return null if value is not available
@@ -202,11 +209,42 @@ export class Field extends BaseClass {
     }
   }
 
+  /**
+   * Display component to render when displaying value with <display-field/>
+   */
   get displayComponent (): Promise<ComponentModule> {
     return import('../components/BaseDisplayFieldRender')
   }
 
+  /**
+   * Simple Vue render function when using default displayComponent when displaying value with <display-field/>
+   */
   displayRender (h: CreateElement, resolvedValue: any): VNode {
     return h('span', resolvedValue)
+  }
+
+  /**
+   * Input component to render when showing input for field with <input-field/>
+   */
+  get inputComponent (): Promise<ComponentModule> {
+    return import('../components/BaseInputFieldRender')
+  }
+
+  /**
+   * Simple Vue render function when using default inputComponent for input of field value with <input-field/>
+   */
+  inputRender (h: CreateElement, resolvedValue: any): VNode {
+    return h('input', {
+      attrs: {
+        type: 'text',
+        value: resolvedValue
+      },
+      on: {
+        input: (event: InputEvent) => {
+          const target = event.target as { value?: any }
+          this.value = target.value
+        }
+      }
+    })
   }
 }

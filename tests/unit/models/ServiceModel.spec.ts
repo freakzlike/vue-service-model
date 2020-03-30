@@ -1,8 +1,42 @@
 import { ServiceModel } from '@/models/ServiceModel'
+import { BaseModel } from '@/models/BaseModel'
 import { ServiceParent } from '@/types/models/ServiceModel'
 import { MissingUrlException } from '@/exceptions/ModelExceptions'
+import { Field } from '@/fields/Field'
 
 describe('models/ServiceModel', () => {
+  describe('constructor', () => {
+    class TestModel extends ServiceModel {
+    }
+
+    it('should create ServiceModel with default values', () => {
+      const model = new TestModel()
+      expect(model).toBeInstanceOf(TestModel)
+      expect(model).toBeInstanceOf(ServiceModel)
+      expect(model).toBeInstanceOf(BaseModel)
+
+      expect(model.data).toEqual({})
+      expect(model.parents).toEqual({})
+    })
+
+    it('should create ServiceModel with no parents', () => {
+      const data = { x: 1 }
+      const model = new TestModel(data)
+
+      expect(model.data).toBe(data)
+      expect(model.parents).toEqual({})
+    })
+
+    it('should create ServiceModel with only parents', () => {
+      const parents = { x: 1 }
+      const model = new TestModel(undefined, parents)
+
+      expect(model.data).toEqual({})
+      expect(model.parents).not.toBe(parents)
+      expect(model.parents).toEqual(parents)
+    })
+  })
+
   describe('getListUrl', () => {
     it('should return urls.LIST', async () => {
       const listUrl = 'list-url/'
@@ -28,7 +62,7 @@ describe('models/ServiceModel', () => {
       }
 
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
         protected static urls = {
           LIST: 'list-url/{parent1}/text/{parent2}/'
         }
@@ -85,7 +119,7 @@ describe('models/ServiceModel', () => {
       }
 
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
         protected static urls = {
           DETAIL: 'detail-url/{parent1}/text/{parent2}/{pk}/'
         }
@@ -125,7 +159,7 @@ describe('models/ServiceModel', () => {
 
     it('should check correct parents given', async () => {
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
       }
 
       const spy = jest.spyOn(console, 'warn').mockImplementation()
@@ -136,7 +170,7 @@ describe('models/ServiceModel', () => {
 
     it('should check parents not given', async () => {
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
       }
 
       const spy = jest.spyOn(console, 'warn').mockImplementation()
@@ -151,7 +185,7 @@ describe('models/ServiceModel', () => {
 
     it('should check missing parent', async () => {
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1', 'parent2']
+        protected static parentNames = ['parent1', 'parent2']
       }
 
       const parents: ServiceParent = { parent1: 10 }
@@ -182,7 +216,7 @@ describe('models/ServiceModel', () => {
 
     it('should check parents too much parents given', async () => {
       class TestModel extends ServiceModel {
-        protected static parents = ['parent1']
+        protected static parentNames = ['parent1']
       }
 
       const parents: ServiceParent = { parent1: 10, parent2: 'text' }
@@ -219,6 +253,82 @@ describe('models/ServiceModel', () => {
       expect(modelManager).toBeInstanceOf(TestModel.ModelManager)
       expect(modelManager).toBeInstanceOf(CustomModelManager)
       expect(TestModel.objects).toBe(modelManager)
+    })
+  })
+
+  describe('parents', () => {
+    class TestModel extends ServiceModel {
+    }
+
+    it('should return parents', () => {
+      const parents = { a: 1 }
+      const model = new TestModel(undefined, parents)
+      expect(model.parents).toEqual(parents)
+      expect(model.parents).not.toBe(parents)
+    })
+
+    it('should set copy of parents', () => {
+      const model = new TestModel()
+      const parents = { a: 1 }
+      expect(model.parents).toEqual({})
+
+      model.parents = parents
+      expect(model.parents).toEqual(parents)
+      expect(model.parents).not.toBe(parents)
+    })
+  })
+
+  describe('reload', () => {
+    class TestModel extends ServiceModel {
+      protected static fieldsDef = {
+        id: new Field({ primaryKey: true }),
+        title: new Field()
+      }
+    }
+
+    it('should reload from service', async () => {
+      const modelData = { id: 1, title: 'Old title' }
+      const responseData = { id: 1, title: 'New Title' }
+      const mockServiceStoreGetData = jest.spyOn(TestModel.objects, 'retrieveDetailData').mockImplementation(async () => responseData)
+
+      const model = new TestModel(modelData)
+      expect(await model.reload()).toBe(true)
+
+      expect(model.data).toEqual(responseData)
+
+      expect(mockServiceStoreGetData).toBeCalledTimes(1)
+      expect(mockServiceStoreGetData.mock.calls[0]).toEqual([modelData.id, { refreshCache: true, parents: {} }])
+      mockServiceStoreGetData.mockRestore()
+    })
+
+    it('should reload from service with parents', async () => {
+      class ParentTestModel extends TestModel {
+        protected static parentNames: ['parent1', 'parent2']
+      }
+
+      const parents = { parent1: 8, parent2: 'key' }
+      const modelData = { id: 1, title: 'Old title' }
+      const responseData = { id: 1, title: 'New Title' }
+      const mockServiceStoreGetData = jest.spyOn(TestModel.objects, 'retrieveDetailData').mockImplementation(async () => responseData)
+
+      const model = new TestModel(modelData, parents)
+      expect(await model.reload()).toBe(true)
+
+      expect(model.data).toEqual(responseData)
+
+      expect(mockServiceStoreGetData).toBeCalledTimes(1)
+      expect(mockServiceStoreGetData.mock.calls[0]).toEqual([modelData.id, { refreshCache: true, parents }])
+      mockServiceStoreGetData.mockRestore()
+    })
+
+    it('should not reload without primary key', async () => {
+      const mockServiceStoreGetData = jest.spyOn(TestModel.objects, 'retrieveDetailData').mockImplementation()
+
+      const model = new TestModel()
+      expect(await model.reload()).toBe(false)
+
+      expect(mockServiceStoreGetData).not.toBeCalled()
+      mockServiceStoreGetData.mockRestore()
     })
   })
 })
