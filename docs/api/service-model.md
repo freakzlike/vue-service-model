@@ -1,4 +1,4 @@
-# ServiceModel
+# ServiceModel API
 
 ```typescript
 class ServiceModel extends BaseModel {

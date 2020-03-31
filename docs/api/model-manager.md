@@ -1,4 +1,4 @@
-# ModelManager
+# ModelManager API
 
 ```typescript
 class ModelManager {

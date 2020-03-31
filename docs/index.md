@@ -1,21 +1,25 @@
-# vue-service-model
+---
+home: true
+heroImage: /logo.png
+heroText: vue-service-model
+tagline: Vue.js Library for handling REST service requests with caching, aggregation and model definitions.
+actionText: Get Started →
+actionLink: /guide/
+features:
+- title: Model definitions
+  details: Define your backend REST services as models and use them for simple usage in your frontend.
+- title: Service requests
+  details: Reduce your service request load with request caching and aggregation.
+- title: Field rendering
+  details: Define the display and input rendering of your fields at one point and receive consistent representation of your fields.
+footer: MIT Licensed | Copyright © 2020-present Freakzlike
+---
 
 [![Build](https://github.com/freakzlike/vue-service-model/workflows/Build/badge.svg)](https://github.com/freakzlike/vue-service-model/actions)
 [![codecov](https://codecov.io/gh/freakzlike/vue-service-model/branch/master/graph/badge.svg)](https://codecov.io/gh/freakzlike/vue-service-model)
 [![Package Quality](https://npm.packagequality.com/shield/vue-service-model.svg)](https://packagequality.com/#?package=vue-service-model)
 [![Latest Version](https://img.shields.io/npm/v/vue-service-model.svg)](https://www.npmjs.com/package/vue-service-model)
 [![License](https://img.shields.io/npm/l/vue-service-model.svg)](https://github.com/freakzlike/vue-service-model/blob/master/LICENSE)
-
-[Vue.js](https://vuejs.org/) Library for handling REST service requests with caching, aggregation and model definitions.
-
-## Features
-
-* Define models and easily handle REST service requests
-* Pass model data to REST service requests and retrieve model data from them
-* Aggregation for multiple parallel requests to the same url to avoid redundant requests. See [aggregation](/guide/service-model.html#aggregation)
-* Caches response from services
-* Uses [axios](https://github.com/axios/axios) for service request
-* Field specific [rendering](/guide/fields.html#rendering) with common component for consistent display of field values
 
 ## Installation
 ```sh

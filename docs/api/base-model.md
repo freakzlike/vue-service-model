@@ -1,4 +1,4 @@
-# BaseModel
+# BaseModel API
 
 ```typescript
 class BaseModel {
