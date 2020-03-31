@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "tslib": "^1.11.1",
     "vue": "^2.6.10",
     "vue-async-computed": "^3.8.2"
   },
