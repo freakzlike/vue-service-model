@@ -44,9 +44,11 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "tslib": "^1.11.1",
-    "vue": "^2.6.10",
-    "vue-async-computed": "^3.8.2"
+    "tslib": "^1.11.1"
+  },
+  "peerDependencies": {
+    "vue": "^2.0.0",
+    "vue-async-computed": "^3.0.0"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
@@ -69,6 +71,8 @@
     "eslint-plugin-vue": "^6.2.2",
     "rimraf": "^3.0.2",
     "typescript": "^3.8.3",
+    "vue": "^2.6.11",
+    "vue-async-computed": "^3.8.2",
     "vue-template-compiler": "^2.6.11",
     "vuepress": "^1.4.0"
   }
