@@ -11,7 +11,6 @@ module.exports = {
     logo: '/logo.png',
     docsDir: 'docs',
     lastUpdated: 'Last Updated',
-    docsRepo: 'vuejs/vuepress',
     editLinks: true,
     editLinkText: 'Edit this page on GitHub',
     algolia: {
