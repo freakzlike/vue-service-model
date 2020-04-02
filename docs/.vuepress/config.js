@@ -11,7 +11,13 @@ module.exports = {
     logo: '/logo.png',
     docsDir: 'docs',
     lastUpdated: 'Last Updated',
+    docsRepo: 'vuejs/vuepress',
+    editLinks: true,
     editLinkText: 'Edit this page on GitHub',
+    algolia: {
+      apiKey: 'fe9b2afde6107c95fc541e87736e6103',
+      indexName: 'vue-service-model'
+    },
     nav: [
       {
         text: 'Guide',

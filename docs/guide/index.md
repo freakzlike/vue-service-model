@@ -29,6 +29,16 @@ For production you should use a specific versions to avoid unexpected changes.
 <script src="https://cdn.jsdelivr.net/npm/vue-service-model@0.8.0/dist/vue-service-model.min.js"></script>
 ```
 
+::: warning
+When using CDN you need to access from `VueServiceModel`. E.g:
+```js
+class MyModel extends VueServiceModel.ServiceModel {
+  [...]
+}
+```
+:::
+
+
 ## Example
 
 [Codepen example](https://codepen.io/freakzlike/pen/WNvWJXg)
