@@ -309,9 +309,9 @@ describe('models/ServiceModel', () => {
       const parents = { parent1: 8, parent2: 'key' }
       const modelData = { id: 1, title: 'Old title' }
       const responseData = { id: 1, title: 'New Title' }
-      const mockServiceStoreGetData = jest.spyOn(TestModel.objects, 'retrieveDetailData').mockImplementation(async () => responseData)
+      const mockServiceStoreGetData = jest.spyOn(ParentTestModel.objects, 'retrieveDetailData').mockImplementation(async () => responseData)
 
-      const model = new TestModel(modelData, parents)
+      const model = new ParentTestModel(modelData, parents)
       expect(await model.reload()).toBe(true)
 
       expect(model.data).toEqual(responseData)
@@ -329,6 +329,54 @@ describe('models/ServiceModel', () => {
 
       expect(mockServiceStoreGetData).not.toBeCalled()
       mockServiceStoreGetData.mockRestore()
+    })
+  })
+
+  describe('delete', () => {
+    class TestModel extends ServiceModel {
+      protected static fieldsDef = {
+        id: new Field({ primaryKey: true }),
+        title: new Field()
+      }
+    }
+
+    it('should delete from service', async () => {
+      const modelData = { id: 1, title: 'Title' }
+      const mockModelManagerDelete = jest.spyOn(TestModel.objects, 'delete').mockImplementation(async () => null)
+
+      const model = new TestModel(modelData)
+      expect(await model.delete()).toBe(true)
+
+      expect(mockModelManagerDelete).toBeCalledTimes(1)
+      expect(mockModelManagerDelete.mock.calls[0]).toEqual([modelData.id, { parents: {} }])
+      mockModelManagerDelete.mockRestore()
+    })
+
+    it('should delete from service with parents', async () => {
+      class ParentTestModel extends TestModel {
+        protected static parentNames: ['parent1', 'parent2']
+      }
+
+      const parents = { parent1: 8, parent2: 'key' }
+      const modelData = { id: 1, title: 'Title' }
+      const mockModelManagerDelete = jest.spyOn(ParentTestModel.objects, 'delete').mockImplementation(async () => null)
+
+      const model = new ParentTestModel(modelData, parents)
+      expect(await model.delete()).toBe(true)
+
+      expect(mockModelManagerDelete).toBeCalledTimes(1)
+      expect(mockModelManagerDelete.mock.calls[0]).toEqual([modelData.id, { parents }])
+      mockModelManagerDelete.mockRestore()
+    })
+
+    it('should not reload without primary key', async () => {
+      const mockModelManagerDelete = jest.spyOn(TestModel.objects, 'delete').mockImplementation(async () => null)
+
+      const model = new TestModel()
+      expect(await model.delete()).toBe(false)
+
+      expect(mockModelManagerDelete).not.toBeCalled()
+      mockModelManagerDelete.mockRestore()
     })
   })
 })

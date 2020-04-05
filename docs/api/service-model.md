@@ -41,5 +41,9 @@ class ServiceModel extends BaseModel {
   // Reload model data from service. Overwrites changes made to model data
   // Returns true if successful
   public async reload (): Promise<boolean>
+
+  // Delete current model from service. Calls objects.delete() with primary key and parents
+  // Returns true if successful
+  public async delete (): Promise<boolean>
 }
 ```

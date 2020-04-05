@@ -189,6 +189,22 @@ export class ServiceModel extends BaseModel {
   }
 
   /**
+   * Delete current model instance from service
+   * Returns true if successful
+   */
+  public async delete (): Promise<boolean> {
+    const pk = this.pk
+    if (pk === null) return false
+
+    const cls = this.constructor as typeof ServiceModel
+    await cls.objects.delete(pk, {
+      parents: this.parents
+    })
+
+    return true
+  }
+
+  /**
    * Create instance of store class
    */
   protected static createStoreModule (): ServiceStore {

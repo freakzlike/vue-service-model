@@ -60,6 +60,9 @@ await Album.objects.update(1, {title: 'Updated album'})
 
 // Delete specific album
 await Album.objects.delete(1)
+
+// Delete current album instance
+await album.delete()
 ```
 
 You can also define [fields](/guide/fields.html) for your model.
@@ -70,7 +73,7 @@ class Album extends ServiceModel {
 
   static fieldsDef = {
     id: new Field({primaryKey: true}),
-    title: new Field({label: 'Album title'})
+    title: new Field()
   }
 }
 
@@ -80,7 +83,7 @@ const album = await Album.objects.detail(1)
 album.pk // Output: 1
 
 // Retrieve value for field title
-await album.val.title // Output: 'Album title'
+await album.val.title // Output: Album title
 ```
 
 By using a common component [`DisplayField`](/guide/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.

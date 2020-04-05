@@ -12,7 +12,7 @@ class Album extends BaseModel {
 
   static fieldsDef = {
     id: new Field({primaryKey: true}),
-    title: new Field({label: 'Album title'})
+    title: new Field()
   }
 }
 ```
