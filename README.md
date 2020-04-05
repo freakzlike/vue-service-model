@@ -23,7 +23,6 @@
 ## Future
 
 * Models
-  * Model instance methods for saving/deleting data (`.save()`, `.delete()`)
   * Synchronize mode to update model data 
   * Cache
     * Define a different cacheDuration for a specific request

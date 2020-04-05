@@ -332,6 +332,177 @@ describe('models/ServiceModel', () => {
     })
   })
 
+  describe('create', () => {
+    class TestModel extends ServiceModel {
+      protected static fieldsDef = {
+        id: new Field({ primaryKey: true }),
+        title: new Field()
+      }
+    }
+
+    it('should call ModelManager create', async () => {
+      const modelData = { title: 'Title' }
+      const newModelData = { id: 1, title: 'Title' }
+      const mockModelManagerCreate = jest.spyOn(TestModel.objects, 'create').mockImplementation(async () => newModelData)
+
+      const model = new TestModel(modelData)
+      expect(await model.create()).toBe(true)
+
+      expect(model.data).toBe(newModelData)
+
+      expect(mockModelManagerCreate).toBeCalledTimes(1)
+      expect(mockModelManagerCreate.mock.calls[0]).toEqual([modelData, { parents: {} }])
+
+      mockModelManagerCreate.mockRestore()
+    })
+
+    it('should call ModelManager create with parents', async () => {
+      class ParentTestModel extends TestModel {
+        protected static parentNames: ['parent1', 'parent2']
+      }
+
+      const parents = { parent1: 8, parent2: 'key' }
+      const modelData = { title: 'Title' }
+      const newModelData = { id: 1, title: 'Title' }
+      const mockModelManagerCreate = jest.spyOn(ParentTestModel.objects, 'create').mockImplementation(async () => newModelData)
+
+      const model = new ParentTestModel(modelData, parents)
+      expect(await model.create()).toBe(true)
+
+      expect(model.data).toBe(newModelData)
+
+      expect(mockModelManagerCreate).toBeCalledTimes(1)
+      expect(mockModelManagerCreate.mock.calls[0]).toEqual([modelData, { parents }])
+      mockModelManagerCreate.mockRestore()
+    })
+
+    it('should call ModelManager create and not reset data when update returns nothing', async () => {
+      const modelData = { title: 'Title' }
+      const mockModelManagerCreate = jest.spyOn(TestModel.objects, 'create').mockImplementation(async () => null)
+
+      const model = new TestModel(modelData)
+      expect(await model.create()).toBe(true)
+
+      expect(model.data).not.toBeNull()
+      expect(model.data).toBe(modelData)
+
+      expect(mockModelManagerCreate).toBeCalledTimes(1)
+      expect(mockModelManagerCreate.mock.calls[0]).toEqual([modelData, { parents: {} }])
+
+      mockModelManagerCreate.mockRestore()
+    })
+  })
+
+  describe('update', () => {
+    class TestModel extends ServiceModel {
+      protected static fieldsDef = {
+        id: new Field({ primaryKey: true }),
+        title: new Field()
+      }
+    }
+
+    it('should call ModelManager update', async () => {
+      const modelData = { id: 1, title: 'Title' }
+      const newModelData = { id: 1, title: 'Updated Title' }
+      const mockModelManagerUpdate = jest.spyOn(TestModel.objects, 'update').mockImplementation(async () => newModelData)
+
+      const model = new TestModel(modelData)
+      expect(await model.update()).toBe(true)
+
+      expect(model.data).toBe(newModelData)
+
+      expect(mockModelManagerUpdate).toBeCalledTimes(1)
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {} }])
+
+      mockModelManagerUpdate.mockRestore()
+    })
+
+    it('should call ModelManager update with parents', async () => {
+      class ParentTestModel extends TestModel {
+        protected static parentNames: ['parent1', 'parent2']
+      }
+
+      const parents = { parent1: 8, parent2: 'key' }
+      const modelData = { id: 1, title: 'Title' }
+      const newModelData = { id: 1, title: 'Updated Title' }
+      const mockModelManagerUpdate = jest.spyOn(ParentTestModel.objects, 'update').mockImplementation(async () => newModelData)
+
+      const model = new ParentTestModel(modelData, parents)
+      expect(await model.update()).toBe(true)
+
+      expect(model.data).toBe(newModelData)
+
+      expect(mockModelManagerUpdate).toBeCalledTimes(1)
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents }])
+      mockModelManagerUpdate.mockRestore()
+    })
+
+    it('should call ModelManager update and not reset data when update returns nothing', async () => {
+      const modelData = { id: 1, title: 'Title' }
+      const mockModelManagerUpdate = jest.spyOn(TestModel.objects, 'update').mockImplementation(async () => null)
+
+      const model = new TestModel(modelData)
+      expect(await model.update()).toBe(true)
+
+      expect(model.data).not.toBeNull()
+      expect(model.data).toBe(modelData)
+
+      expect(mockModelManagerUpdate).toBeCalledTimes(1)
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {} }])
+
+      mockModelManagerUpdate.mockRestore()
+    })
+
+    it('should not call ModelManager update without primary key', async () => {
+      const mockModelManagerUpdate = jest.spyOn(TestModel.objects, 'update').mockImplementation(async () => null)
+
+      const model = new TestModel()
+      expect(await model.update()).toBe(false)
+
+      expect(mockModelManagerUpdate).not.toBeCalled()
+      mockModelManagerUpdate.mockRestore()
+    })
+  })
+
+  describe('save', () => {
+    class TestModel extends ServiceModel {
+      protected static fieldsDef = {
+        id: new Field({ primaryKey: true }),
+        title: new Field()
+      }
+    }
+
+    it('should call create when no primary key is set', async () => {
+      const modelData = { title: 'Title' }
+      const model = new TestModel(modelData)
+      const mockCreate = jest.spyOn(model, 'create').mockImplementation(async () => true)
+      const mockUpdate = jest.spyOn(model, 'update').mockImplementation(async () => true)
+
+      expect(await model.save()).toBe(true)
+
+      expect(mockCreate).toBeCalledTimes(1)
+      expect(mockUpdate).not.toBeCalled()
+
+      mockCreate.mockRestore()
+      mockUpdate.mockRestore()
+    })
+
+    it('should call create when primary key is set', async () => {
+      const modelData = { id: true, title: 'Title' }
+      const model = new TestModel(modelData)
+      const mockCreate = jest.spyOn(model, 'create').mockImplementation(async () => true)
+      const mockUpdate = jest.spyOn(model, 'update').mockImplementation(async () => true)
+
+      expect(await model.save()).toBe(false)
+
+      expect(mockCreate).not.toBeCalled()
+      expect(mockUpdate).toBeCalledTimes(1)
+
+      mockCreate.mockRestore()
+      mockUpdate.mockRestore()
+    })
+  })
+
   describe('delete', () => {
     class TestModel extends ServiceModel {
       protected static fieldsDef = {
@@ -340,7 +511,7 @@ describe('models/ServiceModel', () => {
       }
     }
 
-    it('should delete from service', async () => {
+    it('should call ModelManager delete', async () => {
       const modelData = { id: 1, title: 'Title' }
       const mockModelManagerDelete = jest.spyOn(TestModel.objects, 'delete').mockImplementation(async () => null)
 
@@ -352,7 +523,7 @@ describe('models/ServiceModel', () => {
       mockModelManagerDelete.mockRestore()
     })
 
-    it('should delete from service with parents', async () => {
+    it('should call ModelManager delete with parents', async () => {
       class ParentTestModel extends TestModel {
         protected static parentNames: ['parent1', 'parent2']
       }
@@ -369,7 +540,7 @@ describe('models/ServiceModel', () => {
       mockModelManagerDelete.mockRestore()
     })
 
-    it('should not reload without primary key', async () => {
+    it('should not call ModelManager delete without primary key', async () => {
       const mockModelManagerDelete = jest.spyOn(TestModel.objects, 'delete').mockImplementation(async () => null)
 
       const model = new TestModel()
