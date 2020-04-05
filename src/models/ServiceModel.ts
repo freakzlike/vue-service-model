@@ -198,7 +198,7 @@ export class ServiceModel extends BaseModel {
       return true
     } else {
       await this.update()
-      return true
+      return false
     }
   }
 
