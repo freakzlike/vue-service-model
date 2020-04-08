@@ -28,6 +28,8 @@ npm install vue-service-model
 
 ## Example
 
+[Codepen example](https://codepen.io/freakzlike/pen/WNvWJXg)
+
 Definition of a simple `ServiceModel` without using fields. https://jsonplaceholder.typicode.com/albums/ is being used as an example REST JSON service.
 ```js
 import {ServiceModel} from 'vue-service-model'
@@ -52,14 +54,8 @@ const album = await Album.objects.detail(1)
 // Retrieve filtered list from /albums/?userId=1
 const userAlbums = await Album.objects.list({filter: {userId: 1}})
 
-// Create new album
-await Album.objects.create({title: 'New album'})
-
-// Update an album
-await Album.objects.update(1, {title: 'Updated album'})
-
-// Delete specific album
-await Album.objects.delete(1)
+// Reloading model data from service
+await album.reload()
 ```
 
 You can also define [fields](/guide/fields.html) for your model.
@@ -70,7 +66,7 @@ class Album extends ServiceModel {
 
   static fieldsDef = {
     id: new Field({primaryKey: true}),
-    title: new Field({label: 'Album title'})
+    title: new Field()
   }
 }
 
@@ -80,8 +76,46 @@ const album = await Album.objects.detail(1)
 album.pk // Output: 1
 
 // Retrieve value for field title
-await album.val.title // Output: 'Album title'
+await album.val.title // Output: Album title
 ```
+
+If you want to create, update or delete your backend data you can use the following methods.
+
+### Create
+```js
+// Create new album directly
+await Album.objects.create({title: 'New album'})
+
+// Or create by calling .create on model instance
+const album = new Album({title: 'New album'})
+await album.create()
+```
+
+### Update
+```js
+// Update an album
+await Album.objects.update(1, {title: 'Updated album'})
+
+// Or update by calling .update on model instance
+album.val.title = 'Updated album'
+await album.update()
+```
+
+::: tip
+You can also use `.save()` for create or update. It will call `.create()` if no primary key if set.
+Otherwise `.update()` will be called. 
+:::
+
+### Delete
+```js
+// Delete specific album
+await Album.objects.delete(1)
+
+// Delete current album instance
+await album.delete()
+```
+
+### Rendering:
 
 By using a common component [`DisplayField`](/guide/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
 ```vue

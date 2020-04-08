@@ -189,6 +189,75 @@ export class ServiceModel extends BaseModel {
   }
 
   /**
+   * Call either .create() or .update() by checking whether primary key is set or not
+   * Returns true if create has been called
+   */
+  public async save (): Promise<boolean> {
+    if (this.pk === null) {
+      await this.create()
+      return true
+    } else {
+      await this.update()
+      return false
+    }
+  }
+
+  /**
+   * Create current model instance by calling objects.create()
+   * Updates model data from response if set
+   * Returns true if successful
+   */
+  public async create (): Promise<boolean> {
+    const cls = this.constructor as typeof ServiceModel
+    const data = await cls.objects.create(this.data, {
+      parents: this.parents
+    })
+
+    if (data && Object.keys(data).length) {
+      this.data = data
+    }
+
+    return true
+  }
+
+  /**
+   * Update current model instance by calling objects.update()
+   * Updates model data from response if set
+   * Returns true if successful
+   */
+  public async update (): Promise<boolean> {
+    const pk = this.pk
+    if (pk === null) return false
+
+    const cls = this.constructor as typeof ServiceModel
+    const data = await cls.objects.update(pk, this.data, {
+      parents: this.parents
+    })
+
+    if (data && Object.keys(data).length) {
+      this.data = data
+    }
+
+    return true
+  }
+
+  /**
+   * Delete current model instance by calling objects.delete()
+   * Returns true if successful
+   */
+  public async delete (): Promise<boolean> {
+    const pk = this.pk
+    if (pk === null) return false
+
+    const cls = this.constructor as typeof ServiceModel
+    await cls.objects.delete(pk, {
+      parents: this.parents
+    })
+
+    return true
+  }
+
+  /**
    * Create instance of store class
    */
   protected static createStoreModule (): ServiceStore {
