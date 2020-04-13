@@ -20,6 +20,8 @@
 
 ## [Documentation](https://freakzlike.github.io/vue-service-model/)
 
+## [Example project](https://github.com/freakzlike/vue-service-model-example)
+
 ## Future
 
 * Models

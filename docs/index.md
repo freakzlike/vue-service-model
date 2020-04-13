@@ -29,6 +29,7 @@ npm install vue-service-model
 ## Example
 
 [Codepen example](https://codepen.io/freakzlike/pen/WNvWJXg)
+[Example project](https://github.com/freakzlike/vue-service-model-example)
 
 Definition of a simple `ServiceModel` without using fields. https://jsonplaceholder.typicode.com/albums/ is being used as an example REST JSON service.
 ```js
