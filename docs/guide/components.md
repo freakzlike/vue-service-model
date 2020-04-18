@@ -73,3 +73,17 @@ The `InputField` component is equal to the `DisplayField`. The input value will 
   }
 </script>
 ```
+
+## FieldLabel
+
+In case you just want to render the label of the field you can use the `FieldLabel` component which will resolve the async field label. 
+
+```vue
+<template>
+  [...]
+    <field-label :model="album" field-name="title"/>
+    <!-- or directly with field -->
+    <field-label :field="album.getField('title')"/>
+  [...]
+</template>
+```
