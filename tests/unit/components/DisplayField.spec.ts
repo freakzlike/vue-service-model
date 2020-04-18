@@ -23,11 +23,28 @@ describe('components/DisplayField', () => {
     await wrapper.vm.$nextTick()
   }
 
-  it('should render correctly', async () => {
+  it('should render correctly with model and fieldName', async () => {
     const wrapper = mount(DisplayField, {
       propsData: {
         model: model,
         fieldName: 'name'
+      }
+    })
+    expect(wrapper.vm.displayComponent).toBeNull()
+    expect(wrapper.html()).toBeUndefined()
+
+    await renderDisplayField(wrapper)
+
+    expect(wrapper.vm.displayComponent).not.toBeNull()
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  it('should render correctly with field', async () => {
+    const wrapper = mount(DisplayField, {
+      propsData: {
+        field: model.getField('name')
       }
     })
     expect(wrapper.vm.displayComponent).toBeNull()
@@ -94,6 +111,26 @@ describe('components/DisplayField', () => {
     expect(wrapper.text()).toBe(modelData.name)
 
     wrapper.setProps({ fieldName: 'description' })
+
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toBe(modelData.description)
+  })
+
+  it('should render correct when field changed', async () => {
+    const wrapper = mount(DisplayField, {
+      propsData: {
+        field: model.getField('name')
+      }
+    })
+
+    await renderDisplayField(wrapper)
+
+    expect(wrapper.vm.displayComponent).not.toBeNull()
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.text()).toBe(modelData.name)
+
+    wrapper.setProps({ field: model.getField('description') })
 
     await wrapper.vm.$nextTick()
     expect(wrapper.text()).toBe(modelData.description)

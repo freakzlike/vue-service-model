@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/InputField should render correctly 1`] = `<input type="text" value="Name 1">`;
+exports[`components/InputField should render correctly with field 1`] = `<input type="text" value="Name 1">`;
+
+exports[`components/InputField should render correctly with model and fieldName 1`] = `<input type="text" value="Name 1">`;

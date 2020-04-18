@@ -23,11 +23,28 @@ describe('components/InputField', () => {
     await wrapper.vm.$nextTick()
   }
 
-  it('should render correctly', async () => {
+  it('should render correctly with model and fieldName', async () => {
     const wrapper = mount(InputField, {
       propsData: {
         model: model,
         fieldName: 'name'
+      }
+    })
+    expect(wrapper.vm.inputComponent).toBeNull()
+    expect(wrapper.html()).toBeUndefined()
+
+    await renderInputField(wrapper)
+
+    expect(wrapper.vm.inputComponent).not.toBeNull()
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  it('should render correctly with field', async () => {
+    const wrapper = mount(InputField, {
+      propsData: {
+        field: model.getField('name')
       }
     })
     expect(wrapper.vm.inputComponent).toBeNull()
@@ -98,6 +115,28 @@ describe('components/InputField', () => {
     expect(inputElement.attributes('value')).toBe(modelData.name)
 
     wrapper.setProps({ fieldName: 'description' })
+
+    await wrapper.vm.$nextTick()
+    expect(inputElement.attributes('value')).toBe(modelData.description)
+  })
+
+  it('should render correct when field changed', async () => {
+    const wrapper = mount(InputField, {
+      propsData: {
+        field: model.getField('name')
+      }
+    })
+
+    await renderInputField(wrapper)
+
+    expect(wrapper.vm.inputComponent).not.toBeNull()
+    await wrapper.vm.$nextTick()
+
+    const inputElement = wrapper.find('input')
+    expect(inputElement.is('input')).toBe(true)
+    expect(inputElement.attributes('value')).toBe(modelData.name)
+
+    wrapper.setProps({ field: model.getField('description') })
 
     await wrapper.vm.$nextTick()
     expect(inputElement.attributes('value')).toBe(modelData.description)
