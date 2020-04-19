@@ -128,11 +128,11 @@ Different field types will be added with future releases.
 
 ## Rendering
 
-By using the [`DisplayField`](/guide/components.html#displayfield) component you can render the value of a field for displaying purpose
-and [`InputField`](/guide/components.html#inputfield) when you want to render the input component for this field.
+By using the [`DisplayField`](/guide-old/components.html#displayfield) component you can render the value of a field for displaying purpose
+and [`InputField`](/guide-old/components.html#inputfield) when you want to render the input component for this field.
 To customize the different output which should be rendered you can either set a `displayRender`/`inputRender` or a custom `displayComponent`/`inputComponent`.
 
-The `displayRender`/`inputRender` can be used for small changes of the output and is a simple render function (See [Vue.js render function](https://vuejs.org/v2/guide/render-function.html)).
+The `displayRender`/`inputRender` can be used for small changes of the output and is a simple render function (See [Vue.js render function](https://vuejs.org/v2/guide-old/render-function.html)).
 
 ```js
 class RedTextField extends Field {
@@ -163,7 +163,7 @@ class RedTextField extends Field {
 }
 ```
 
-In case you need to do more specific rendering you can also set your own component which will be rendered when using [`DisplayField`](/guide/components.html#displayfield) on your custom field.
+In case you need to do more specific rendering you can also set your own component which will be rendered when using [`DisplayField`](/guide-old/components.html#displayfield) on your custom field.
 If you want to change the input component you can extend from `BaseInputFieldRender` and overwrite the `inputComponent` method of your field.
 For easy usage with async values if recommend you to take a look at [vue-async-computed](https://github.com/foxbenjaminfox/vue-async-computed).
 

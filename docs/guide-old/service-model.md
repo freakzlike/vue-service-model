@@ -2,7 +2,7 @@
 
 [[toc]]
 
-A `ServiceModel` extends from [`BaseModel`](/guide/base-model/) and adds the [`ModelManager`](/guide/model-manager/) with a caching
+A `ServiceModel` extends from [`BaseModel`](/guide-old/base-model/) and adds the [`ModelManager`](/guide-old/model-manager/) with a caching
 store to keep track of [aggregation](#aggregation) of running requests and optionally caching the result of the services.
 
 ```js
@@ -27,8 +27,8 @@ class Album extends ServiceModel {
 
 Urls are currently divided into 2 different types. `LIST` and `DETAIL` (same like in [Django REST framework](https://www.django-rest-framework.org/api-guide/routers.html#simplerouter)).
 
-* `LIST`: (e.g. `/albums/`) used for [`objects.list()`](/guide/model-manager.html#retrieve-list-of-data-objectslist)
-* `DETAIL`: (e.g. `/albums/1/`) used for [`objects.detail(1)`](/guide/model-manager.html#retrieve-single-entry-of-data-objectsdetail)
+* `LIST`: (e.g. `/albums/`) used for [`objects.list()`](/guide-old/model-manager.html#retrieve-list-of-data-objectslist)
+* `DETAIL`: (e.g. `/albums/1/`) used for [`objects.detail(1)`](/guide-old/model-manager.html#retrieve-single-entry-of-data-objectsdetail)
 
 
 The simplest way to define the urls is to set the static property `urls.BASE` in your `ServiceModel`.
@@ -63,7 +63,7 @@ When you start to request data from a service, for example `Album.objects.detail
 be saved as long as the request has not been completed. So when requesting `Album.objects.detail('1')` again (e.g from another component)
 this request will be attached to the first request which has not been completed yet and the request of the service will only made once.
 
-In case you want to avoid the request aggregation for a specific request see [`noRequestAggregation`](/guide/model-manager.html#retrieveinterfaceparams) in [ModelManager RetrieveInterfaceParams](/guide/model-manager.html#retrieveinterfaceparams).
+In case you want to avoid the request aggregation for a specific request see [`noRequestAggregation`](/guide-old/model-manager.html#retrieveinterfaceparams) in [ModelManager RetrieveInterfaceParams](/guide-old/model-manager.html#retrieveinterfaceparams).
 
 ## Cache
 
@@ -75,7 +75,7 @@ should be cached. The default value is 30 seconds. Currently the expired data wi
 
 You can manually clear the complete cache including [aggregation](#aggregation) by calling `model.store.clear()`.
 
-In case you want to set cache options for a specific request see [ModelManager RetrieveInterfaceParams](/guide/model-manager.html#retrieveinterfaceparams).
+In case you want to set cache options for a specific request see [ModelManager RetrieveInterfaceParams](/guide-old/model-manager.html#retrieveinterfaceparams).
 
 ## Parents
 
@@ -105,6 +105,6 @@ photo.parents
 ```
 
 It is necessary to set exact parents otherwise a warning will be printed to the console. You can also add some custom
-validation of the parents by extending the `checkServiceParents` method of your `ServiceModel`. This will be called on default [`ModelManager`](/guide/model-manager/) interfaces and when retrieving the service url from [`getListUrl`](#urls) or [`getDetailUrl`](#urls).
+validation of the parents by extending the `checkServiceParents` method of your `ServiceModel`. This will be called on default [`ModelManager`](/guide-old/model-manager/) interfaces and when retrieving the service url from [`getListUrl`](#urls) or [`getDetailUrl`](#urls).
 
 You can provide parents to your model instance via the constructor or manually set with `photo.parents = {album: 1}`.

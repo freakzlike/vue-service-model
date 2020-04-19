@@ -4,7 +4,7 @@ heroImage: /logo.png
 heroText: vue-service-model
 tagline: Vue.js Library for handling REST service requests with caching, aggregation and model definitions.
 actionText: Get Started →
-actionLink: /guide/
+actionLink: /guide-old/
 features:
 - title: Model definitions
   details: Define your backend REST services as models and use them for simple usage in your frontend.
@@ -59,7 +59,7 @@ const userAlbums = await Album.objects.list({filter: {userId: 1}})
 await album.reload()
 ```
 
-You can also define [fields](/guide/fields.html) for your model.
+You can also define [fields](/guide-old/fields.html) for your model.
 
 ```js
 class Album extends ServiceModel {
@@ -118,12 +118,12 @@ await album.delete()
 
 ### Rendering:
 
-By using a common component [`DisplayField`](/guide/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
+By using a common component [`DisplayField`](/guide-old/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
 ```vue
 <display-field :model="album" field-name="title"/>
 ```
 
-Or [`InputField`](/guide/components.html#inputfield) for an input field.
+Or [`InputField`](/guide-old/components.html#inputfield) for an input field.
 
 ```vue
 <input-field :model="album" field-name="title"/>
