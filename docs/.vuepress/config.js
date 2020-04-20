@@ -19,8 +19,8 @@ module.exports = {
     },
     nav: [
       {
-        text: 'Guide (Old)',
-        link: '/guide-old/'
+        text: 'Guide',
+        link: '/guide/'
       },
       {
         text: 'API Reference',
@@ -33,6 +33,18 @@ module.exports = {
     ],
     sidebar: [
       '/',
+      {
+        title: 'Guide',
+        path: '/guide/',
+        collapsable: false,
+        children: [
+          '/guide/getting-started.md',
+          '/guide/installation.md',
+          '/guide/models.md',
+          '/guide/fields.md',
+          '/guide/service-model.md'
+        ]
+      },
       {
         title: 'Guide (Old)',
         path: '/guide-old/',
