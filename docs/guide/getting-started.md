@@ -78,7 +78,8 @@ There are currently 2 ways to make service requests. As static method without re
 The [`ModelManager`](/guide/model-manager/) of a [`ServiceModel`](/guide/service-model.html) can be accessed by `Album.objects` and is used for every service request.
 
 ::: tip
-* The response of `GET` requests will automatically be cached for 30 seconds
+* The response of `GET` detail requests will automatically be cached for 30 seconds
+* The response of a list request will not be cached by default
 * Parallel requests will be aggregated
 * To use the model instance methods it is required to set the primary key
 :::

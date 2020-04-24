@@ -77,6 +77,8 @@ You can manually clear the complete cache including [aggregation](#aggregation) 
 
 In case you want to set cache options for a specific request see [ModelManager RetrieveInterfaceParams](/guide/model-manager.html#retrieveinterfaceparams).
 
+By default the response of a list request will not be cached.
+
 ## Parents
 
 When using a nested RESTful service more information is necessary to uniquely identify a resource. You need to define `parentNames` in your `ServiceModel`.
