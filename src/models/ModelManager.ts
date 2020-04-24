@@ -57,24 +57,31 @@ export class ModelManager {
    * Retrieve list of model instances from service
    */
   public async list (params?: RetrieveInterfaceParams): Promise<Array<ServiceModel>> {
-    const parents = params && params.parents
-    const filterParams = params && params.filter
+    const _params = { ...(params || {}) }
 
-    const Model = this.model
-    const url = await Model.getListUrl(parents)
-    const keyBuilder = [url]
-    if (filterParams && Object.keys(filterParams).length > 0) {
-      keyBuilder.push(JSON.stringify(filterParams))
+    // Disable cache of list requests by default
+    if (!Object.prototype.hasOwnProperty.call(_params, 'noCache')) {
+      _params.noCache = true
     }
 
+    const Model = this.model
+    const url = await Model.getListUrl(_params.parents)
+
+    // Build key for request by url and filter
+    const keyBuilder = [url]
+    if (_params.filter && Object.keys(_params.filter).length > 0) {
+      keyBuilder.push(JSON.stringify(_params.filter))
+    }
+
+    // Retrieve ServiceStoreOptions
     const options = this.getServiceStoreOptions({
       key: keyBuilder.join('?'),
       sendRequest: this.sendListRequest.bind(this),
-      args: [url, params]
-    }, params)
+      args: [url, _params]
+    }, _params)
 
     const dataList: Array<ResponseData> = await Model.store.getData(options)
-    return dataList.map(data => new Model(data, parents))
+    return dataList.map(data => new Model(data, _params.parents))
   }
 
   /**

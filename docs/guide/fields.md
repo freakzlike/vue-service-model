@@ -122,10 +122,6 @@ const myObj = new MyModel({
 await myObj.val.full_name // output: Joe Bloggs
 ```
 
-## Field types
-
-Different field types will be added with future releases.
-
 ## Rendering
 
 By using the [`DisplayField`](/guide/components.html#displayfield) component you can render the value of a field for displaying purpose

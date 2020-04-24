@@ -1,8 +1,8 @@
-# ModelManager (`objects`)
+# ModelManager
 
 [[toc]]
 
-The `ModelManager` provides the interface to perform the api requests. At the moment there are 2 default interface methods.
+The `ModelManager` (`objects`) provides the interface to perform the api requests. At the moment there are 2 default interface methods.
 
 ## Retrieve list of data (`objects.list()`)
 
@@ -16,6 +16,13 @@ Album.objects.list() // Request: GET /albums/
 Photo.objects.list({parents: {album: 1}}) // Request: GET /albums/1/photos/
 Album.objects.list({filter: {userId: 1}}) // Request: GET /albums/?userId=1
 ```
+
+::: tip
+By default the response of a list request will not be cached. To enable caching you can set the option `noCache: false`.
+```js
+Album.objects.list({noCache: false}) // Request: GET /albums/ with cache
+```
+:::
 
 ## Retrieve single entry of data (`objects.detail()`)
 

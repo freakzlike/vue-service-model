@@ -38,9 +38,11 @@ module.exports = {
         path: '/guide/',
         collapsable: false,
         children: [
-          '/guide/base-model.md',
-          '/guide/service-model.md',
+          '/guide/getting-started.md',
+          '/guide/installation.md',
+          '/guide/models.md',
           '/guide/fields.md',
+          '/guide/service-model.md',
           '/guide/model-manager.md',
           '/guide/components.md'
         ]

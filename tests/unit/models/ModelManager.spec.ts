@@ -19,20 +19,16 @@ describe('models/ModelManager', () => {
   const PARENT_BASE_URL = 'test/{parent1}/base/{parent2}/url/'
 
   class BaseTestModel extends ServiceModel {
-    protected static cacheDuration = 0
+    protected static cacheDuration: number | null = 0
   }
 
   class TestModel extends BaseTestModel {
-    protected static urls = {
-      BASE: BASE_URL
-    }
+    protected static urls = BASE_URL
   }
 
   class ParentTestModel extends BaseTestModel {
     protected static parentNames = ['parent1', 'parent2']
-    protected static urls = {
-      BASE: PARENT_BASE_URL
-    }
+    protected static urls = PARENT_BASE_URL
   }
 
   const CACHED_TEST_MODEL_URL = '/parent/{parent}/model/'
@@ -40,9 +36,7 @@ describe('models/ModelManager', () => {
   class CachedTestModel extends ServiceModel {
     protected static parentNames = ['parent']
     protected static cacheDuration = null
-    protected static urls = {
-      BASE: CACHED_TEST_MODEL_URL
-    }
+    protected static urls = CACHED_TEST_MODEL_URL
   }
 
   const withMockedAxios = async (
@@ -62,7 +56,7 @@ describe('models/ModelManager', () => {
     }
   }
 
-  const checkModelParents = (model: BaseTestModel, parents?: ServiceParent) => {
+  const checkModelParents = (model: ServiceModel, parents?: ServiceParent) => {
     if (parents) {
       expect(model.parents).not.toBe(parents)
       expect(model.parents).toEqual(parents)
@@ -73,12 +67,12 @@ describe('models/ModelManager', () => {
 
   const checkListResponseData = (
     responseData: Array<Dictionary<any>>,
-    resultData: Array<BaseTestModel>,
-    model: typeof BaseTestModel,
+    resultData: Array<ServiceModel>,
+    model: typeof ServiceModel,
     parents?: ServiceParent
   ) => {
     expect(resultData).toHaveLength(responseData.length)
-    resultData.forEach((entry: BaseTestModel, index: number) => {
+    resultData.forEach((entry: ServiceModel, index: number) => {
       expect(entry).toBeInstanceOf(model)
       expect(entry.data).toEqual(responseData[index])
       checkModelParents(entry, parents)
@@ -190,31 +184,91 @@ describe('models/ModelManager', () => {
         const filter1 = { name: 1 }
         const filter2 = { name: 2 }
 
-        await CachedTestModel.objects.list({ parents: parents1, filter: filter1 })
+        await CachedTestModel.objects.list({ parents: parents1, filter: filter1, noCache: false })
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
         expect(mockedAxios.get.mock.calls[0]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents1), { params: filter1 }])
         expect(mockSendListRequest).toBeCalledTimes(1)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
         // Check if cached
-        await CachedTestModel.objects.list({ parents: parents1, filter: filter1 })
+        await CachedTestModel.objects.list({ parents: parents1, filter: filter1, noCache: false })
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
         expect(mockSendListRequest).toBeCalledTimes(1)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
         // Check with other filter
-        await CachedTestModel.objects.list({ parents: parents1, filter: filter2 })
+        await CachedTestModel.objects.list({ parents: parents1, filter: filter2, noCache: false })
         expect(mockedAxios.get.mock.calls).toHaveLength(2)
         expect(mockedAxios.get.mock.calls[1]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents1), { params: filter2 }])
         expect(mockSendListRequest).toBeCalledTimes(2)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(2)
 
         // Check with other parent
-        await CachedTestModel.objects.list({ parents: parents2, filter: filter1 })
+        await CachedTestModel.objects.list({ parents: parents2, filter: filter1, noCache: false })
         expect(mockedAxios.get.mock.calls).toHaveLength(3)
         expect(mockedAxios.get.mock.calls[2]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents2), { params: filter1 }])
         expect(mockSendListRequest).toBeCalledTimes(3)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(3)
+
+        mockSendListRequest.mockRestore()
+        mockMapListResponseBeforeCache.mockRestore()
+      })
+    })
+
+    it('should request all without cache', async () => {
+      class CacheTestModel extends TestModel {
+        protected static cacheDuration = null
+      }
+
+      const responseData = [{ text: 'Entry 1' }, { text: 'Entry 2' }]
+      await withMockedAxios(responseData, async mockedAxios => {
+        const mockSendListRequest = jest.spyOn(CacheTestModel.objects, 'sendListRequest')
+        const mockMapListResponseBeforeCache = jest.spyOn(CacheTestModel.objects, 'mapListResponseBeforeCache')
+
+        const resultData = await CacheTestModel.objects.list()
+        expect(mockedAxios.get.mock.calls).toHaveLength(1)
+        expect(mockedAxios.get.mock.calls).toEqual([[BASE_URL, {}]])
+
+        expect(mockSendListRequest).toBeCalledTimes(1)
+        expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
+
+        checkListResponseData(responseData, resultData, CacheTestModel)
+
+        // Check if not cached
+        await CacheTestModel.objects.list()
+        expect(mockedAxios.get.mock.calls).toHaveLength(2)
+        expect(mockSendListRequest).toBeCalledTimes(2)
+        expect(mockMapListResponseBeforeCache).toBeCalledTimes(2)
+
+        mockSendListRequest.mockRestore()
+        mockMapListResponseBeforeCache.mockRestore()
+      })
+    })
+
+    it('should request all with cache', async () => {
+      class CacheTestModel extends TestModel {
+        protected static cacheDuration = null
+      }
+
+      const responseData = [{ text: 'Entry 1' }, { text: 'Entry 2' }]
+      await withMockedAxios(responseData, async mockedAxios => {
+        const mockSendListRequest = jest.spyOn(CacheTestModel.objects, 'sendListRequest')
+        const mockMapListResponseBeforeCache = jest.spyOn(CacheTestModel.objects, 'mapListResponseBeforeCache')
+
+        const resultData = await CacheTestModel.objects.list({ noCache: false })
+        expect(mockedAxios.get.mock.calls).toHaveLength(1)
+        expect(mockedAxios.get.mock.calls).toEqual([[BASE_URL, {}]])
+
+        expect(mockSendListRequest).toBeCalledTimes(1)
+        expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
+
+        checkListResponseData(responseData, resultData, CacheTestModel)
+
+        // Check if cached
+        await CacheTestModel.objects.list({ noCache: false })
+        expect(mockedAxios.get.mock.calls).toHaveLength(1)
+        expect(mockSendListRequest).toBeCalledTimes(1)
+        expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
         mockSendListRequest.mockRestore()
         mockMapListResponseBeforeCache.mockRestore()

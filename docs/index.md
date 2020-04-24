@@ -4,7 +4,7 @@ heroImage: /logo.png
 heroText: vue-service-model
 tagline: Vue.js Library for handling REST service requests with caching, aggregation and model definitions.
 actionText: Get Started →
-actionLink: /guide/
+actionLink: /guide/getting-started/
 features:
 - title: Model definitions
   details: Define your backend REST services as models and use them for simple usage in your frontend.
@@ -26,95 +26,52 @@ footer: MIT Licensed | Copyright © 2020-present Freakzlike
 npm install vue-service-model
 ```
 
-## Example
+## Examples
 
-[Codepen example](https://codepen.io/freakzlike/pen/WNvWJXg)
-[Example project](https://github.com/freakzlike/vue-service-model-example)
+* [Codepen example](https://codepen.io/freakzlike/pen/WNvWJXg)
+* [Example project](https://github.com/freakzlike/vue-service-model-example)
 
-Definition of a simple `ServiceModel` without using fields. https://jsonplaceholder.typicode.com/albums/ is being used as an example REST JSON service.
+Definition of a simple [`ServiceModel`](/guide/service-model.html) without using fields. https://jsonplaceholder.typicode.com/albums/ is being used as an example REST JSON service.
 ```js
-import {ServiceModel} from 'vue-service-model'
+import {ServiceModel, Field} from 'vue-service-model'
 
 class Album extends ServiceModel {
   // Define service url
-  static urls = {
-    BASE: 'https://jsonplaceholder.typicode.com/albums/'
-  }
-}
-```
+  static urls = 'https://jsonplaceholder.typicode.com/albums/'
 
-Retrieve data from a service. `objects.detail()` will return a model instance. `objects.list()` will return a list of model instances.
-
-```js
-// Retrieve all albums from /albums/
-const allAlbums = await Album.objects.list()
-
-// Retrieve specific album from /albums/1/
-const album = await Album.objects.detail(1)
-
-// Retrieve filtered list from /albums/?userId=1
-const userAlbums = await Album.objects.list({filter: {userId: 1}})
-
-// Reloading model data from service
-await album.reload()
-```
-
-You can also define [fields](/guide/fields.html) for your model.
-
-```js
-class Album extends ServiceModel {
-  [...]
-
+  // Define model fields
   static fieldsDef = {
     id: new Field({primaryKey: true}),
     title: new Field()
   }
 }
 
-const album = await Album.objects.detail(1)
+// Retrieve all albums from /albums/
+const allAlbums = await Album.objects.list()
 
-// Retrieve primary key
-album.pk // Output: 1
+// Retrieve specific album from /albums/1/
+const album = await Album.objects.detail(1)
 
 // Retrieve value for field title
 await album.val.title // Output: Album title
-```
 
-If you want to create, update or delete your backend data you can use the following methods.
-
-### Create
-```js
-// Create new album directly
-await Album.objects.create({title: 'New album'})
-
-// Or create by calling .create on model instance
-const album = new Album({title: 'New album'})
-await album.create()
-```
-
-### Update
-```js
-// Update an album
-await Album.objects.update(1, {title: 'Updated album'})
-
-// Or update by calling .update on model instance
+// Set new title for album
 album.val.title = 'Updated album'
+
+// Update album by doing a PUT request to /albums/1/
 await album.update()
 ```
 
-::: tip
-You can also use `.save()` for create or update. It will call `.create()` if no primary key if set.
-Otherwise `.update()` will be called. 
-:::
+### Mapping of service URLs to vue-service-model methods
 
-### Delete
-```js
-// Delete specific album
-await Album.objects.delete(1)
+| Url      | HTTP Method | vue-service-model methods |
+| ------------ | ------ | ---- |
+| /albums/      | GET    | `Album.objects.list()` |
+| /albums/      | POST   | `Album.objects.create()` or `album.create()` |
+| /albums/{pk}/ | GET    | `Album.objects.detail()` or `album.reload()` |
+| /albums/{pk}/ | PUT    | `Album.objects.update()` or `album.update()` |
+| /albums/{pk}/ | DELETE | `Album.objects.delete()` or `album.delete()` |
 
-// Delete current album instance
-await album.delete()
-```
 
 ### Rendering:
 

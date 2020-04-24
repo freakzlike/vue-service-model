@@ -1,4 +1,4 @@
-# BaseModel
+# Models
 
 [[toc]]
 
@@ -56,3 +56,4 @@ const myObj = new MyModel({
 await myObj.val.first_name // output: Joe
 await myObj.val.last_name // output: Bloggs
 ```
+
