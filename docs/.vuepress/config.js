@@ -42,19 +42,9 @@ module.exports = {
           '/guide/installation.md',
           '/guide/models.md',
           '/guide/fields.md',
-          '/guide/service-model.md'
-        ]
-      },
-      {
-        title: 'Guide (Old)',
-        path: '/guide-old/',
-        collapsable: false,
-        children: [
-          '/guide-old/base-model.md',
-          '/guide-old/service-model.md',
-          '/guide-old/fields.md',
-          '/guide-old/model-manager.md',
-          '/guide-old/components.md'
+          '/guide/service-model.md',
+          '/guide/model-manager.md',
+          '/guide/components.md'
         ]
       },
       {

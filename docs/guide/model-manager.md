@@ -1,14 +1,14 @@
-# ModelManager (`objects`)
+# ModelManager
 
 [[toc]]
 
-The `ModelManager` provides the interface to perform the api requests. At the moment there are 2 default interface methods.
+The `ModelManager` (`objects`) provides the interface to perform the api requests. At the moment there are 2 default interface methods.
 
 ## Retrieve list of data (`objects.list()`)
 
 `objects.list()` is used to request a list of data (e.g. `/albums/`) and will return a list of model instances.
 You can optionally set [`RetrieveInterfaceParams`](#retrieveinterfaceparams) as only argument.
-The method will use [`getListUrl`](/guide-old/service-model.html#urls), [`sendListRequest`](#custom-modelmanager) and [`mapListResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
+The method will use [`getListUrl`](/guide/service-model.html#urls), [`sendListRequest`](#custom-modelmanager) and [`mapListResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
 
 Examples:
 ```js
@@ -21,7 +21,7 @@ Album.objects.list({filter: {userId: 1}}) // Request: GET /albums/?userId=1
 
 `objects.detail()` is used to request a single entry (e.g. `/albums/1/`) and will return a model instance.
 The first argument is the primary key which can either be a `string` or `number`. You can optionally set [`RetrieveInterfaceParams`](#retrieveinterfaceparams) as second argument.
-The method will use [`getDetailUrl`](/guide-old/service-model.html#urls), [`sendDetailRequest`](#custom-modelmanager) and [`mapDetailResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
+The method will use [`getDetailUrl`](/guide/service-model.html#urls), [`sendDetailRequest`](#custom-modelmanager) and [`mapDetailResponseBeforeCache`](#custom-modelmanager) which can be overwritten for customization.
 
 Examples:
 ```js
@@ -32,7 +32,7 @@ Photo.objects.detail(5, {parents: {album: 1}}) // Request: GET /albums/1/photos/
 ## Create single entry (`objects.create()`)
 
 `objects.create()` is used to create a single entry under (e.g. `/albums/`) by sending a request with method `POST`.
-You can provide your data you want to send with post as first argument. The method will use [`getListUrl`](/guide-old/service-model.html#urls) and [`sendCreateRequest`](#custom-modelmanager).
+You can provide your data you want to send with post as first argument. The method will use [`getListUrl`](/guide/service-model.html#urls) and [`sendCreateRequest`](#custom-modelmanager).
 
 Examples:
 ```js
@@ -44,7 +44,7 @@ Photo.objects.create({title: 'New Photo'}, {parents: {album: 1}}) // Request: PO
 
 `objects.update()` is used to update a single entry under (e.g. `/albums/1/`) by sending a request with method `PUT`.
 The first argument is the primary key which can either be a `string` or `number`. You can provide your data you want to send with put as first argument.
-The method will use [`getDetailUrl`](/guide-old/service-model.html#urls) and [`sendUpdateRequest`](#custom-modelmanager).
+The method will use [`getDetailUrl`](/guide/service-model.html#urls) and [`sendUpdateRequest`](#custom-modelmanager).
 
 Examples:
 ```js
@@ -55,7 +55,7 @@ Photo.objects.update(5, {title: 'Updated Photo'}, {parents: {album: 1}}) // Requ
 ## Delete single entry (`objects.delete()`)
 
 `objects.delete()` is used to delete a single entry under (e.g. `/albums/1/`) by sending a request with method `DELETE`.
-The method will use [`getDetailUrl`](/guide-old/service-model.html#urls) and [`sendDeleteRequest`](#custom-modelmanager).
+The method will use [`getDetailUrl`](/guide/service-model.html#urls) and [`sendDeleteRequest`](#custom-modelmanager).
 
 Examples:
 ```js
@@ -65,7 +65,7 @@ Photo.objects.delete(5, {parents: {album: 1}}) // Request: DELETE /albums/1/phot
 
 ## RetrieveInterfaceParams
 
-With `RetrieveInterfaceParams` you can provide additional parameters for `objects.list()` and `objects.detail()` e.g. for using query parameters or [parents](/guide-old/service-model.html#parents).
+With `RetrieveInterfaceParams` you can provide additional parameters for `objects.list()` and `objects.detail()` e.g. for using query parameters or [parents](/guide/service-model.html#parents).
 
 Full structure example:
 ```js

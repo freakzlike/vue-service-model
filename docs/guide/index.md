@@ -12,3 +12,5 @@
 * [Models](/guide/models/)
 * [Fields](/guide/fields/)
 * [ServiceModel](/guide/service-model/)
+* [ModelManager](/guide/model-manager/)
+* [Components](/guide/components/)

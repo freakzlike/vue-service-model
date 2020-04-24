@@ -31,7 +31,7 @@ npm install vue-service-model
 * [Codepen example](https://codepen.io/freakzlike/pen/WNvWJXg)
 * [Example project](https://github.com/freakzlike/vue-service-model-example)
 
-Definition of a simple `ServiceModel` without using fields. https://jsonplaceholder.typicode.com/albums/ is being used as an example REST JSON service.
+Definition of a simple [`ServiceModel`](/guide/service-model.html) without using fields. https://jsonplaceholder.typicode.com/albums/ is being used as an example REST JSON service.
 ```js
 import {ServiceModel, Field} from 'vue-service-model'
 
@@ -77,12 +77,12 @@ await album.update()
 
 ### Rendering:
 
-By using a common component [`DisplayField`](/guide-old/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
+By using a common component [`DisplayField`](/guide/components.html#displayfield) you can render the value of a field for display purpose anywhere in your application with the same output.
 ```vue
 <display-field :model="album" field-name="title"/>
 ```
 
-Or [`InputField`](/guide-old/components.html#inputfield) for an input field.
+Or [`InputField`](/guide/components.html#inputfield) for an input field.
 
 ```vue
 <input-field :model="album" field-name="title"/>

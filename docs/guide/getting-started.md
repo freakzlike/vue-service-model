@@ -1,6 +1,9 @@
 # Getting started
 
+::: tip
 For quick prototyping you can use this [Codepen example](https://codepen.io/freakzlike/pen/WNvWJXg) or checkout the [example project](https://github.com/freakzlike/vue-service-model-example).
+:::
+
 [https://jsonplaceholder.typicode.com/albums/](https://jsonplaceholder.typicode.com/albums/) is being used as an example REST JSON service.
 
 [[toc]]
@@ -37,7 +40,7 @@ class Album extends ServiceModel {
 Set your service url at `urls.BASE` which will be used when making common REST service requests.
 
 
-At `fieldsDef` you can declare fields of your model as plain object where the key is your field name as key and the field instance as value.
+At [`fieldsDef`](/guide/models.html#model-fields-fieldsdef) you can declare fields of your model as plain object where the key is your field name as key and the field instance as value.
 With `primaryKey: true` the field `id` will be set as the primary key of your model and will be used to make requests.
 
 
@@ -71,8 +74,8 @@ console.log(album.pk) // 3
 
 ## Making service requests
 
-There are currently 2 ways to make service requests. As static method without relation to a model instance (called `ModelManager`) or specific services of a model instance (like `update` or `delete`).
-The `ModelManager` of a `ServiceModel` can be accessed by `Album.objects` and is used for every service request.
+There are currently 2 ways to make service requests. As static method without relation to a model instance (called [`ModelManager`](/guide/model-manager/)) or specific services of a model instance (like `update` or `delete`).
+The [`ModelManager`](/guide/model-manager/) of a [`ServiceModel`](/guide/service-model.html) can be accessed by `Album.objects` and is used for every service request.
 
 ::: tip
 * The response of `GET` requests will automatically be cached for 30 seconds
@@ -160,7 +163,7 @@ await Album.objects.delete(1)
 
 ## Use components
 
-To make it easy to render the value or an input element of a field you can use the `DisplayField` and the `InputField` component.
+To make it easy to render the value or an input element of a field you can use the [`DisplayField`](/guide/components.html#displayfield) and the [`InputField`](/guide/components.html#inputfield) component.
 This is useful when having multiple field types (like numeric or boolean fields) so the value will be displayed user friendly and the correct input element will be rendered (e.g. a checkbox) .
 
 ```vue
