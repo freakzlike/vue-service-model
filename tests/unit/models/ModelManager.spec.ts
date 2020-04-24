@@ -23,16 +23,12 @@ describe('models/ModelManager', () => {
   }
 
   class TestModel extends BaseTestModel {
-    protected static urls = {
-      BASE: BASE_URL
-    }
+    protected static urls = BASE_URL
   }
 
   class ParentTestModel extends BaseTestModel {
     protected static parentNames = ['parent1', 'parent2']
-    protected static urls = {
-      BASE: PARENT_BASE_URL
-    }
+    protected static urls = PARENT_BASE_URL
   }
 
   const CACHED_TEST_MODEL_URL = '/parent/{parent}/model/'
@@ -40,9 +36,7 @@ describe('models/ModelManager', () => {
   class CachedTestModel extends ServiceModel {
     protected static parentNames = ['parent']
     protected static cacheDuration = null
-    protected static urls = {
-      BASE: CACHED_TEST_MODEL_URL
-    }
+    protected static urls = CACHED_TEST_MODEL_URL
   }
 
   const withMockedAxios = async (

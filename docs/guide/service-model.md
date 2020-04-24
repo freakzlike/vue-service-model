@@ -9,9 +9,7 @@ store to keep track of [aggregation](#aggregation) of running requests and optio
 import {ServiceModel, Field} from 'vue-service-model'
 
 class Album extends ServiceModel {
-  static urls = {
-    BASE: 'https://jsonplaceholder.typicode.com/albums/'
-  }
+  static urls = 'https://jsonplaceholder.typicode.com/albums/'
 
   // Duration to cache requested data in seconds. 0: no cache. null: Cache forever. Default is 30 seconds
   static cacheDuration = 5
@@ -31,13 +29,11 @@ Urls are currently divided into 2 different types. `LIST` and `DETAIL` (same lik
 * `DETAIL`: (e.g. `/albums/1/`) used for [`objects.detail(1)`](/guide/model-manager.html#retrieve-single-entry-of-data-objectsdetail)
 
 
-The simplest way to define the urls is to set the static property `urls.BASE` in your `ServiceModel`.
+The simplest way to define the urls is to set the static property `urls` in your `ServiceModel`.
 ```js
-static urls = {
-  BASE: 'https://jsonplaceholder.typicode.com/albums/'
-}
+static urls = 'https://jsonplaceholder.typicode.com/albums/'
 ```
-When performing a detail request your key will be automatically appended to the end of the `BASE` url.
+When performing a detail request your key will be automatically appended to the end of the url.
 
 You can also define the `LIST` and `DETAIL` url separately:
 ```js
@@ -51,7 +47,7 @@ static urls = {
 There are currently 3 ways to define your url with the following priority
 1. Overwrite `getListUrl` or `getDetailUrl` method and a return a `Promise` which will resolve the url as a string
 1. Set the `LIST` or `DETAIL` url in your model `static urls = { LIST: <...>, DETAIL: <...> }`
-1. Set the `BASE` url in your model `static urls = { BASE: <...> }`
+1. Set the base url in your model as string `static urls = '<...>'` or `static urls = { BASE: <...> }`
 
 If you got a nested RESTful service structure (e.g. `/albums/1/photos/`) have a look at [parents](#parents).
 
@@ -90,10 +86,8 @@ class Photo extends ServiceModel {
   // Define name of parents
   static parentNames = ['album']
 
-  static urls = {
-    // Add placeholder for parent in your url
-    BASE: 'https://jsonplaceholder.typicode.com/albums/{album}/photos/'
-  }
+  // Add placeholder for parent in your url
+  static urls = 'https://jsonplaceholder.typicode.com/albums/{album}/photos/'
 }
 
 // Retrieve all photos from album 1: /albums/1/photos/

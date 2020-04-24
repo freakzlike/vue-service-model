@@ -25,9 +25,7 @@ import {ServiceModel, Field} from 'vue-service-model'
 
 class Album extends ServiceModel {
   // Define service url
-  static urls = {
-    BASE: 'https://jsonplaceholder.typicode.com/albums/'
-  }
+  static urls = 'https://jsonplaceholder.typicode.com/albums/'
 
   // Define model fields
   static fieldsDef = {

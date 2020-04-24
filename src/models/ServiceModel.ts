@@ -20,7 +20,7 @@ export class ServiceModel extends BaseModel {
     BASE?: string | null
     LIST?: string | null
     DETAIL?: string | null
-  } = {}
+  } | string = {}
 
   /**
    * List of parent names to be used in url
@@ -84,7 +84,9 @@ export class ServiceModel extends BaseModel {
     this.checkServiceParents(parents)
 
     const url: string = (() => {
-      if (this.urls.LIST) {
+      if (typeof this.urls === 'string') {
+        return this.urls
+      } else if (this.urls.LIST) {
         return this.urls.LIST
       } else if (this.urls.BASE) {
         return this.urls.BASE
@@ -107,7 +109,9 @@ export class ServiceModel extends BaseModel {
     this.checkServiceParents(parents)
 
     const url: string = (() => {
-      if (this.urls.DETAIL) {
+      if (typeof this.urls === 'string') {
+        return this.urls + '{pk}/'
+      } else if (this.urls.DETAIL) {
         return this.urls.DETAIL
       } else if (this.urls.BASE) {
         return this.urls.BASE + '{pk}/'

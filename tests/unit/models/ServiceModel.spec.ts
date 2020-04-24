@@ -71,6 +71,16 @@ describe('models/ServiceModel', () => {
       expect(await TestModel.getListUrl(parents)).toBe('list-url/val/text/15/')
     })
 
+    it('should return urls', async () => {
+      const baseUrl = 'base-url/'
+
+      class TestModel extends ServiceModel {
+        protected static urls = baseUrl
+      }
+
+      expect(await TestModel.getListUrl()).toBe(baseUrl)
+    })
+
     it('should return urls.BASE', async () => {
       const baseUrl = 'base-url/'
 
@@ -126,6 +136,14 @@ describe('models/ServiceModel', () => {
       }
 
       expect(await TestModel.getDetailUrl(11, parents)).toBe('detail-url/val/text/15/11/')
+    })
+
+    it('should return urls.BASE', async () => {
+      class TestModel extends ServiceModel {
+        protected static urls = 'base-url/'
+      }
+
+      expect(await TestModel.getDetailUrl('pk-value')).toBe('base-url/pk-value/')
     })
 
     it('should return urls.BASE', async () => {

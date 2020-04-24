@@ -4,11 +4,12 @@
 class ServiceModel extends BaseModel {
   // Default URL definition for backend APIs
   // Fill either LIST/DETAIL or BASE url or use other urls by overwriting getListUrl/getDetailUrl
+  // Can be set as string which is equal to { BASE: ... }
   protected static urls: {
     BASE: string | null
     LIST: string | null
     DETAIL: string | null
-  }
+  } | string
 
   // List of parent names to be used in url
   // Required if using parents
