@@ -41,6 +41,7 @@ class Album extends ServiceModel {
     BASE: 'https://jsonplaceholder.typicode.com/albums/'
   }
 
+  // Define model fields
   static fieldsDef = {
     id: new Field({primaryKey: true}),
     title: new Field()
@@ -63,15 +64,15 @@ album.val.title = 'Updated album'
 await album.update()
 ```
 
-### Service URL mapping to vue-service-model methods
+### Mapping of service URLs to vue-service-model methods
 
-| Url      | Method | vue-service-model methods |
+| Url      | HTTP Method | vue-service-model methods |
 | ------------ | ------ | ---- |
-| /album/      | GET    | `Album.objects.list()` |
-| /album/      | POST   | `Album.objects.create()` or `album.create()` |
-| /album/{pk}/ | GET    | `Album.objects.detail()` or `album.reload()` |
-| /album/{pk}/ | PUT    | `Album.objects.update()` or `album.update()` |
-| /album/{pk}/ | DELETE | `Album.objects.delete()` or `album.delete()` |
+| /albums/      | GET    | `Album.objects.list()` |
+| /albums/      | POST   | `Album.objects.create()` or `album.create()` |
+| /albums/{pk}/ | GET    | `Album.objects.detail()` or `album.reload()` |
+| /albums/{pk}/ | PUT    | `Album.objects.update()` or `album.update()` |
+| /albums/{pk}/ | DELETE | `Album.objects.delete()` or `album.delete()` |
 
 
 ### Rendering:
