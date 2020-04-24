@@ -16,28 +16,10 @@
 * Caches response from services
 * Uses [axios](https://github.com/axios/axios) for service request
 * Field specific [rendering](https://freakzlike.github.io/vue-service-model/guide/fields.html#rendering) with common component for consistent display of field values
-* ... [more later](#future)
 
 ## [Documentation](https://freakzlike.github.io/vue-service-model/)
 
 ## [Example project](https://github.com/freakzlike/vue-service-model-example)
-
-## Future
-
-* Models
-  * Synchronize mode to update model data 
-  * Cache
-    * Define a different cacheDuration for a specific request
-    * Use cache from list response also for detail requests
-    * "garbage collector" to remove expired cache
-* Fields
-  * Different field types
-  * Standalone field instances
-  * Accessing foreign key fields and retrieving foreign model instances
-  * Methods to allow generation of input components according to field type
-  * Loading slot for `DisplayField`
-* Global configuration with hooks
-* ...
 
 ## Contribution
 
