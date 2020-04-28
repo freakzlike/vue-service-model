@@ -103,7 +103,11 @@ export class ModelManager {
 
     const Model = this.model
     const url = await Model.getDetailUrl(pk, parents)
-    return this.sendUpdateRequest(url, pk, data, params)
+    if (params && params.partial) {
+      return this.sendPartialUpdateRequest(url, pk, data, params)
+    } else {
+      return this.sendUpdateRequest(url, pk, data, params)
+    }
   }
 
   /**
@@ -246,6 +250,23 @@ export class ModelManager {
     let response
     try {
       response = await axios.put(url, data)
+    } catch (error) {
+      throw await this.handleResponseError(error)
+    }
+    return response.data
+  }
+
+  /**
+   * Send actual partial update (PATCH) service request
+   * @param url
+   * @param pk
+   * @param data
+   * @param params
+   */
+  public async sendPartialUpdateRequest (url: string, pk: PrimaryKey, data: any, params?: UpdateInterfaceParams): Promise<any> {
+    let response
+    try {
+      response = await axios.patch(url, data)
     } catch (error) {
       throw await this.handleResponseError(error)
     }

@@ -65,6 +65,15 @@ class ModelManager {
   // Gets called when doing an update request with objects.update()
   public async sendUpdateRequest (url: string, pk: PrimaryKey, data: any, params?: UpdateInterfaceParams): Promise<any>
 
+  // Send actual partial update (PATCH) service request
+  // Gets called when doing an update request with objects.update({partial: true)
+  public async sendPartialUpdateRequest (
+    url: string,
+    pk: PrimaryKey,
+    data: any,
+    params?: UpdateInterfaceParams
+  ): Promise<any>
+
   // Send actual delete (DELETE) service request
   // Gets called when doing a delete request with objects.delete()
   public async sendDeleteRequest (url: string, pk: PrimaryKey, params?: DeleteInterfaceParams): Promise<null>

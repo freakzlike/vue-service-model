@@ -503,6 +503,28 @@ describe('models/ModelManager', () => {
       }, 'put')
     })
 
+    it('should send partial update request', async () => {
+      const responseData = { value: 1, id: 5 }
+      await withMockedAxios(responseData, async mockedAxios => {
+        const mockSendPartialUpdateRequest = jest.spyOn(TestModel.objects, 'sendPartialUpdateRequest')
+        const mockSendUpdateRequest = jest.spyOn(TestModel.objects, 'sendUpdateRequest')
+
+        const pk = 1
+        const putData = { value: 1 }
+        const result = await TestModel.objects.update(1, putData, { partial: true })
+
+        const url = BASE_URL + pk + '/'
+        expect(mockedAxios.patch.mock.calls).toHaveLength(1)
+        expect(mockedAxios.patch.mock.calls).toEqual([[url, putData]])
+        expect(mockSendPartialUpdateRequest).toBeCalledTimes(1)
+        expect(mockSendUpdateRequest).not.toBeCalled()
+
+        expect(result).toBe(responseData)
+        mockSendPartialUpdateRequest.mockRestore()
+        mockSendUpdateRequest.mockRestore()
+      }, 'patch')
+    })
+
     it('should handle error from service', async () => {
       await withMockedAxios(null, async mockedAxios => {
         const mockHandleResponseError = jest.spyOn(TestModel.objects, 'handleResponseError')
@@ -514,6 +536,19 @@ describe('models/ModelManager', () => {
         expect(mockHandleResponseError).toBeCalledTimes(1)
         mockHandleResponseError.mockRestore()
       }, 'put')
+    })
+
+    it('should handle error from service on partial update', async () => {
+      await withMockedAxios(null, async mockedAxios => {
+        const mockHandleResponseError = jest.spyOn(TestModel.objects, 'handleResponseError')
+        const customError = new Error('Handle error')
+        mockedAxios.patch.mockRejectedValue(customError)
+
+        expect.assertions(2)
+        await expect(TestModel.objects.update(1, { value: 1 }, { partial: true })).rejects.toBe(customError)
+        expect(mockHandleResponseError).toBeCalledTimes(1)
+        mockHandleResponseError.mockRestore()
+      }, 'patch')
     })
   })
 
