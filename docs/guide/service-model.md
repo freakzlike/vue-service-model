@@ -52,6 +52,89 @@ There are currently 3 ways to define your url with the following priority
 If you got a nested RESTful service structure (e.g. `/albums/1/photos/`) have a look at [parents](#parents).
 
 
+## Service methods
+
+There are several methods to make it even more easy to do service requests in relation to your model instance.
+It is required to define a [primary key field](/guide/fields.html#field-definition) in your model definition.
+
+### Reloading model data
+
+To reload the data of your current model instance you can call `myModel.reload()`.
+This method will send a detail request (equal to [`myModel.objects.detail()`](/guide/model-manager.html#retrieve-single-entry-of-data-objects-detail)) and does not use the cache.
+It is required that your primary key field is filled otherwise the method will return `false`.
+
+::: warning
+Any changes made to your model data will be overwritten
+:::
+ 
+```js
+const album = await Album.objects.detail(1) // Request: GET /albums/1/
+
+[...]
+
+await album.reload() // Request: GET /albums/1/
+```
+
+
+### Updating your model data
+
+In case you want to save your local model data you can either use `myModel.update()`. It is required that your primary key field is filled otherwise the method will return `false`.
+
+`myModel.update()` will internally call the `ModelManager` method [`objects.update()`](/guide/model-manager.html#update-single-entry-objects-update) with your model primary key, parents and data.
+
+```js
+const album = await Album.objects.detail(1) // Request: GET /albums/1/
+
+album.val.title = 'New title'
+
+await album.update() // Request: PUT /albums/1/
+```
+
+
+### Creating a new model record
+
+To create a new record you can call `myModel.create()`.
+
+`myModel.create()` will internally call the `ModelManager` method [`objects.create()`](/guide/model-manager.html#create-single-entry-objects-create) with your model parents and data.
+
+```js
+const album = new Album({title: 'New album'})
+await album.create() // Request: POST /albums/
+```
+
+### Create or update a model instance
+
+When calling `myModel.save()` the method will check if the primary key of your model instance is filled. If so `myModel.update()` if not `myModel.create()` will be called.
+The return value is a boolean flag if the `myModel.create()` has been called or not.
+
+```js
+const album = new Album({title: 'New album'})
+
+console.log(album.pk) // Output: null
+
+await album.save() // Request: POST /albums/
+
+console.log(album.pk) // Output: 5
+
+await album.save() // Request: PUT /albums/5/
+```
+
+### Deleting a model record
+
+To delete an existing record you can call `myModel.delete()`.
+It is required that your primary key field is filled otherwise the method will return `false`.
+
+`myModel.delete()` will internally call the `ModelManager` method [`objects.delete()`](/guide/model-manager.html#delete-single-entry-objects-delete) with your model primary key and parents.
+
+```js
+const album = await Album.objects.detail(1) // Request: GET /albums/1/
+ 
+[...]
+
+await album.delete() // Request: DELETE /albums/1/
+```
+
+
 
 ## Aggregation
 
