@@ -24,6 +24,12 @@ module.exports = {
       env: {
         jest: true
       }
+    },
+    {
+      files: ['*.js'],
+      rules: {
+        semi: 'off'
+      }
     }
   ]
 }
