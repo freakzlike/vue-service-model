@@ -21,7 +21,8 @@ describe('exports', () => {
       ...fieldsExports,
       ...modelsExports,
       ...storeExports,
-      ...componentsExports
+      ...componentsExports,
+      'config'
     ])
   })
 
