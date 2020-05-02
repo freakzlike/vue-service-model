@@ -15,7 +15,7 @@ describe('utils/ConfigHandler', () => {
       const _config = configHandler.getConfig()
       const mockGetConfig = jest.spyOn(configHandler, 'getConfig').mockImplementation(() => _config)
       const spyEvent = jest.spyOn(_config.events, 'onSendDetailRequest').mockImplementation()
-      const args = [{x: 1}]
+      const args = [{ x: 1 }]
 
       configHandler.emitEvent('onSendDetailRequest', args)
 

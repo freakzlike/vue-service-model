@@ -3,7 +3,13 @@ import cu from '../utils/common'
 
 const defaultConfig: Config = {
   events: {
-    onSendDetailRequest: () => {}
+    onSendDetailRequest: () => {},
+    onSendListRequest: () => {},
+    onSendCreateRequest: () => {},
+    onSendUpdateRequest: () => {},
+    onSendPartialUpdateRequest: () => {},
+    onSendDeleteRequest: () => {},
+    onResponseError: () => {}
   }
 }
 
