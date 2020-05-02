@@ -11,7 +11,7 @@ export interface Config {
   /**
    * Events
    */
-  events: {
+  events?: {
     /**
      * Gets called on every ModelManager.sendDetailRequest
      */
@@ -83,4 +83,5 @@ export interface Config {
   }
 }
 
-export declare const config: Config
+export declare function setConfig (_config: Config): void
+export declare function getConfig (): Config

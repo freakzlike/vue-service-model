@@ -10,6 +10,7 @@ describe('exports', () => {
   const componentsExports = [
     'BaseDisplayFieldRender', 'BaseInputFieldRender', 'DisplayField', 'InputField', 'FieldLabel'
   ]
+  const configExports = ['getConfig', 'setConfig']
 
   const checkExports = (modules: object, expectedExports: string[]) => {
     expect(Object.keys(modules).sort()).toEqual(expectedExports.sort())
@@ -22,7 +23,7 @@ describe('exports', () => {
       ...modelsExports,
       ...storeExports,
       ...componentsExports,
-      'config'
+      ...configExports
     ])
   })
 

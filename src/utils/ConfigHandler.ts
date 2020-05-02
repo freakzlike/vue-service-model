@@ -1,4 +1,4 @@
-import { config, Config } from '../config'
+import { getConfig, Config } from '../config'
 import cu from '../utils/common'
 
 const defaultConfig: Config = {
@@ -17,7 +17,7 @@ export const configHandler = {
   defaultConfig,
 
   getConfig () {
-    return cu.mergeDeep({}, defaultConfig, config)
+    return cu.mergeDeep({}, defaultConfig, getConfig())
   },
 
   emitEvent (event: string, args: any[]) {
