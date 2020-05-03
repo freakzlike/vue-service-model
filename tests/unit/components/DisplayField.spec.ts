@@ -112,7 +112,7 @@ describe('components/DisplayField', () => {
 
     wrapper.setProps({ fieldName: 'description' })
 
-    await wrapper.vm.$nextTick()
+    await renderDisplayField(wrapper)
     expect(wrapper.text()).toBe(modelData.description)
   })
 
@@ -132,7 +132,7 @@ describe('components/DisplayField', () => {
 
     wrapper.setProps({ field: model.getField('description') })
 
-    await wrapper.vm.$nextTick()
+    await renderDisplayField(wrapper)
     expect(wrapper.text()).toBe(modelData.description)
   })
 })

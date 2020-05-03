@@ -44,7 +44,8 @@ module.exports = {
           '/guide/fields.md',
           '/guide/service-model.md',
           '/guide/model-manager.md',
-          '/guide/components.md'
+          '/guide/components.md',
+          '/guide/configuration.md'
         ]
       },
       {
@@ -54,7 +55,8 @@ module.exports = {
           '/api/base-model.md',
           '/api/service-model.md',
           '/api/fields.md',
-          '/api/model-manager.md'
+          '/api/model-manager.md',
+          '/api/configuration.md'
         ]
       }
     ]

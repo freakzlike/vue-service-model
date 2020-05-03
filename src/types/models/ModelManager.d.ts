@@ -49,7 +49,12 @@ export interface UpdateInterfaceParams {
   /**
    * Service parents to handle nested RESTful services
    */
-  parents?: ServiceParent
+  parents?: ServiceParent,
+
+  /**
+   * Flag whether a partial update (PATCH) should be send or not
+   */
+  partial?: boolean
 }
 
 /**

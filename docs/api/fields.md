@@ -50,17 +50,25 @@ class Field {
   // For more information see Field - Rendering 
   public get displayComponent (): Promise<ComponentModule>
 
+  // Async function to prepare before displayRender gets called
+  // Can return any data which needs to be resolved for displayRender
+  public async prepareDisplayRender (): Promise<any>
+
   // Simple Vue render function when using default displayComponent when displaying value with <display-field/>
   // For more information see Field - Rendering 
-  public displayRender (h: CreateElement, resolvedValue: any): VNode
+  public displayRender (h: CreateElement, renderData: any): VNode
 
   // Input component to render when showing input for field with <input-field/>
   // For more information see Field - Rendering 
   public get inputComponent (): Promise<ComponentModule>
 
+  // Async function to prepare before inputRender gets called
+  // Can return any data which needs to be resolved for inputRender
+  public async prepareInputRender (): Promise<any>
+
   // Simple Vue render function when using default inputComponent for input of field value with <input-field/>
   // For more information see Field - Rendering 
-  public inputRender (h: CreateElement, resolvedValue: any): VNode
+  public inputRender (h: CreateElement, renderData: any): VNode
 
 }
 ```

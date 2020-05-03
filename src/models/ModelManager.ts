@@ -2,6 +2,7 @@ import Dictionary from '../types/Dictionary'
 import { ServiceModel } from './ServiceModel'
 import { ServiceStoreOptions } from '../types/store/ServiceStore'
 import axios, { AxiosRequestConfig } from 'axios'
+import { configHandler } from '../utils/ConfigHandler'
 import {
   ResponseData,
   RetrieveInterfaceParams,
@@ -103,7 +104,11 @@ export class ModelManager {
 
     const Model = this.model
     const url = await Model.getDetailUrl(pk, parents)
-    return this.sendUpdateRequest(url, pk, data, params)
+    if (params && params.partial) {
+      return this.sendPartialUpdateRequest(url, pk, data, params)
+    } else {
+      return this.sendUpdateRequest(url, pk, data, params)
+    }
   }
 
   /**
@@ -155,10 +160,13 @@ export class ModelManager {
     pk: PrimaryKey,
     params?: RetrieveInterfaceParams
   ): Promise<ResponseData> {
-    const config = await this.buildRetrieveRequestConfig(params)
+    const requestConfig = await this.buildRetrieveRequestConfig(params)
+
+    configHandler.emitEvent('onSendDetailRequest', [{ modelManager: this, url, pk, params }])
+
     let response
     try {
-      response = await axios.get(url, config)
+      response = await axios.get(url, requestConfig)
     } catch (error) {
       throw await this.handleResponseError(error)
     }
@@ -168,11 +176,6 @@ export class ModelManager {
 
   /**
    * Map raw response data from detail service request before cache
-   * @param options
-   * @param data
-   * @param url
-   * @param pk
-   * @param params
    */
   public async mapDetailResponseBeforeCache (
     options: ServiceStoreOptions,
@@ -192,10 +195,13 @@ export class ModelManager {
     url: string,
     params?: RetrieveInterfaceParams
   ): Promise<Array<ResponseData>> {
-    const config = await this.buildRetrieveRequestConfig(params)
+    const requestConfig = await this.buildRetrieveRequestConfig(params)
+
+    configHandler.emitEvent('onSendListRequest', [{ modelManager: this, url, params }])
+
     let response
     try {
-      response = await axios.get(url, config)
+      response = await axios.get(url, requestConfig)
     } catch (error) {
       throw await this.handleResponseError(error)
     }
@@ -205,10 +211,6 @@ export class ModelManager {
 
   /**
    * Map raw response data from list service request before cache
-   * @param options
-   * @param data
-   * @param url
-   * @param params
    */
   public async mapListResponseBeforeCache (
     options: ServiceStoreOptions,
@@ -221,11 +223,10 @@ export class ModelManager {
 
   /**
    * Send actual create (POST) service request
-   * @param url
-   * @param data
-   * @param params
    */
   public async sendCreateRequest (url: string, data: any, params?: CreateInterfaceParams): Promise<any> {
+    configHandler.emitEvent('onSendCreateRequest', [{ modelManager: this, url, data, params }])
+
     let response
     try {
       response = await axios.post(url, data)
@@ -237,12 +238,10 @@ export class ModelManager {
 
   /**
    * Send actual update (PUT) service request
-   * @param url
-   * @param pk
-   * @param data
-   * @param params
    */
   public async sendUpdateRequest (url: string, pk: PrimaryKey, data: any, params?: UpdateInterfaceParams): Promise<any> {
+    configHandler.emitEvent('onSendUpdateRequest', [{ modelManager: this, url, pk, data, params }])
+
     let response
     try {
       response = await axios.put(url, data)
@@ -253,12 +252,26 @@ export class ModelManager {
   }
 
   /**
+   * Send actual partial update (PATCH) service request
+   */
+  public async sendPartialUpdateRequest (url: string, pk: PrimaryKey, data: any, params?: UpdateInterfaceParams): Promise<any> {
+    configHandler.emitEvent('onSendPartialUpdateRequest', [{ modelManager: this, url, pk, data, params }])
+
+    let response
+    try {
+      response = await axios.patch(url, data)
+    } catch (error) {
+      throw await this.handleResponseError(error)
+    }
+    return response.data
+  }
+
+  /**
    * Send actual delete (DELETE) service request
-   * @param url
-   * @param pk
-   * @param params
    */
   public async sendDeleteRequest (url: string, pk: PrimaryKey, params?: DeleteInterfaceParams): Promise<null> {
+    configHandler.emitEvent('onSendDeleteRequest', [{ modelManager: this, url, pk, params }])
+
     try {
       await axios.delete(url)
     } catch (error) {
@@ -269,9 +282,10 @@ export class ModelManager {
 
   /**
    * Receive error from service and map to api exceptions
-   * @param error
    */
   public async handleResponseError (error: any) {
+    configHandler.emitEvent('onResponseError', [{ modelManager: this, error }])
+
     if (error.response) {
       switch (error.response.status) {
         case BadRequestAPIException.statusCode:

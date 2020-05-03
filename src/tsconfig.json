@@ -9,6 +9,7 @@
     /* Redirect output structure to the directory. */
     "outDir": "../lib",
     /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
-    "rootDir": "./"
+    "rootDir": "./",
+    "sourceMap": false
   }
 }

@@ -32,7 +32,9 @@
   ],
   "scripts": {
     "clean": "rimraf ./lib && rimraf ./dist",
-    "build": "npm run clean && rollup -c && tsc -p ./src/tsconfig.json",
+    "build": "npm run clean && npm run build:dist && npm run build:lib",
+    "build:dist": "rollup -c",
+    "build:lib": "copyfiles -u 1 src/**/*.js src/**/*.d.ts lib && tsc -p ./src/tsconfig.json",
     "test:unit": "vue-cli-service test:unit",
     "test:coverage": "vue-cli-service test:unit --coverage",
     "test:lib": "vue-cli-service test:unit --config=jest.lib.config.js",
@@ -64,6 +66,7 @@
     "@vue/eslint-config-standard": "^5.1.2",
     "@vue/eslint-config-typescript": "^5.0.2",
     "@vue/test-utils": "1.0.0-beta.29",
+    "copyfiles": "^2.2.0",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",

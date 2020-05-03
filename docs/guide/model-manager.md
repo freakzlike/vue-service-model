@@ -12,9 +12,14 @@ The method will use [`getListUrl`](/guide/service-model.html#urls), [`sendListRe
 
 Examples:
 ```js
-Album.objects.list() // Request: GET /albums/
-Photo.objects.list({parents: {album: 1}}) // Request: GET /albums/1/photos/
-Album.objects.list({filter: {userId: 1}}) // Request: GET /albums/?userId=1
+// Request: GET /albums/
+Album.objects.list()
+
+// Request: GET /albums/1/photos/
+Photo.objects.list({parents: {album: 1}})
+
+// Request: GET /albums/?userId=1
+Album.objects.list({filter: {userId: 1}})
 ```
 
 ::: tip
@@ -32,8 +37,11 @@ The method will use [`getDetailUrl`](/guide/service-model.html#urls), [`sendDeta
 
 Examples:
 ```js
-Album.objects.detail(1) // Request: GET /albums/1/
-Photo.objects.detail(5, {parents: {album: 1}}) // Request: GET /albums/1/photos/5/
+// Request: GET /albums/1/
+Album.objects.detail(1)
+
+// Request: GET /albums/1/photos/5/
+Photo.objects.detail(5, {parents: {album: 1}})
 ```
 
 ## Create single entry (`objects.create()`)
@@ -43,8 +51,11 @@ You can provide your data you want to send with post as first argument. The meth
 
 Examples:
 ```js
-Album.objects.create({title: 'New Album'}) // Request: POST /albums/
-Photo.objects.create({title: 'New Photo'}, {parents: {album: 1}}) // Request: POST /albums/1/photos/
+// Request: POST /albums/
+Album.objects.create({title: 'New Album'})
+
+// Request: POST /albums/1/photos/
+Photo.objects.create({title: 'New Photo'}, {parents: {album: 1}})
 ```
 
 ## Update single entry (`objects.update()`)
@@ -55,9 +66,19 @@ The method will use [`getDetailUrl`](/guide/service-model.html#urls) and [`sendU
 
 Examples:
 ```js
-Album.objects.update(1, {title: 'Updated Album'}) // Request: PUT /albums/1/
-Photo.objects.update(5, {title: 'Updated Photo'}, {parents: {album: 1}}) // Request: PUT /albums/1/photos/5/
+// Request: PUT /albums/1/
+Album.objects.update(1, {title: 'Updated Album'})
+
+// Request: PUT /albums/1/photos/5/
+Photo.objects.update(5, {title: 'Updated Photo'}, {parents: {album: 1}})
 ```
+
+In case you want to send a partial update as `PATCH` you can set the `partial` option. `sendPartialUpdateRequest` will be used instead of `sendUpdateRequest`.
+
+```js
+// Request: PATCH /albums/1/
+Album.objects.update(1, {title: 'Updated Album'}, {partial: true})
+``` 
 
 ## Delete single entry (`objects.delete()`)
 
@@ -66,8 +87,11 @@ The method will use [`getDetailUrl`](/guide/service-model.html#urls) and [`sendD
 
 Examples:
 ```js
-Album.objects.delete(1) // Request: DELETE /albums/1/
-Photo.objects.delete(5, {parents: {album: 1}}) // Request: DELETE /albums/1/photos/5/
+// Request: DELETE /albums/1/
+Album.objects.delete(1)
+
+// Request: DELETE /albums/1/photos/5/
+Photo.objects.delete(5, {parents: {album: 1}})
 ```
 
 ## RetrieveInterfaceParams

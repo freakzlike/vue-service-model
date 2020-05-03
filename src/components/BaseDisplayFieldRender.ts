@@ -7,7 +7,7 @@ Vue.use(AsyncComputed)
 
 export interface ComponentData {
   // AsyncComputed
-  value?: Field
+  renderData?: any
 }
 
 export default Vue.extend({
@@ -24,29 +24,29 @@ export default Vue.extend({
   data: (): ComponentData => ({}),
 
   computed: {
-    isValueLoaded () {
-      return this.value !== cu.NO_VALUE
+    hasResolvedRenderData () {
+      return this.renderData !== cu.NO_VALUE
     }
   },
 
   asyncComputed: {
-    value: {
+    renderData: {
       default: cu.NO_VALUE,
       get () {
         const field = this.field as Field
-        return field.value
+        return field.prepareDisplayRender()
       }
     }
   },
 
   methods: {
     renderField (h: CreateElement): VNode {
-      return this.field.displayRender(h, this.value)
+      return this.field.displayRender(h, this.renderData)
     }
   },
 
   render (h: CreateElement): VNode {
-    if (this.isValueLoaded) {
+    if (this.hasResolvedRenderData) {
       return this.renderField(h)
     } else {
       return undefined as any

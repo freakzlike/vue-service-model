@@ -1,5 +1,5 @@
 interface Dictionary<T> {
-  [Key: string]: T;
+  [Key: string]: T
 }
 
 export { Dictionary }

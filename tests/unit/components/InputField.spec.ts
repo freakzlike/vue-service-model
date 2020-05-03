@@ -116,7 +116,7 @@ describe('components/InputField', () => {
 
     wrapper.setProps({ fieldName: 'description' })
 
-    await wrapper.vm.$nextTick()
+    await renderInputField(wrapper)
     expect(inputElement.attributes('value')).toBe(modelData.description)
   })
 
@@ -138,7 +138,7 @@ describe('components/InputField', () => {
 
     wrapper.setProps({ field: model.getField('description') })
 
-    await wrapper.vm.$nextTick()
+    await renderInputField(wrapper)
     expect(inputElement.attributes('value')).toBe(modelData.description)
   })
 })

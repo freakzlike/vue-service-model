@@ -3,6 +3,7 @@ import axios from 'axios'
 import { ServiceModel } from '@/models/ServiceModel'
 import { ServiceParent } from '@/types/models/ServiceModel'
 import Dictionary from '@/types/Dictionary'
+import { configHandler } from '@/utils/ConfigHandler'
 import {
   APIException,
   BadRequestAPIException,
@@ -88,6 +89,7 @@ describe('models/ModelManager', () => {
       await withMockedAxios(responseData, async mockedAxios => {
         const mockSendListRequest = jest.spyOn(TestModel.objects, 'sendListRequest')
         const mockMapListResponseBeforeCache = jest.spyOn(TestModel.objects, 'mapListResponseBeforeCache')
+        const mockEmitEvent = jest.spyOn(configHandler, 'emitEvent').mockImplementation()
 
         const resultData = await TestModel.objects.list()
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
@@ -97,6 +99,13 @@ describe('models/ModelManager', () => {
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
         checkListResponseData(responseData, resultData, TestModel)
+
+        expect(mockEmitEvent).toBeCalledTimes(1)
+        expect(mockEmitEvent.mock.calls[0]).toEqual(['onSendListRequest', [{
+          modelManager: TestModel.objects, url: BASE_URL, params: { noCache: true }
+        }]])
+
+        mockEmitEvent.mockRestore()
         mockSendListRequest.mockRestore()
         mockMapListResponseBeforeCache.mockRestore()
       })
@@ -299,6 +308,7 @@ describe('models/ModelManager', () => {
         const mockRetrieveDetailData = jest.spyOn(TestModel.objects, 'retrieveDetailData')
         const mockSendDetailRequest = jest.spyOn(TestModel.objects, 'sendDetailRequest')
         const mockMapDetailResponseBeforeCache = jest.spyOn(TestModel.objects, 'mapDetailResponseBeforeCache')
+        const mockEmitEvent = jest.spyOn(configHandler, 'emitEvent').mockImplementation()
 
         const pk = 1
         const entry = await TestModel.objects.detail(pk)
@@ -313,6 +323,13 @@ describe('models/ModelManager', () => {
         expect(entry).toBeInstanceOf(TestModel)
         expect(entry.data).toEqual(responseData)
         checkModelParents(entry)
+
+        expect(mockEmitEvent).toBeCalledTimes(1)
+        expect(mockEmitEvent.mock.calls[0]).toEqual(['onSendDetailRequest', [{
+          modelManager: TestModel.objects, url, pk, params: undefined
+        }]])
+
+        mockEmitEvent.mockRestore()
         mockRetrieveDetailData.mockRestore()
         mockSendDetailRequest.mockRestore()
         mockMapDetailResponseBeforeCache.mockRestore()
@@ -407,6 +424,7 @@ describe('models/ModelManager', () => {
       const responseData = { value: 1, id: 5 }
       await withMockedAxios(responseData, async mockedAxios => {
         const mockSendCreateRequest = jest.spyOn(TestModel.objects, 'sendCreateRequest')
+        const mockEmitEvent = jest.spyOn(configHandler, 'emitEvent').mockImplementation()
 
         const postData = { value: 1 }
         const result = await TestModel.objects.create(postData)
@@ -417,6 +435,13 @@ describe('models/ModelManager', () => {
         expect(mockSendCreateRequest).toBeCalledTimes(1)
 
         expect(result).toBe(responseData)
+
+        expect(mockEmitEvent).toBeCalledTimes(1)
+        expect(mockEmitEvent.mock.calls[0]).toEqual(['onSendCreateRequest', [{
+          modelManager: TestModel.objects, url, data: postData, params: undefined
+        }]])
+
+        mockEmitEvent.mockRestore()
         mockSendCreateRequest.mockRestore()
       }, 'post')
     })
@@ -465,6 +490,7 @@ describe('models/ModelManager', () => {
       const responseData = { value: 1, id: 5 }
       await withMockedAxios(responseData, async mockedAxios => {
         const mockSendUpdateRequest = jest.spyOn(TestModel.objects, 'sendUpdateRequest')
+        const mockEmitEvent = jest.spyOn(configHandler, 'emitEvent').mockImplementation()
 
         const pk = 1
         const putData = { value: 1 }
@@ -476,6 +502,13 @@ describe('models/ModelManager', () => {
         expect(mockSendUpdateRequest).toBeCalledTimes(1)
 
         expect(result).toBe(responseData)
+
+        expect(mockEmitEvent).toBeCalledTimes(1)
+        expect(mockEmitEvent.mock.calls[0]).toEqual(['onSendUpdateRequest', [{
+          modelManager: TestModel.objects, url, pk, data: putData, params: undefined
+        }]])
+
+        mockEmitEvent.mockRestore()
         mockSendUpdateRequest.mockRestore()
       }, 'put')
     })
@@ -503,6 +536,36 @@ describe('models/ModelManager', () => {
       }, 'put')
     })
 
+    it('should send partial update request', async () => {
+      const responseData = { value: 1, id: 5 }
+      await withMockedAxios(responseData, async mockedAxios => {
+        const mockSendPartialUpdateRequest = jest.spyOn(TestModel.objects, 'sendPartialUpdateRequest')
+        const mockSendUpdateRequest = jest.spyOn(TestModel.objects, 'sendUpdateRequest')
+        const mockEmitEvent = jest.spyOn(configHandler, 'emitEvent').mockImplementation()
+
+        const pk = 1
+        const putData = { value: 1 }
+        const result = await TestModel.objects.update(1, putData, { partial: true })
+
+        const url = BASE_URL + pk + '/'
+        expect(mockedAxios.patch.mock.calls).toHaveLength(1)
+        expect(mockedAxios.patch.mock.calls).toEqual([[url, putData]])
+        expect(mockSendPartialUpdateRequest).toBeCalledTimes(1)
+        expect(mockSendUpdateRequest).not.toBeCalled()
+
+        expect(result).toBe(responseData)
+
+        expect(mockEmitEvent).toBeCalledTimes(1)
+        expect(mockEmitEvent.mock.calls[0]).toEqual(['onSendPartialUpdateRequest', [{
+          modelManager: TestModel.objects, url, pk, data: putData, params: { partial: true }
+        }]])
+
+        mockEmitEvent.mockRestore()
+        mockSendPartialUpdateRequest.mockRestore()
+        mockSendUpdateRequest.mockRestore()
+      }, 'patch')
+    })
+
     it('should handle error from service', async () => {
       await withMockedAxios(null, async mockedAxios => {
         const mockHandleResponseError = jest.spyOn(TestModel.objects, 'handleResponseError')
@@ -515,6 +578,19 @@ describe('models/ModelManager', () => {
         mockHandleResponseError.mockRestore()
       }, 'put')
     })
+
+    it('should handle error from service on partial update', async () => {
+      await withMockedAxios(null, async mockedAxios => {
+        const mockHandleResponseError = jest.spyOn(TestModel.objects, 'handleResponseError')
+        const customError = new Error('Handle error')
+        mockedAxios.patch.mockRejectedValue(customError)
+
+        expect.assertions(2)
+        await expect(TestModel.objects.update(1, { value: 1 }, { partial: true })).rejects.toBe(customError)
+        expect(mockHandleResponseError).toBeCalledTimes(1)
+        mockHandleResponseError.mockRestore()
+      }, 'patch')
+    })
   })
 
   /**
@@ -524,6 +600,7 @@ describe('models/ModelManager', () => {
     it('should send delete request', async () => {
       await withMockedAxios(null, async mockedAxios => {
         const mockSendDeleteRequest = jest.spyOn(TestModel.objects, 'sendDeleteRequest')
+        const mockEmitEvent = jest.spyOn(configHandler, 'emitEvent').mockImplementation()
 
         const pk = 1
         const result = await TestModel.objects.delete(pk)
@@ -534,6 +611,13 @@ describe('models/ModelManager', () => {
         expect(mockSendDeleteRequest).toBeCalledTimes(1)
 
         expect(result).toBeNull()
+
+        expect(mockEmitEvent).toBeCalledTimes(1)
+        expect(mockEmitEvent.mock.calls[0]).toEqual(['onSendDeleteRequest', [{
+          modelManager: TestModel.objects, url: await TestModel.getDetailUrl(pk), pk, params: undefined
+        }]])
+
+        mockEmitEvent.mockRestore()
         mockSendDeleteRequest.mockRestore()
       }, 'delete')
     })
@@ -605,8 +689,17 @@ describe('models/ModelManager', () => {
     })
 
     it('should return other error', async () => {
+      const mockEmitEvent = jest.spyOn(configHandler, 'emitEvent').mockImplementation()
+
       const customError = new Error('Custom error')
       expect(await TestModel.objects.handleResponseError(customError)).toBe(customError)
+
+      expect(mockEmitEvent).toBeCalledTimes(1)
+      expect(mockEmitEvent.mock.calls[0]).toEqual(['onResponseError', [{
+        modelManager: TestModel.objects, error: customError
+      }]])
+
+      mockEmitEvent.mockRestore()
     })
   })
 })
