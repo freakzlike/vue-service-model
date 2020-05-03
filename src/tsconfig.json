@@ -10,6 +10,7 @@
     "outDir": "../lib",
     /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
     "rootDir": "./",
-    "sourceMap": false
+    "sourceMap": false,
+    "allowJs": true
   }
 }
