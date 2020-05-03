@@ -1,6 +1,6 @@
 {
   "name": "vue-service-model",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Vue.js library for handling REST service requests with caching, aggregation and model definitions",
   "license": "MIT",
   "author": {
