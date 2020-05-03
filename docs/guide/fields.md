@@ -159,9 +159,32 @@ class RedTextField extends Field {
 }
 ```
 
+### Resolving asynchronous values before rendering
+
+In some cases you need to prepare or fetch other data before the field should be rendered. This can be done with the methods `prepareDisplayRender`/`prepareInputRender`.
+They will be called before `displayRender`/`inputRender` and will give any async data to as 2. argument to them.
+
+```js
+class AlbumTitleField extends Field {
+  // Do any asynchronous operations before rendering with displayRender
+  async prepareDisplayRender () {
+    const albumId = await this.value
+    const album = await Album.objects.detail(albumId)
+    return album.val.title
+  }
+
+  // Render the asynchronous fetched data
+  // renderData will contain the value returned by prepareDisplayRender
+  displayRender (h, renderData) {
+    return h('span', renderData)
+  }
+}
+```
+
+### Custom field component
+
 In case you need to do more specific rendering you can also set your own component which will be rendered when using [`DisplayField`](/guide/components.html#displayfield) on your custom field.
 If you want to change the input component you can extend from `BaseInputFieldRender` and overwrite the `inputComponent` method of your field.
-For easy usage with async values if recommend you to take a look at [vue-async-computed](https://github.com/foxbenjaminfox/vue-async-computed).
 
 ```js
 // CustomField.js

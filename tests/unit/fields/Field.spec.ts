@@ -357,11 +357,33 @@ describe('fields/Field', () => {
     })
   })
 
+  describe('prepareDisplayRender', () => {
+    it('should return renderData', async () => {
+      const data = { description: 'desc value' }
+      const model = new TestModel(data)
+
+      const field = new Field({}, { name: 'description', model })
+      const renderData = await field.prepareDisplayRender()
+      expect(renderData).toBe(data.description)
+    })
+  })
+
   describe('displayComponent', () => {
     it('should return BaseDisplayFieldRender', async () => {
       const field = new Field()
       const displayComponent = await field.displayComponent
       expect(displayComponent.default).toBe(BaseDisplayFieldRender)
+    })
+  })
+
+  describe('prepareInputRender', () => {
+    it('should return renderData', async () => {
+      const data = { description: 'desc value' }
+      const model = new TestModel(data)
+
+      const field = new Field({}, { name: 'description', model })
+      const renderData = await field.prepareInputRender()
+      expect(renderData).toBe(data.description)
     })
   })
 

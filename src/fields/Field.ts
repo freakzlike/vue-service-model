@@ -212,32 +212,48 @@ export class Field extends BaseClass {
   /**
    * Display component to render when displaying value with <display-field/>
    */
-  get displayComponent (): Promise<ComponentModule> {
+  public get displayComponent (): Promise<ComponentModule> {
     return import('../components/BaseDisplayFieldRender')
+  }
+
+  /**
+   * Async function to prepare before displayRender gets called
+   * Can return any data which needs to be resolved for displayRender
+   */
+  public async prepareDisplayRender (): Promise<any> {
+    return this.value
   }
 
   /**
    * Simple Vue render function when using default displayComponent when displaying value with <display-field/>
    */
-  displayRender (h: CreateElement, resolvedValue: any): VNode {
-    return h('span', resolvedValue)
+  public displayRender (h: CreateElement, renderData: any): VNode {
+    return h('span', renderData)
   }
 
   /**
    * Input component to render when showing input for field with <input-field/>
    */
-  get inputComponent (): Promise<ComponentModule> {
+  public get inputComponent (): Promise<ComponentModule> {
     return import('../components/BaseInputFieldRender')
+  }
+
+  /**
+   * Async function to prepare before inputRender gets called
+   * Can return any data which needs to be resolved for inputRender
+   */
+  public async prepareInputRender (): Promise<any> {
+    return this.value
   }
 
   /**
    * Simple Vue render function when using default inputComponent for input of field value with <input-field/>
    */
-  inputRender (h: CreateElement, resolvedValue: any): VNode {
+  public inputRender (h: CreateElement, renderData: any): VNode {
     return h('input', {
       attrs: {
         type: 'text',
-        value: resolvedValue
+        value: renderData
       },
       on: {
         input: (event: InputEvent) => {

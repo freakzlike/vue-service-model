@@ -1,4 +1,4 @@
-import { shallowMount } from '@vue/test-utils'
+import Vue, { shallowMount, Wrapper } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 import { BaseModel } from '@/models/BaseModel'
@@ -15,7 +15,13 @@ describe('components/BaseInputFieldRender', () => {
   const model = new TestModel(modelData)
   const field = model.getField('name') as Field
 
+  const waitForRender = async (wrapper: Wrapper<Vue>) => {
+    await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
+  }
+
   it('should call and render correct inputRender', async () => {
+    const spyPrepareInputRender = jest.spyOn(field, 'prepareInputRender')
     const spyInputRender = jest.spyOn(field, 'inputRender')
 
     const wrapper = shallowMount(BaseInputFieldRender, {
@@ -23,10 +29,12 @@ describe('components/BaseInputFieldRender', () => {
     })
     expect(wrapper.text()).toBe('')
 
+    expect(spyPrepareInputRender).toBeCalledTimes(1)
     expect(spyInputRender).toBeCalledTimes(0)
 
-    await wrapper.vm.$nextTick()
+    await waitForRender(wrapper)
 
+    expect(spyPrepareInputRender).toBeCalledTimes(1)
     expect(spyInputRender).toBeCalledTimes(1)
     const inputElement = wrapper.find('input')
     expect(inputElement.is('input')).toBe(true)
@@ -35,8 +43,9 @@ describe('components/BaseInputFieldRender', () => {
     expect(inputElement.attributes('value')).toBe(modelData.name)
 
     field.value = 'New Name'
-    await wrapper.vm.$nextTick()
+    await waitForRender(wrapper)
 
+    expect(spyPrepareInputRender).toBeCalledTimes(2)
     expect(spyInputRender).toBeCalledTimes(2)
     expect(inputElement.attributes('value')).toBe('New Name')
   })
@@ -48,7 +57,7 @@ describe('components/BaseInputFieldRender', () => {
     const wrapper = shallowMount(BaseInputFieldRender, {
       propsData: { field: field }
     })
-    await wrapper.vm.$nextTick()
+    await waitForRender(wrapper)
     const inputElement = wrapper.find('input')
     expect(inputElement.is('input')).toBe(true)
 
@@ -66,7 +75,7 @@ describe('components/BaseInputFieldRender', () => {
     const wrapper = shallowMount(BaseInputFieldRender, {
       propsData: { field: field }
     })
-    await wrapper.vm.$nextTick()
+    await waitForRender(wrapper)
     expect(wrapper.html()).toMatchSnapshot()
   })
 })
