@@ -2,6 +2,10 @@ import { getConfig, Config } from '../config'
 import cu from '../utils/common'
 
 const defaultConfig: Config = {
+  i18n: {
+    no: 'No',
+    yes: 'Yes'
+  },
   events: {
     onSendDetailRequest: () => {},
     onSendListRequest: () => {},
@@ -20,6 +24,21 @@ export const configHandler = {
     return cu.mergeDeep({}, defaultConfig, getConfig())
   },
 
+  /**
+   * Get translation for given key
+   */
+  async getTranslation (key: string): Promise<string> {
+    const _config = this.getConfig()
+    if (!_config.i18n[key]) {
+      throw new Error('Try to get unknown translation key: ' + key)
+    }
+
+    return cu.promiseEval(_config.i18n[key], null, key)
+  },
+
+  /**
+   * Emit event
+   */
   emitEvent (event: string, args: any[]) {
     const _config = this.getConfig()
     if (!_config.events[event]) {

@@ -6,8 +6,19 @@ import {
   UpdateInterfaceParams,
   DeleteInterfaceParams
 } from './types/models/ModelManager'
+import { LazyValue } from './types/LazyValue'
+
+export type TranslationKey = LazyValue<string>
 
 export interface Config {
+  /**
+   * i18n translations
+   */
+  i18n?: {
+    no?: TranslationKey,
+    yes?: TranslationKey
+  }
+
   /**
    * Events
    */
@@ -84,4 +95,5 @@ export interface Config {
 }
 
 export declare function setConfig (_config: Config): void
+
 export declare function getConfig (): Config

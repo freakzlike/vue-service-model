@@ -1,7 +1,17 @@
-# Configuration
+# Configuration API
 
 ```typescript
 interface Config {
+  /**
+   * i18n translations
+   * A TranslationKey can either be a string, a function returning a
+   * string or a promise resolving a string 
+   */
+  i18n?: {
+    no?: TranslationKey, // Default: No
+    yes?: TranslationKey // Default: Yes
+  }
+
   /**
    * Events
    */

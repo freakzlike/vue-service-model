@@ -42,6 +42,7 @@ module.exports = {
           '/guide/installation.md',
           '/guide/models.md',
           '/guide/fields.md',
+          '/guide/field-types.md',
           '/guide/service-model.md',
           '/guide/model-manager.md',
           '/guide/components.md',
