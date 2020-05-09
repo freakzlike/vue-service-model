@@ -11,6 +11,8 @@
 * [Installation](/guide/installation/)
 * [Models](/guide/models/)
 * [Fields](/guide/fields/)
+* [Field types](/guide/field-types/)
 * [ServiceModel](/guide/service-model/)
 * [ModelManager](/guide/model-manager/)
 * [Components](/guide/components/)
+* [Configuration](/guide/configuration/)
