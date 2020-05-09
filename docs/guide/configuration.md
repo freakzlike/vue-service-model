@@ -6,6 +6,7 @@
 
 To make some optional configuration, you need to call `setConfig` with your configuration as js object.
 It is recommend to do this in your `main.js` but it is also possible to set or change the configuration during runtime.
+When calling `setConfig` the active configuration will be replaced and not be merged.
 
 You can see the [full configuration structure here](/api/configuration.html).
 
@@ -13,6 +14,13 @@ You can see the [full configuration structure here](/api/configuration.html).
 import {setConfig} from 'vue-service-model'
 
 setConfig({
+  // Translation keys
+  i18n: {
+    no: 'Nein', 
+    yes: () => Promise.resolve('Ja')
+  },
+
+  // Callback events
   events: {
     onSendDetailRequest: params => {
       console.log('onSendDetailRequest', params)
@@ -20,6 +28,18 @@ setConfig({
   }
 })
 ```
+
+## i18n translations
+
+You can customize the translations that will be used by `vue-service-model`. You can set a string or a function that will return a string or a promise.
+The function will be called with the translation key as argument to allow to map the translation to your translation handling.  
+
+### All keys with default translation
+
+| Key | Default translation |
+| --- | ----------- |
+| `no` | No |
+| `yes` | Yes |
 
 ## Events
 
