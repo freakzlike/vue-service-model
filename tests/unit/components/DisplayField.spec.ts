@@ -1,7 +1,8 @@
-import Vue, { mount, Wrapper } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import DisplayField from '@/components/DisplayField'
 import { BaseModel } from '@/models/BaseModel'
+import { waitRender } from '../../testUtils'
 
 describe('components/DisplayField', () => {
   const modelData = {
@@ -18,11 +19,6 @@ describe('components/DisplayField', () => {
 
   const model = new TestModel(modelData)
 
-  const renderDisplayField = async (wrapper: Wrapper<Vue>) => {
-    await wrapper.vm.$nextTick()
-    await wrapper.vm.$nextTick()
-  }
-
   it('should render correctly with model and fieldName', async () => {
     const wrapper = mount(DisplayField, {
       propsData: {
@@ -31,13 +27,11 @@ describe('components/DisplayField', () => {
       }
     })
     expect(wrapper.vm.displayComponent).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
 
-    await renderDisplayField(wrapper)
+    await waitRender.DisplayField(wrapper)
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
-
     expect(wrapper.html()).toMatchSnapshot()
   })
 
@@ -48,13 +42,11 @@ describe('components/DisplayField', () => {
       }
     })
     expect(wrapper.vm.displayComponent).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
 
-    await renderDisplayField(wrapper)
+    await waitRender.DisplayField(wrapper)
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
-
     expect(wrapper.html()).toMatchSnapshot()
   })
 
@@ -66,11 +58,10 @@ describe('components/DisplayField', () => {
       }
     })
 
-    await renderDisplayField(wrapper)
+    await waitRender.DisplayField(wrapper)
 
     expect(wrapper.vm.displayComponent).toBeNull()
-    await wrapper.vm.$nextTick()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
   })
 
   it('should not render when model reset', async () => {
@@ -81,15 +72,16 @@ describe('components/DisplayField', () => {
       }
     })
 
-    await renderDisplayField(wrapper)
+    await waitRender.DisplayField(wrapper)
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
     expect(wrapper.text()).toBe(modelData.name)
 
     wrapper.setProps({ model: null })
 
-    expect(wrapper.html()).toBeUndefined()
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.html()).toBe('')
 
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.displayComponent).toBeNull()
@@ -103,16 +95,16 @@ describe('components/DisplayField', () => {
       }
     })
 
-    await renderDisplayField(wrapper)
+    await waitRender.DisplayField(wrapper)
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
 
     expect(wrapper.text()).toBe(modelData.name)
 
     wrapper.setProps({ fieldName: 'description' })
 
-    await renderDisplayField(wrapper)
+    await waitRender.DisplayFieldUpdate(wrapper)
+
     expect(wrapper.text()).toBe(modelData.description)
   })
 
@@ -123,16 +115,16 @@ describe('components/DisplayField', () => {
       }
     })
 
-    await renderDisplayField(wrapper)
+    await waitRender.DisplayField(wrapper)
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
 
     expect(wrapper.text()).toBe(modelData.name)
 
     wrapper.setProps({ field: model.getField('description') })
 
-    await renderDisplayField(wrapper)
+    await waitRender.DisplayFieldUpdate(wrapper)
+
     expect(wrapper.text()).toBe(modelData.description)
   })
 })

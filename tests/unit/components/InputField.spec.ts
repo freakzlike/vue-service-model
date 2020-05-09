@@ -1,7 +1,8 @@
-import Vue, { mount, Wrapper } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import InputField from '@/components/InputField'
 import { BaseModel } from '@/models/BaseModel'
+import { waitRender } from '../../testUtils'
 
 describe('components/InputField', () => {
   const modelData = {
@@ -18,11 +19,6 @@ describe('components/InputField', () => {
 
   const model = new TestModel(modelData)
 
-  const renderInputField = async (wrapper: Wrapper<Vue>) => {
-    await wrapper.vm.$nextTick()
-    await wrapper.vm.$nextTick()
-  }
-
   it('should render correctly with model and fieldName', async () => {
     const wrapper = mount(InputField, {
       propsData: {
@@ -31,9 +27,9 @@ describe('components/InputField', () => {
       }
     })
     expect(wrapper.vm.inputComponent).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
 
-    await renderInputField(wrapper)
+    await waitRender.InputField(wrapper)
 
     expect(wrapper.vm.inputComponent).not.toBeNull()
     await wrapper.vm.$nextTick()
@@ -48,9 +44,9 @@ describe('components/InputField', () => {
       }
     })
     expect(wrapper.vm.inputComponent).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
 
-    await renderInputField(wrapper)
+    await waitRender.InputField(wrapper)
 
     expect(wrapper.vm.inputComponent).not.toBeNull()
     await wrapper.vm.$nextTick()
@@ -66,11 +62,11 @@ describe('components/InputField', () => {
       }
     })
 
-    await renderInputField(wrapper)
+    await waitRender.InputField(wrapper)
 
     expect(wrapper.vm.inputComponent).toBeNull()
     await wrapper.vm.$nextTick()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
   })
 
   it('should not render when model reset', async () => {
@@ -81,17 +77,17 @@ describe('components/InputField', () => {
       }
     })
 
-    await renderInputField(wrapper)
+    await waitRender.InputField(wrapper)
 
     expect(wrapper.vm.inputComponent).not.toBeNull()
     await wrapper.vm.$nextTick()
-    const inputElement = wrapper.find('input')
-    expect(inputElement.is('input')).toBe(true)
+    const inputElement = wrapper.get('input')
     expect(inputElement.attributes('value')).toBe(modelData.name)
 
     wrapper.setProps({ model: null })
 
-    expect(wrapper.html()).toBeUndefined()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.html()).toBe('')
 
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.inputComponent).toBeNull()
@@ -105,18 +101,17 @@ describe('components/InputField', () => {
       }
     })
 
-    await renderInputField(wrapper)
+    await waitRender.InputField(wrapper)
 
     expect(wrapper.vm.inputComponent).not.toBeNull()
     await wrapper.vm.$nextTick()
 
-    const inputElement = wrapper.find('input')
-    expect(inputElement.is('input')).toBe(true)
+    const inputElement = wrapper.get('input')
     expect(inputElement.attributes('value')).toBe(modelData.name)
 
     wrapper.setProps({ fieldName: 'description' })
 
-    await renderInputField(wrapper)
+    await waitRender.InputField(wrapper)
     expect(inputElement.attributes('value')).toBe(modelData.description)
   })
 
@@ -127,18 +122,17 @@ describe('components/InputField', () => {
       }
     })
 
-    await renderInputField(wrapper)
+    await waitRender.InputField(wrapper)
 
     expect(wrapper.vm.inputComponent).not.toBeNull()
     await wrapper.vm.$nextTick()
 
-    const inputElement = wrapper.find('input')
-    expect(inputElement.is('input')).toBe(true)
+    const inputElement = wrapper.get('input')
     expect(inputElement.attributes('value')).toBe(modelData.name)
 
     wrapper.setProps({ field: model.getField('description') })
 
-    await renderInputField(wrapper)
+    await waitRender.InputField(wrapper)
     expect(inputElement.attributes('value')).toBe(modelData.description)
   })
 })
