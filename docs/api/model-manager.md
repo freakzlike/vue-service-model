@@ -82,3 +82,80 @@ class ModelManager {
   public async handleResponseError (error: any)
 }
 ```
+
+## RetrieveInterfaceParams
+
+```typescript
+/**
+ * Interface params for ModelManager detail and list
+ */
+interface RetrieveInterfaceParams {
+  /**
+   * Service parents to handle nested RESTful services
+   */
+  parents?: ServiceParent,
+  /**
+   * Filter params as plain object which will be converted to query parameters (params in axios)
+   */
+  filter?: FilterParams
+  /**
+   * Do not use and set response cache. Requests will still be aggregated. Already cached data will not be cleared
+   */
+  noCache?: boolean
+  /**
+   * Do not use request aggregation. Response will still be set and used from cache
+   */
+  noRequestAggregation?: boolean
+  /**
+   * Cache will not be used but set. Requests will still be aggregated
+   */
+  refreshCache?: boolean
+}
+```
+
+## CreateInterfaceParams
+
+```typescript
+/**
+ * Interface params for ModelManager create
+ */
+interface CreateInterfaceParams {
+  /**
+   * Service parents to handle nested RESTful services
+   */
+  parents?: ServiceParent
+}
+```
+
+## UpdateInterfaceParams
+
+```typescript
+/**
+ * Interface params for ModelManager update
+ */
+interface UpdateInterfaceParams {
+  /**
+   * Service parents to handle nested RESTful services
+   */
+  parents?: ServiceParent,
+
+  /**
+   * Flag whether a partial update (PATCH) should be send or not
+   */
+  partial?: boolean
+}
+```
+
+## DeleteInterfaceParams
+
+```typescript
+/**
+ * Interface params for ModelManager delete
+ */
+interface DeleteInterfaceParams {
+  /**
+   * Service parents to handle nested RESTful services
+   */
+  parents?: ServiceParent
+}
+```
