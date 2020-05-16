@@ -27,7 +27,7 @@ been passed as `model`. To change the output for specific fields see [Fields ren
         album: null
       }  
     },
-    mounted () {
+    created () {
       this.loadAlbum()    
     },
     methods: {
@@ -37,6 +37,24 @@ been passed as `model`. To change the output for specific fields see [Fields ren
     }
   }
 </script>
+```
+
+::: warning
+When using direct `field` property, keep in mind that the model will be `null` during loading
+:::
+
+To display the loading state of the component, when the data is being fetched, you can use the `loading` slot.
+
+```vue
+<template>
+  [...]
+    <display-field :model="album" field-name="title">
+      <template v-slot:loading>
+        <span>Loading title...</span>
+      </template>
+    </display-field>
+  [...]
+</template>
 ```
 
 ## InputField
@@ -62,7 +80,7 @@ The `InputField` component is equal to the `DisplayField`. The input value will 
         album: null
       }  
     },
-    mounted () {
+    created () {
       this.loadAlbum()    
     },
     methods: {
@@ -72,6 +90,24 @@ The `InputField` component is equal to the `DisplayField`. The input value will 
     }
   }
 </script>
+```
+
+::: warning
+When using direct `field` property, keep in mind that the model will be `null` during loading
+:::
+
+To display the loading state of the component, when the data is being fetched, you can use the `loading` slot.
+
+```vue
+<template>
+  [...]
+    <input-field :model="album" field-name="title">
+      <template v-slot:loading>
+        <span>Loading title...</span>
+      </template>
+    </input-field>
+  [...]
+</template>
 ```
 
 ## FieldLabel

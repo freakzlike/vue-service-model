@@ -1,6 +1,8 @@
 import AsyncComputed from 'vue-async-computed'
 import Vue, { CreateElement, VNode, Component } from 'vue'
+import mixins from '../utils/mixins'
 import FieldPropsMixin from './FieldPropsMixin'
+import LoadingSlotMixin from './LoadingSlotMixin'
 
 Vue.use(AsyncComputed)
 
@@ -12,14 +14,14 @@ interface ComponentData {
 /**
  * Main component to display value of a field
  */
-export default FieldPropsMixin.extend({
+export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
   name: 'DisplayField',
   inheritAttrs: false,
 
   data: (): ComponentData => ({}),
 
   asyncComputed: {
-    async displayComponent () {
+    async displayComponent (): Promise<Component | null> {
       if (this.fieldObj) {
         const componentModule = await this.fieldObj.displayComponent
         return componentModule.default
@@ -37,7 +39,7 @@ export default FieldPropsMixin.extend({
         }
       })
     } else {
-      return undefined as any
+      return this.renderLoading(h)
     }
   }
 })

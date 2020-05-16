@@ -167,4 +167,28 @@ describe('components/FieldLabel', () => {
     expect(wrapper.vm.label).toBe(fieldLabels.description)
     expect(wrapper.text()).toBe(fieldLabels.description)
   })
+
+  it('should render correct loading slot', async () => {
+    const wrapper = mount(FieldLabel, {
+      propsData: {
+        field: model.getField('name')
+      },
+      slots: {
+        loading: '<span>Loading</span>'
+      }
+    })
+    expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
+  })
+
+  it('should render correct loading scoped slot', async () => {
+    const wrapper = mount(FieldLabel, {
+      propsData: {
+        field: model.getField('name')
+      },
+      scopedSlots: {
+        loading: '<span>Loading</span>'
+      }
+    })
+    expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
+  })
 })

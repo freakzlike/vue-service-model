@@ -135,4 +135,28 @@ describe('components/InputField', () => {
     await waitRender.InputField(wrapper)
     expect(inputElement.attributes('value')).toBe(modelData.description)
   })
+
+  it('should render correct loading slot', async () => {
+    const wrapper = mount(InputField, {
+      propsData: {
+        field: model.getField('name')
+      },
+      slots: {
+        loading: '<span>Loading</span>'
+      }
+    })
+    expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
+  })
+
+  it('should render correct loading scoped slot', async () => {
+    const wrapper = mount(InputField, {
+      propsData: {
+        field: model.getField('name')
+      },
+      scopedSlots: {
+        loading: '<span>Loading</span>'
+      }
+    })
+    expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
+  })
 })
