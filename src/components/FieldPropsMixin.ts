@@ -7,7 +7,6 @@ import { Field } from '../fields/Field'
  * Takes field instance or model and field name
  */
 export default Vue.extend({
-  name: 'DisplayField',
   inheritAttrs: false,
 
   props: {

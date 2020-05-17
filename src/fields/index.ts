@@ -3,3 +3,4 @@ export { FormatStringField } from './FormatStringField'
 
 export { CharField } from './CharField'
 export { BooleanField } from './BooleanField'
+export { IntegerField } from './IntegerField'

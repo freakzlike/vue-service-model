@@ -70,8 +70,7 @@ describe('fields/BooleanField', () => {
 
       expect(wrapper.html()).toMatchSnapshot()
 
-      const inputElement = wrapper.find('input')
-      expect(inputElement.is('input')).toBe(true)
+      const inputElement = wrapper.get('input')
       expect(inputElement.attributes('checked')).toBe('checked')
 
       model.val.active = false
@@ -92,8 +91,7 @@ describe('fields/BooleanField', () => {
 
       await waitRender.InputField(wrapper)
 
-      const inputElement = wrapper.find('input')
-      expect(inputElement.is('input')).toBe(true)
+      const inputElement = wrapper.get('input')
       expect(inputElement.attributes('checked')).toBe('checked')
 
       inputElement.setChecked(false)

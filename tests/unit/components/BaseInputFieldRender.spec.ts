@@ -36,8 +36,7 @@ describe('components/BaseInputFieldRender', () => {
 
     expect(spyPrepareInputRender).toBeCalledTimes(1)
     expect(spyInputRender).toBeCalledTimes(1)
-    const inputElement = wrapper.find('input')
-    expect(inputElement.is('input')).toBe(true)
+    const inputElement = wrapper.get('input')
 
     expect(inputElement.attributes('type')).toBe('text')
     expect(inputElement.attributes('value')).toBe(modelData.name)
@@ -58,8 +57,7 @@ describe('components/BaseInputFieldRender', () => {
       propsData: { field: field }
     })
     await waitForRender(wrapper)
-    const inputElement = wrapper.find('input')
-    expect(inputElement.is('input')).toBe(true)
+    const inputElement = wrapper.get('input')
 
     expect(inputElement.attributes('type')).toBe('text')
     expect(inputElement.attributes('value')).toBe(modelData.name)

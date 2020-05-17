@@ -1,7 +1,9 @@
 import AsyncComputed from 'vue-async-computed'
 import Vue, { VNode, CreateElement } from 'vue'
+import mixins from '../utils/mixins'
 import { Field } from '../fields/Field'
 import FieldPropsMixin from './FieldPropsMixin'
+import LoadingSlotMixin from './LoadingSlotMixin'
 
 Vue.use(AsyncComputed)
 
@@ -10,7 +12,10 @@ export interface ComponentData {
   label?: string | null
 }
 
-export default FieldPropsMixin.extend({
+/**
+ * Main component to display label of a field
+ */
+export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
   name: 'FieldLabel',
   inheritAttrs: false,
 
@@ -50,7 +55,7 @@ export default FieldPropsMixin.extend({
     if (this.label) {
       return this.renderLabel(h)
     } else {
-      return undefined as any
+      return this.renderLoading(h)
     }
   }
 })

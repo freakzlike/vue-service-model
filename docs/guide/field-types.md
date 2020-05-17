@@ -28,3 +28,10 @@ class ActiveStatusField extends BooleanField {
   }
 }
 ```
+
+
+## IntegerField
+
+A `IntegerField` uses a `valueFormatter` to format any value (except `undefined` and `null`) to a `string` for display purpose.
+
+As input element a textbox with `type="number"` will be rendered and the input value will be parsed to an integer.

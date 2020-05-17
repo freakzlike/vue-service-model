@@ -47,16 +47,16 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "tslib": "^1.11.1"
+    "tslib": "^2.0.0"
   },
   "peerDependencies": {
     "vue": "^2.0.0",
     "vue-async-computed": "^3.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "@typescript-eslint/eslint-plugin": "^2.30.0",
-    "@typescript-eslint/parser": "^2.30.0",
+    "@types/jest": "^25.2.2",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "^4.3.1",
     "@vue/cli-plugin-eslint": "^4.3.1",
     "@vue/cli-plugin-typescript": "^4.3.1",
@@ -65,7 +65,7 @@
     "@vue/cli-service": "^4.3.1",
     "@vue/eslint-config-standard": "^5.1.2",
     "@vue/eslint-config-typescript": "^5.0.2",
-    "@vue/test-utils": "1.0.0-beta.29",
+    "@vue/test-utils": "^1.0.2",
     "copyfiles": "^2.2.0",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",
@@ -74,13 +74,13 @@
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.2.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.7.6",
+    "rollup": "^2.10.2",
     "rollup-plugin-terser": "^5.3.0",
-    "rollup-plugin-typescript2": "^0.27.0",
-    "typescript": "^3.8.3",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "typescript": "^3.9.2",
     "vue": "^2.6.11",
     "vue-async-computed": "^3.8.2",
     "vue-template-compiler": "^2.6.11",
-    "vuepress": "^1.4.1"
+    "vuepress": "^1.5.0"
   }
 }

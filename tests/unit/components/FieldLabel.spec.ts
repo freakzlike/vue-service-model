@@ -1,7 +1,8 @@
-import Vue, { mount, Wrapper } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import FieldLabel from '@/components/FieldLabel'
 import { BaseModel } from '@/models/BaseModel'
+import { waitRender } from '../../testUtils'
 
 describe('components/FieldLabel', () => {
   const fieldLabels = {
@@ -18,11 +19,6 @@ describe('components/FieldLabel', () => {
 
   const model = new TestModel({})
 
-  const renderFieldLabel = async (wrapper: Wrapper<Vue>) => {
-    await wrapper.vm.$nextTick()
-    await wrapper.vm.$nextTick()
-  }
-
   it('should render correctly with model and fieldName', async () => {
     const wrapper = mount(FieldLabel, {
       propsData: {
@@ -31,9 +27,9 @@ describe('components/FieldLabel', () => {
       }
     })
     expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.name)
 
@@ -47,9 +43,9 @@ describe('components/FieldLabel', () => {
       }
     })
     expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.name)
 
@@ -65,9 +61,9 @@ describe('components/FieldLabel', () => {
       }
     })
     expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.description)
 
@@ -85,9 +81,9 @@ describe('components/FieldLabel', () => {
       }
     })
     expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.description)
 
@@ -104,10 +100,10 @@ describe('components/FieldLabel', () => {
 
     expect(wrapper.vm.label).toBeNull()
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
   })
 
   it('should not render when model reset', async () => {
@@ -118,16 +114,16 @@ describe('components/FieldLabel', () => {
       }
     })
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.name)
     expect(wrapper.text()).toBe(fieldLabels.name)
 
     wrapper.setProps({ model: null })
 
-    await wrapper.vm.$nextTick()
+    await waitRender.FieldLabel(wrapper)
 
-    expect(wrapper.html()).toBeUndefined()
+    expect(wrapper.html()).toBe('')
     expect(wrapper.vm.label).toBeNull()
   })
 
@@ -139,14 +135,14 @@ describe('components/FieldLabel', () => {
       }
     })
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.name)
     expect(wrapper.text()).toBe(fieldLabels.name)
 
     wrapper.setProps({ fieldName: 'description' })
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.description)
     expect(wrapper.text()).toBe(fieldLabels.description)
@@ -159,16 +155,40 @@ describe('components/FieldLabel', () => {
       }
     })
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.name)
     expect(wrapper.text()).toBe(fieldLabels.name)
 
     wrapper.setProps({ field: model.getField('description') })
 
-    await renderFieldLabel(wrapper)
+    await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.description)
     expect(wrapper.text()).toBe(fieldLabels.description)
+  })
+
+  it('should render correct loading slot', async () => {
+    const wrapper = mount(FieldLabel, {
+      propsData: {
+        field: model.getField('name')
+      },
+      slots: {
+        loading: '<span>Loading</span>'
+      }
+    })
+    expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
+  })
+
+  it('should render correct loading scoped slot', async () => {
+    const wrapper = mount(FieldLabel, {
+      propsData: {
+        field: model.getField('name')
+      },
+      scopedSlots: {
+        loading: '<span>Loading</span>'
+      }
+    })
+    expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
   })
 })
