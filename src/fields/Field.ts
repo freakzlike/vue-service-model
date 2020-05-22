@@ -2,7 +2,7 @@ import Vue, { CreateElement, VNode } from 'vue'
 import cu from '../utils/common'
 import { BaseClass } from '../utils/BaseClass'
 import { FieldNotBoundException } from '../exceptions/FieldExceptions'
-import { FieldDef, FieldBind } from '../types/fields/Field'
+import { FieldDef, FieldBind, FieldTypeOptions } from '../types/fields/Field'
 import { BaseModel } from '../models'
 import Dictionary from '../types/Dictionary'
 import { ComponentModule } from '../types/components'
@@ -128,6 +128,20 @@ export class Field extends BaseClass {
    */
   public get hint (): Promise<string> {
     return cu.promiseEval(this._def.hint, this)
+  }
+
+  /**
+   * Field options
+   */
+  public get options (): Promise<FieldTypeOptions> {
+    return cu.promiseEval(this._def.options, this).then(options => this.validateOptions(options))
+  }
+
+  /**
+   * Validate field options
+   */
+  protected async validateOptions (options: FieldTypeOptions): Promise<FieldTypeOptions> {
+    return options || {}
   }
 
   /**

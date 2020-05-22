@@ -1,6 +1,6 @@
 import { Field } from '@/fields/Field'
 import { BaseModel } from '@/models/BaseModel'
-import { FieldDef, FieldBind } from '@/types/fields/Field'
+import { FieldDef, FieldBind, FieldTypeOptions } from '@/types/fields/Field'
 import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
 import BaseInputFieldRender from '@/components/BaseInputFieldRender'
@@ -245,6 +245,73 @@ describe('fields/Field', () => {
 
       const field = new Field(def)
       expect(await field.hint).toBe(hint)
+    })
+  })
+
+  describe('options', () => {
+    class TestField extends Field {
+      public async validateOptions (options: FieldTypeOptions) {
+        return super.validateOptions(options)
+      }
+    }
+
+    it('should get options', async () => {
+      const def: FieldDef = { options: {} }
+      const field = new TestField(def)
+      const mockValidateOptions = jest.spyOn(field, 'validateOptions')
+
+      const result = await field.options
+      expect(result).toBe(def.options)
+
+      expect(mockValidateOptions).toBeCalledTimes(1)
+      expect(mockValidateOptions.mock.calls[0]).toEqual([def.options])
+      mockValidateOptions.mockRestore()
+    })
+
+    it('should get options function', async () => {
+      const options: FieldTypeOptions = {}
+      const def: FieldDef = {}
+      const field = new TestField(def)
+      def.options = function (...args: Array<any>) {
+        expect(args.length).toBe(0)
+        expect(this).toBe(field)
+        return options
+      }
+
+      const mockValidateOptions = jest.spyOn(field, 'validateOptions')
+
+      expect(await field.options).toBe(options)
+
+      expect(mockValidateOptions).toBeCalledTimes(1)
+      expect(mockValidateOptions.mock.calls[0]).toEqual([options])
+      mockValidateOptions.mockRestore()
+    })
+
+    it('should get options Promise', async () => {
+      const options: FieldTypeOptions = {}
+      const def: FieldDef = {
+        options: () => new Promise(resolve => resolve(options))
+      }
+
+      const field = new TestField(def)
+      const mockValidateOptions = jest.spyOn(field, 'validateOptions')
+
+      expect(await field.options).toBe(options)
+
+      expect(mockValidateOptions).toBeCalledTimes(1)
+      expect(mockValidateOptions.mock.calls[0]).toEqual([options])
+      mockValidateOptions.mockRestore()
+    })
+
+    it('should get default options', async () => {
+      const field = new TestField({})
+      const mockValidateOptions = jest.spyOn(field, 'validateOptions')
+
+      expect(await field.options).toEqual({})
+
+      expect(mockValidateOptions).toBeCalledTimes(1)
+      expect(mockValidateOptions.mock.calls[0]).toEqual([undefined])
+      mockValidateOptions.mockRestore()
     })
   })
 
