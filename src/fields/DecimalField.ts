@@ -3,6 +3,7 @@ import { FieldTypeOptions } from '../types/fields/Field'
 import { CreateElement, VNode } from 'vue'
 
 export interface DecimalFieldOptions extends FieldTypeOptions {
+  // Set number of decimal places
   decimalPlaces: number
 }
 

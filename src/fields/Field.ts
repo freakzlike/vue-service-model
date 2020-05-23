@@ -131,14 +131,14 @@ export class Field extends BaseClass {
   }
 
   /**
-   * Field options
+   * Returns async field options with validation and default values depending on field type
    */
   public get options (): Promise<FieldTypeOptions> {
     return cu.promiseEval(this._def.options, this).then(options => this.validateOptions(options))
   }
 
   /**
-   * Validate field options
+   * Validate field options and set default values depending on field type
    */
   protected async validateOptions (options: FieldTypeOptions): Promise<FieldTypeOptions> {
     return options || {}

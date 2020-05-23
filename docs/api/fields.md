@@ -34,6 +34,12 @@ class Field {
   // Returns async field hint from field definition
   public get hint (): Promise<string>
 
+  // Returns async field options with validation and default values depending on field type
+  public get options (): Promise<FieldTypeOptions>
+
+  // Validate field options and set default values depending on field type
+  protected async validateOptions (options: FieldTypeOptions): Promise<FieldTypeOptions>
+
   // Returns boolean whether field is a primary key
   public get isPrimaryKey (): boolean
 
