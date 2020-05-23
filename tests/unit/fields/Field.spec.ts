@@ -327,6 +327,18 @@ describe('fields/Field', () => {
     })
   })
 
+  describe('isNestedAttribute', () => {
+    it('should be nested attribute', () => {
+      const field = new Field({ attributeName: 'obj.title' })
+      expect(field.isNestedAttribute).toBe(true)
+    })
+
+    it('should not be nested attribute', () => {
+      const field = new Field({ attributeName: 'title' })
+      expect(field.isNestedAttribute).toBe(false)
+    })
+  })
+
   describe('valueGetter', () => {
     it('should return null data', () => {
       const field = new Field({}, { name: 'field' })

@@ -152,6 +152,13 @@ export class Field extends BaseClass {
   }
 
   /**
+   * Returns boolean whether attribute is an nested data structure
+   */
+  public get isNestedAttribute (): boolean {
+    return this.attributeName.includes('.')
+  }
+
+  /**
    * Retrieve value from data structure according to attributeName
    * Uses nested syntax from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
    * Will return null if value is not available
@@ -160,7 +167,7 @@ export class Field extends BaseClass {
     if (!data || typeof data !== 'object') return null
 
     // No nested attribute name
-    if (!this.attributeName.includes('.')) {
+    if (!this.isNestedAttribute) {
       const value = data[this.attributeName]
       return !cu.isNull(value) ? value : null
     }

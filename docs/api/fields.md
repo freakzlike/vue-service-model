@@ -43,6 +43,9 @@ class Field {
   // Returns boolean whether field is a primary key
   public get isPrimaryKey (): boolean
 
+  // Returns boolean whether attribute is an nested data structure
+  public get isNestedAttribute (): boolean
+
   // Retrieve value from data structure according to attributeName
   // Uses nested syntax from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
   // Will return null if value is not available
