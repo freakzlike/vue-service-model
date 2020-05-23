@@ -162,12 +162,12 @@ export class ServiceModel extends BaseModel {
     const _parents = parents || {}
 
     if (this.parentNames.length < Object.keys(_parents).length) {
-      console.warn('Too much parents given', this.name, _parents)
+      console.error('[vue-service-model] Too much parents given', this.name, _parents)
       return false
     } else if (this.parentNames.length > 0) {
       const missingParents = this.parentNames.filter(name => !_parents[name])
       if (missingParents.length) {
-        console.warn('Missing parents', this.name, missingParents)
+        console.error('[vue-service-model] Missing parents', this.name, missingParents)
         return false
       }
     }

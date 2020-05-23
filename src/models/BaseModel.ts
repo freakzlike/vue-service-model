@@ -127,7 +127,7 @@ export class BaseModel extends BaseClass {
   public getPrimaryKeyField (): Field | null {
     const pkFields = Object.values(this.fields).filter(field => field.isPrimaryKey)
     if (pkFields.length > 1) {
-      console.warn('Multiple primary key fields found in model', this.constructor.name)
+      console.error('[vue-service-model] Multiple primary key fields found in model', this.constructor.name)
     }
 
     return pkFields.length ? pkFields[0] : null

@@ -169,9 +169,9 @@ describe('models/ServiceModel', () => {
       class TestModel extends ServiceModel {
       }
 
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents()).toBe(true)
-      expect(console.warn).toHaveBeenCalledTimes(0)
+      expect(console.error).toHaveBeenCalledTimes(0)
       spy.mockRestore()
     })
 
@@ -180,9 +180,9 @@ describe('models/ServiceModel', () => {
         protected static parentNames = ['parent1', 'parent2']
       }
 
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents({ parent1: 'text', parent2: 15 })).toBe(true)
-      expect(console.warn).toHaveBeenCalledTimes(0)
+      expect(console.error).toHaveBeenCalledTimes(0)
       spy.mockRestore()
     })
 
@@ -191,12 +191,12 @@ describe('models/ServiceModel', () => {
         protected static parentNames = ['parent1', 'parent2']
       }
 
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents({})).toBe(false)
 
-      expect(console.warn).toHaveBeenCalledTimes(1)
+      expect(console.error).toHaveBeenCalledTimes(1)
       expect(spy.mock.calls).toEqual([
-        ['Missing parents', 'TestModel', ['parent1', 'parent2']]
+        ['[vue-service-model] Missing parents', 'TestModel', ['parent1', 'parent2']]
       ])
       spy.mockRestore()
     })
@@ -207,12 +207,12 @@ describe('models/ServiceModel', () => {
       }
 
       const parents: ServiceParent = { parent1: 10 }
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents(parents)).toBe(false)
 
-      expect(console.warn).toHaveBeenCalledTimes(1)
+      expect(console.error).toHaveBeenCalledTimes(1)
       expect(spy.mock.calls).toEqual([
-        ['Missing parents', 'TestModel', ['parent2']]
+        ['[vue-service-model] Missing parents', 'TestModel', ['parent2']]
       ])
       spy.mockRestore()
     })
@@ -222,12 +222,12 @@ describe('models/ServiceModel', () => {
       }
 
       const parents: ServiceParent = { parent1: 10 }
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents(parents)).toBe(false)
 
-      expect(console.warn).toHaveBeenCalledTimes(1)
+      expect(console.error).toHaveBeenCalledTimes(1)
       expect(spy.mock.calls).toEqual([
-        ['Too much parents given', 'TestModel', parents]
+        ['[vue-service-model] Too much parents given', 'TestModel', parents]
       ])
       spy.mockRestore()
     })
@@ -238,12 +238,12 @@ describe('models/ServiceModel', () => {
       }
 
       const parents: ServiceParent = { parent1: 10, parent2: 'text' }
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents(parents)).toBe(false)
 
-      expect(console.warn).toHaveBeenCalledTimes(1)
+      expect(console.error).toHaveBeenCalledTimes(1)
       expect(spy.mock.calls).toEqual([
-        ['Too much parents given', 'TestModel', parents]
+        ['[vue-service-model] Too much parents given', 'TestModel', parents]
       ])
       spy.mockRestore()
     })
