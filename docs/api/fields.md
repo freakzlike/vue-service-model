@@ -55,6 +55,10 @@ class Field {
   // Will create nested structure from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
   public valueSetter (value: any, data: Dictionary<any>): void
 
+  // Map value from a data structure to another data structure.
+  // Uses valueGetter and valueSetter
+  public mapFieldValue (fromData: Dictionary<any>, toData: Dictionary<any>): void
+
   // Display component to render when displaying value with <display-field/>
   // For more information see Field - Rendering 
   public get displayComponent (): Promise<ComponentModule>

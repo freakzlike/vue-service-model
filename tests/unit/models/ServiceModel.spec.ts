@@ -1,7 +1,7 @@
 import { ServiceModel } from '@/models/ServiceModel'
 import { BaseModel } from '@/models/BaseModel'
 import { ServiceParent } from '@/types/models/ServiceModel'
-import { MissingUrlException } from '@/exceptions/ModelExceptions'
+import { MissingUrlException, NotDeclaredFieldException } from '@/exceptions/ModelExceptions'
 import { Field } from '@/fields/Field'
 
 describe('models/ServiceModel', () => {
@@ -249,6 +249,45 @@ describe('models/ServiceModel', () => {
     })
   })
 
+  describe('mapPartialUpdateFields', () => {
+    class TestModel extends ServiceModel {
+      protected static fieldsDef = {
+        id: new Field({ primaryKey: true }),
+        title: new Field(),
+        description: new Field(),
+        nestedField: new Field({ attributeName: 'nested.field' })
+      }
+    }
+
+    const modelData = {
+      id: 1,
+      title: 'Title',
+      nested: {
+        field: 'value'
+      }
+    }
+    const model = new TestModel(modelData)
+
+    it('should map fields', async () => {
+      const spyMapFieldValue = jest.spyOn(model.getField('title'), 'mapFieldValue')
+
+      expect(await model.mapPartialUpdateFields(model.data, ['title', 'description', 'nestedField'])).toEqual({
+        title: 'Title',
+        description: null,
+        nested: {
+          field: 'value'
+        }
+      })
+
+      expect(spyMapFieldValue).toHaveBeenCalledTimes(1)
+      spyMapFieldValue.mockRestore()
+    })
+
+    it('should throw error on unknown field', async () => {
+      await expect(model.mapPartialUpdateFields(model.data, ['unknown_field'])).rejects.toBeInstanceOf(NotDeclaredFieldException)
+    })
+  })
+
   describe('objects', () => {
     it('should return ModelManager instance', () => {
       class TestModel extends ServiceModel {
@@ -430,7 +469,7 @@ describe('models/ServiceModel', () => {
       expect(model.data).toBe(newModelData)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
-      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {} }])
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {}, partial: false }])
 
       mockModelManagerUpdate.mockRestore()
     })
@@ -451,7 +490,7 @@ describe('models/ServiceModel', () => {
       expect(model.data).toBe(newModelData)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
-      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents }])
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents, partial: false }])
       mockModelManagerUpdate.mockRestore()
     })
 
@@ -466,9 +505,32 @@ describe('models/ServiceModel', () => {
       expect(model.data).toBe(modelData)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
-      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {} }])
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {}, partial: false }])
 
       mockModelManagerUpdate.mockRestore()
+    })
+
+    it('should call ModelManager update partial', async () => {
+      const modelData = { id: 1, title: 'Title' }
+      const mockModelManagerUpdate = jest.spyOn(TestModel.objects, 'update').mockImplementation(async () => null)
+      const model = new TestModel(modelData)
+
+      const mockMapPartialUpdateFields = jest.spyOn(model, 'mapPartialUpdateFields')
+
+      expect(await model.update({ updateFields: ['title'] })).toBe(true)
+
+      expect(mockMapPartialUpdateFields).toBeCalledTimes(1)
+      expect(mockMapPartialUpdateFields.mock.calls[0]).toEqual([modelData, ['title']])
+
+      expect(mockModelManagerUpdate).toBeCalledTimes(1)
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([
+        modelData.id,
+        { title: modelData.title },
+        { parents: {}, partial: true }
+      ])
+
+      mockModelManagerUpdate.mockRestore()
+      mockMapPartialUpdateFields.mockRestore()
     })
 
     it('should not call ModelManager update without primary key', async () => {

@@ -4,6 +4,7 @@ import { FieldDef, FieldBind, FieldTypeOptions } from '@/types/fields/Field'
 import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
 import BaseInputFieldRender from '@/components/BaseInputFieldRender'
+import { Dictionary } from '@/types/Dictionary'
 
 describe('fields/Field', () => {
   class TestModel extends BaseModel {
@@ -433,6 +434,48 @@ describe('fields/Field', () => {
       field.valueSetter(value, data)
       expect(data).toEqual({ nested: { obj: { field: value } } })
       expect(data.nested.obj.field).toBe(value)
+    })
+  })
+
+  describe('mapFieldValue', () => {
+    it('should map value', () => {
+      const field = new Field({}, { name: 'field' })
+      const fromData = { field: {}, otherField: 2 }
+      const toData: Dictionary<any> = { otherField: 1 }
+
+      field.mapFieldValue(fromData, toData)
+
+      expect(toData).toEqual({
+        otherField: 1,
+        field: fromData.field
+      })
+      expect(toData.field).toBe(fromData.field)
+    })
+
+    it('should map nested value', () => {
+      const field = new Field({ attributeName: 'nested.field' }, { name: 'field' })
+      const fromData = { nested: { field: {}, otherField: 1 } }
+      const toData: Dictionary<any> = {}
+
+      field.mapFieldValue(fromData, toData)
+
+      expect(toData).toEqual({
+        nested: { field: fromData.nested.field }
+      })
+      expect(toData.nested.field).toBe(fromData.nested.field)
+    })
+
+    it('should map null value', () => {
+      const field = new Field({}, { name: 'field' })
+      const fromData = { otherField: 2 }
+      const toData = { otherField: 1 }
+
+      field.mapFieldValue(fromData, toData)
+
+      expect(toData).toEqual({
+        otherField: 1,
+        field: null
+      })
     })
   })
 

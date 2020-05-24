@@ -231,6 +231,14 @@ export class Field extends BaseClass {
   }
 
   /**
+   * Map value from a data structure to another data structure
+   */
+  public mapFieldValue (fromData: Dictionary<any>, toData: Dictionary<any>): void {
+    const value = this.valueGetter(fromData)
+    this.valueSetter(value, toData)
+  }
+
+  /**
    * Display component to render when displaying value with <display-field/>
    */
   public get displayComponent (): Promise<ComponentModule> {
