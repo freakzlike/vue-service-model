@@ -39,6 +39,9 @@ class ServiceModel extends BaseModel {
   // Set deep copy of parents to model instance
   public set parents (parents: ServiceParent)
 
+  // Map data by field names for partial updates
+  public async mapPartialUpdateFields (data: Dictionary<any>, updateFields: string[]): Promise<Dictionary<any>>
+
   // Reload model data from service. Overwrites changes made to model data
   // Returns true if successful
   public async reload (): Promise<boolean>

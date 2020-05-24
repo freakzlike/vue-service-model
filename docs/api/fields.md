@@ -34,8 +34,17 @@ class Field {
   // Returns async field hint from field definition
   public get hint (): Promise<string>
 
+  // Returns async field options with validation and default values depending on field type
+  public get options (): Promise<FieldTypeOptions>
+
+  // Validate field options and set default values depending on field type
+  protected async validateOptions (options: FieldTypeOptions): Promise<FieldTypeOptions>
+
   // Returns boolean whether field is a primary key
   public get isPrimaryKey (): boolean
+
+  // Returns boolean whether attribute is an nested data structure
+  public get isNestedAttribute (): boolean
 
   // Retrieve value from data structure according to attributeName
   // Uses nested syntax from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
@@ -45,6 +54,10 @@ class Field {
   // Set value to data by using attributeName
   // Will create nested structure from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
   public valueSetter (value: any, data: Dictionary<any>): void
+
+  // Map value from a data structure to another data structure.
+  // Uses valueGetter and valueSetter
+  public mapFieldValue (fromData: Dictionary<any>, toData: Dictionary<any>): void
 
   // Display component to render when displaying value with <display-field/>
   // For more information see Field - Rendering 

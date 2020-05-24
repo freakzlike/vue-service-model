@@ -1,7 +1,7 @@
 import { ServiceModel } from '@/models/ServiceModel'
 import { BaseModel } from '@/models/BaseModel'
 import { ServiceParent } from '@/types/models/ServiceModel'
-import { MissingUrlException } from '@/exceptions/ModelExceptions'
+import { MissingUrlException, NotDeclaredFieldException } from '@/exceptions/ModelExceptions'
 import { Field } from '@/fields/Field'
 
 describe('models/ServiceModel', () => {
@@ -169,9 +169,9 @@ describe('models/ServiceModel', () => {
       class TestModel extends ServiceModel {
       }
 
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents()).toBe(true)
-      expect(console.warn).toHaveBeenCalledTimes(0)
+      expect(console.error).toHaveBeenCalledTimes(0)
       spy.mockRestore()
     })
 
@@ -180,9 +180,9 @@ describe('models/ServiceModel', () => {
         protected static parentNames = ['parent1', 'parent2']
       }
 
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents({ parent1: 'text', parent2: 15 })).toBe(true)
-      expect(console.warn).toHaveBeenCalledTimes(0)
+      expect(console.error).toHaveBeenCalledTimes(0)
       spy.mockRestore()
     })
 
@@ -191,12 +191,12 @@ describe('models/ServiceModel', () => {
         protected static parentNames = ['parent1', 'parent2']
       }
 
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents({})).toBe(false)
 
-      expect(console.warn).toHaveBeenCalledTimes(1)
+      expect(console.error).toHaveBeenCalledTimes(1)
       expect(spy.mock.calls).toEqual([
-        ['Missing parents', 'TestModel', ['parent1', 'parent2']]
+        ['[vue-service-model] Missing parents', 'TestModel', ['parent1', 'parent2']]
       ])
       spy.mockRestore()
     })
@@ -207,12 +207,12 @@ describe('models/ServiceModel', () => {
       }
 
       const parents: ServiceParent = { parent1: 10 }
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents(parents)).toBe(false)
 
-      expect(console.warn).toHaveBeenCalledTimes(1)
+      expect(console.error).toHaveBeenCalledTimes(1)
       expect(spy.mock.calls).toEqual([
-        ['Missing parents', 'TestModel', ['parent2']]
+        ['[vue-service-model] Missing parents', 'TestModel', ['parent2']]
       ])
       spy.mockRestore()
     })
@@ -222,12 +222,12 @@ describe('models/ServiceModel', () => {
       }
 
       const parents: ServiceParent = { parent1: 10 }
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents(parents)).toBe(false)
 
-      expect(console.warn).toHaveBeenCalledTimes(1)
+      expect(console.error).toHaveBeenCalledTimes(1)
       expect(spy.mock.calls).toEqual([
-        ['Too much parents given', 'TestModel', parents]
+        ['[vue-service-model] Too much parents given', 'TestModel', parents]
       ])
       spy.mockRestore()
     })
@@ -238,14 +238,53 @@ describe('models/ServiceModel', () => {
       }
 
       const parents: ServiceParent = { parent1: 10, parent2: 'text' }
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
       expect(TestModel.checkServiceParents(parents)).toBe(false)
 
-      expect(console.warn).toHaveBeenCalledTimes(1)
+      expect(console.error).toHaveBeenCalledTimes(1)
       expect(spy.mock.calls).toEqual([
-        ['Too much parents given', 'TestModel', parents]
+        ['[vue-service-model] Too much parents given', 'TestModel', parents]
       ])
       spy.mockRestore()
+    })
+  })
+
+  describe('mapPartialUpdateFields', () => {
+    class TestModel extends ServiceModel {
+      protected static fieldsDef = {
+        id: new Field({ primaryKey: true }),
+        title: new Field(),
+        description: new Field(),
+        nestedField: new Field({ attributeName: 'nested.field' })
+      }
+    }
+
+    const modelData = {
+      id: 1,
+      title: 'Title',
+      nested: {
+        field: 'value'
+      }
+    }
+    const model = new TestModel(modelData)
+
+    it('should map fields', async () => {
+      const spyMapFieldValue = jest.spyOn(model.getField('title'), 'mapFieldValue')
+
+      expect(await model.mapPartialUpdateFields(model.data, ['title', 'description', 'nestedField'])).toEqual({
+        title: 'Title',
+        description: null,
+        nested: {
+          field: 'value'
+        }
+      })
+
+      expect(spyMapFieldValue).toHaveBeenCalledTimes(1)
+      spyMapFieldValue.mockRestore()
+    })
+
+    it('should throw error on unknown field', async () => {
+      await expect(model.mapPartialUpdateFields(model.data, ['unknown_field'])).rejects.toBeInstanceOf(NotDeclaredFieldException)
     })
   })
 
@@ -430,7 +469,7 @@ describe('models/ServiceModel', () => {
       expect(model.data).toBe(newModelData)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
-      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {} }])
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {}, partial: false }])
 
       mockModelManagerUpdate.mockRestore()
     })
@@ -451,7 +490,7 @@ describe('models/ServiceModel', () => {
       expect(model.data).toBe(newModelData)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
-      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents }])
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents, partial: false }])
       mockModelManagerUpdate.mockRestore()
     })
 
@@ -466,9 +505,32 @@ describe('models/ServiceModel', () => {
       expect(model.data).toBe(modelData)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
-      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {} }])
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {}, partial: false }])
 
       mockModelManagerUpdate.mockRestore()
+    })
+
+    it('should call ModelManager update partial', async () => {
+      const modelData = { id: 1, title: 'Title' }
+      const mockModelManagerUpdate = jest.spyOn(TestModel.objects, 'update').mockImplementation(async () => null)
+      const model = new TestModel(modelData)
+
+      const mockMapPartialUpdateFields = jest.spyOn(model, 'mapPartialUpdateFields')
+
+      expect(await model.update({ updateFields: ['title'] })).toBe(true)
+
+      expect(mockMapPartialUpdateFields).toBeCalledTimes(1)
+      expect(mockMapPartialUpdateFields.mock.calls[0]).toEqual([modelData, ['title']])
+
+      expect(mockModelManagerUpdate).toBeCalledTimes(1)
+      expect(mockModelManagerUpdate.mock.calls[0]).toEqual([
+        modelData.id,
+        { title: modelData.title },
+        { parents: {}, partial: true }
+      ])
+
+      mockModelManagerUpdate.mockRestore()
+      mockMapPartialUpdateFields.mockRestore()
     })
 
     it('should not call ModelManager update without primary key', async () => {

@@ -6,7 +6,7 @@ import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
 describe('models/BaseModel', () => {
   describe('constructor', () => {
     it('should create BaseModel with data', () => {
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
 
       class TestModel extends BaseModel {
       }
@@ -15,14 +15,14 @@ describe('models/BaseModel', () => {
       const model = new TestModel(data)
       expect(model).toBeInstanceOf(BaseModel)
 
-      expect(console.warn).toHaveBeenCalledTimes(0)
+      expect(console.error).toHaveBeenCalledTimes(0)
 
       expect(model.data).toBe(data)
       spy.mockRestore()
     })
 
     it('should create BaseModel with default data', () => {
-      const spy = jest.spyOn(console, 'warn').mockImplementation()
+      const spy = jest.spyOn(console, 'error').mockImplementation()
 
       class TestModel extends BaseModel {
       }
@@ -30,7 +30,7 @@ describe('models/BaseModel', () => {
       const model = new TestModel()
       expect(model).toBeInstanceOf(BaseModel)
 
-      expect(console.warn).toHaveBeenCalledTimes(0)
+      expect(console.error).toHaveBeenCalledTimes(0)
 
       expect(model.data).toEqual({})
       spy.mockRestore()
@@ -229,7 +229,7 @@ describe('models/BaseModel', () => {
 
   describe('getPrimaryKeyField', () => {
     it('should return primary key field', () => {
-      const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+      const mockConsoleWarn = jest.spyOn(console, 'error').mockImplementation()
 
       class IDField extends Field {
       }
@@ -252,7 +252,7 @@ describe('models/BaseModel', () => {
     })
 
     it('should return warn for multiple primary key fields', () => {
-      const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+      const mockConsoleWarn = jest.spyOn(console, 'error').mockImplementation()
 
       class TestModel extends BaseModel {
         protected static fieldsDef = {
@@ -271,7 +271,7 @@ describe('models/BaseModel', () => {
     })
 
     it('should return no primary key field', () => {
-      const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+      const mockConsoleWarn = jest.spyOn(console, 'error').mockImplementation()
 
       class TestModel extends BaseModel {
         protected static fieldsDef = {

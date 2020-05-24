@@ -90,6 +90,14 @@ album.val.title = 'New title'
 await album.update() // Request: PUT /albums/1/
 ```
 
+You can give a list of field names as `updateFields` to the `update` method to do a partial update request (PATCH).
+
+```js
+await album.update({ updateFields: ['title'] }) // Request: PATCH /albums/1/
+```
+
+The model data will be mapped by `mapPartialUpdateFields` which will call `mapFieldValue` on every field you provide in `updateFields`.
+
 
 ### Creating a new model record
 

@@ -1,1 +1,1 @@
-export { ServiceStoreStateData, ServiceStoreOptions } from './ServiceStore'
+export * from './ServiceStore'

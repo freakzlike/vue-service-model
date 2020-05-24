@@ -1,2 +1,2 @@
-export { FilterParams, ResponseData, RetrieveInterfaceParams } from './ModelManager'
-export { ServiceParent } from './ServiceModel'
+export * from './ModelManager'
+export * from './ServiceModel'

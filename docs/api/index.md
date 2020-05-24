@@ -4,3 +4,4 @@
 * [ServiceModel](/api/service-model/)
 * [Fields](/api/fields/)
 * [ModelManager](/api/model-manager/)
+* [Configuration](/api/configuration/)

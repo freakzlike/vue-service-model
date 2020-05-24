@@ -4,7 +4,9 @@ describe('exports', () => {
     'BadRequestAPIException', 'UnauthorizedAPIException', 'ForbiddenAPIException', 'NotFoundAPIException',
     'InternalServerErrorAPIException'
   ]
-  const fieldsExports = ['Field', 'FormatStringField', 'CharField', 'BooleanField', 'IntegerField']
+  const fieldsExports = [
+    'Field', 'FormatStringField', 'CharField', 'BooleanField', 'IntegerField', 'DecimalField'
+  ]
   const modelsExports = ['BaseModel', 'ServiceModel', 'ModelManager']
   const storeExports = ['ServiceStore']
   const componentsExports = [

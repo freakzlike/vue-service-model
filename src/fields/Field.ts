@@ -2,7 +2,7 @@ import Vue, { CreateElement, VNode } from 'vue'
 import cu from '../utils/common'
 import { BaseClass } from '../utils/BaseClass'
 import { FieldNotBoundException } from '../exceptions/FieldExceptions'
-import { FieldDef, FieldBind } from '../types/fields/Field'
+import { FieldDef, FieldBind, FieldTypeOptions } from '../types/fields/Field'
 import { BaseModel } from '../models'
 import Dictionary from '../types/Dictionary'
 import { ComponentModule } from '../types/components'
@@ -131,10 +131,31 @@ export class Field extends BaseClass {
   }
 
   /**
+   * Returns async field options with validation and default values depending on field type
+   */
+  public get options (): Promise<FieldTypeOptions> {
+    return cu.promiseEval(this._def.options, this).then(options => this.validateOptions(options))
+  }
+
+  /**
+   * Validate field options and set default values depending on field type
+   */
+  protected async validateOptions (options: FieldTypeOptions): Promise<FieldTypeOptions> {
+    return options || {}
+  }
+
+  /**
    * Returns boolean whether field is a primary key
    */
   public get isPrimaryKey (): boolean {
     return Boolean(this.definition.primaryKey)
+  }
+
+  /**
+   * Returns boolean whether attribute is an nested data structure
+   */
+  public get isNestedAttribute (): boolean {
+    return this.attributeName.includes('.')
   }
 
   /**
@@ -146,7 +167,7 @@ export class Field extends BaseClass {
     if (!data || typeof data !== 'object') return null
 
     // No nested attribute name
-    if (!this.attributeName.includes('.')) {
+    if (!this.isNestedAttribute) {
       const value = data[this.attributeName]
       return !cu.isNull(value) ? value : null
     }
@@ -207,6 +228,14 @@ export class Field extends BaseClass {
 
       Vue.set(currentData, subFieldName, setValue)
     }
+  }
+
+  /**
+   * Map value from a data structure to another data structure
+   */
+  public mapFieldValue (fromData: Dictionary<any>, toData: Dictionary<any>): void {
+    const value = this.valueGetter(fromData)
+    this.valueSetter(value, toData)
   }
 
   /**

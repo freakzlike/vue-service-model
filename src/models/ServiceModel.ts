@@ -2,7 +2,7 @@ import { BaseModel } from './BaseModel'
 import { ModelManager } from './ModelManager'
 import cu from '../utils/common'
 import { ServiceStore } from '../store/ServiceStore'
-import { ServiceParent } from '../types/models/ServiceModel'
+import { ServiceParent, ServiceModelUpdateOptions } from '../types/models/ServiceModel'
 import { MissingUrlException } from '../exceptions/ModelExceptions'
 import { PrimaryKey } from '../types/models/ModelManager'
 import Dictionary from '../types/Dictionary'
@@ -162,17 +162,31 @@ export class ServiceModel extends BaseModel {
     const _parents = parents || {}
 
     if (this.parentNames.length < Object.keys(_parents).length) {
-      console.warn('Too much parents given', this.name, _parents)
+      console.error('[vue-service-model] Too much parents given', this.name, _parents)
       return false
     } else if (this.parentNames.length > 0) {
       const missingParents = this.parentNames.filter(name => !_parents[name])
       if (missingParents.length) {
-        console.warn('Missing parents', this.name, missingParents)
+        console.error('[vue-service-model] Missing parents', this.name, missingParents)
         return false
       }
     }
 
     return true
+  }
+
+  /**
+   * Map data by field names for partial update
+   */
+  public async mapPartialUpdateFields (data: Dictionary<any>, updateFields: string[]): Promise<Dictionary<any>> {
+    const updateData: Dictionary<any> = {}
+
+    updateFields.forEach(fieldName => {
+      const field = this.getField(fieldName)
+      field.mapFieldValue(data, updateData)
+    })
+
+    return updateData
   }
 
   /**
@@ -229,13 +243,19 @@ export class ServiceModel extends BaseModel {
    * Updates model data from response if set
    * Returns true if successful
    */
-  public async update (): Promise<boolean> {
+  public async update (options?: ServiceModelUpdateOptions): Promise<boolean> {
     const pk = this.pk
     if (pk === null) return false
 
+    const updateFields = options && options.updateFields
+    const partial = Boolean(updateFields)
+
+    const updateData = partial ? await this.mapPartialUpdateFields(this.data, updateFields as string[]) : this.data
+
     const cls = this.constructor as typeof ServiceModel
-    const data = await cls.objects.update(pk, this.data, {
-      parents: this.parents
+    const data = await cls.objects.update(pk, updateData, {
+      parents: this.parents,
+      partial
     })
 
     if (data && Object.keys(data).length) {

@@ -34,7 +34,12 @@ Field definition structure:
 
   // Boolean flag whether field is a primary key
   // Optional: default is false
-  primaryKey: true
+  primaryKey: true,
+
+  // Optional field type specific options.
+  // Can either be an object, a function or a promise.
+  // See field Types
+  options: {}
 }
 ```
 

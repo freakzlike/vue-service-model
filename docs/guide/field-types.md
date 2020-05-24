@@ -35,3 +35,23 @@ class ActiveStatusField extends BooleanField {
 A `IntegerField` uses a `valueFormatter` to format any value (except `undefined` and `null`) to a `string` for display purpose.
 
 As input element a textbox with `type="number"` will be rendered and the input value will be parsed to an integer.
+
+
+## DecimalField
+
+A `DecimalField` uses a `valueFormatter` to format any value (except `undefined` and `null`) to a `string` for display purpose.
+
+As input element a textbox with `type="number"` will be rendered and the input value will be parsed to an float with precision.
+Depending on `options.decimalPlaces` the `step` attribute on the Input element will be set.
+
+### Options
+
+```js
+new DecimalField({
+  options: {
+    // Set decimal places for DecimalField.
+    // Which will result in step="0.01"
+    decimalPlaces: 2
+  }
+})
+```
