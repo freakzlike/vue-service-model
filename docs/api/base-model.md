@@ -25,7 +25,11 @@ class BaseModel {
   // Primary key field can be defined with FieldDef attribute 'primaryKey: true'
   public get pk (): string | number | null
 
-  // Return field by name.
+  // Return unbound static field by name.
+  // Throws NotDeclaredFieldException if field name is not in fields
+  public static getField (fieldName: string): Field
+
+  // Return bound field by name.
   // Throws NotDeclaredFieldException if field name is not in fields
   public getField (fieldName: string): Field
 }

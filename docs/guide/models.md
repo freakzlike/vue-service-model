@@ -57,3 +57,33 @@ await myObj.val.first_name // output: Joe
 await myObj.val.last_name // output: Bloggs
 ```
 
+### Get a field of model
+
+You can retrieve a field instance by calling `getField` of your your model instance or the static model class.
+
+::: warning
+When using the static model class to retrieve the field instance, then you will receive an unbound field where you can only use some functions (e.g. the label for a column header).
+The methods will throw a `FieldNotBoundException`.
+:::
+
+```js
+class MyModel extends BaseModel {
+  static fieldsDef = {
+    first_name: new Field({label: 'First name'})
+  }
+}
+
+// Return unbound field instance
+field = MyModel.getField('first_name')
+await field.label // output: First name
+await field.value // Throws FieldNotBoundException
+
+const myObj = new MyModel({
+  first_name: 'Joe'
+})
+
+// Return bound field instance
+field = myObj.getField('first_name')
+await field.label // output: First name
+await field.value // output: Joe
+```

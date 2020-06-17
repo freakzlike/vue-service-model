@@ -1,7 +1,7 @@
 import { BaseModel } from '../models'
 
 export class NotDeclaredFieldException extends Error {
-  constructor (model: BaseModel, fieldName: string) {
+  constructor (model: BaseModel | typeof BaseModel, fieldName: string) {
     super('Field "' + fieldName + '" not declared on Model "' + model.cls.name + '"')
     this.constructor = NotDeclaredFieldException
     // @ts-ignore
