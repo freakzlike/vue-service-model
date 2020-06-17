@@ -19,6 +19,23 @@ describe('components/FieldLabel', () => {
 
   const model = new TestModel({})
 
+  it('should render correctly with static model and fieldName', async () => {
+    const wrapper = mount(FieldLabel, {
+      propsData: {
+        model: TestModel,
+        fieldName: 'name'
+      }
+    })
+    expect(wrapper.vm.label).toBeNull()
+    expect(wrapper.html()).toBe('')
+
+    await waitRender.FieldLabel(wrapper)
+
+    expect(wrapper.vm.label).toBe(fieldLabels.name)
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
   it('should render correctly with model and fieldName', async () => {
     const wrapper = mount(FieldLabel, {
       propsData: {
@@ -48,6 +65,23 @@ describe('components/FieldLabel', () => {
     await waitRender.FieldLabel(wrapper)
 
     expect(wrapper.vm.label).toBe(fieldLabels.name)
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  it('should render correctly with unbound field', async () => {
+    const field = new Field({ label: 'New Field' })
+    const wrapper = mount(FieldLabel, {
+      propsData: {
+        field: field
+      }
+    })
+    expect(wrapper.vm.label).toBeNull()
+    expect(wrapper.html()).toBe('')
+
+    await waitRender.FieldLabel(wrapper)
+
+    expect(wrapper.vm.label).toBe('New Field')
 
     expect(wrapper.html()).toMatchSnapshot()
   })
