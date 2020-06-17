@@ -4,7 +4,7 @@ import mixins from '../utils/mixins'
 import { Field } from '../fields/Field'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
-import { BaseModel } from '@/models/BaseModel'
+import { BaseModel } from '../models/BaseModel'
 
 Vue.use(AsyncComputed)
 
