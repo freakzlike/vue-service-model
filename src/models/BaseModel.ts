@@ -110,6 +110,18 @@ export class BaseModel extends BaseClass {
   }
 
   /**
+   * Return unbound static field by name.
+   * Throws NotDeclaredFieldException if field name is not in fields
+   */
+  public static getField (fieldName: string): Field {
+    if (Object.keys(this.fieldsDef).indexOf(fieldName) === -1) {
+      throw new NotDeclaredFieldException(this, fieldName)
+    }
+
+    return this.fieldsDef[fieldName]
+  }
+
+  /**
    * Return field by name.
    * Throws NotDeclaredFieldException if field name is not in fields
    */

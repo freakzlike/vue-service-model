@@ -11,3 +11,7 @@ exports[`components/FieldLabel should render correctly with scoped slot 1`] = `
   <p>Description</p>
 </div>
 `;
+
+exports[`components/FieldLabel should render correctly with static model and fieldName 1`] = `<span>Name</span>`;
+
+exports[`components/FieldLabel should render correctly with unbound field 1`] = `<span>New Field</span>`;

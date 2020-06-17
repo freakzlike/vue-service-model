@@ -113,10 +113,17 @@ To display the loading state of the component, when the data is being fetched, y
 ## FieldLabel
 
 In case you just want to render the label of the field you can use the `FieldLabel` component which will resolve the async field label. 
+You can use your model instance or the static model class
 
 ```vue
 <template>
   [...]
+    <!-- with model static class -->
+    <field-label :model="Album" field-name="title"/>
+    <!-- or directly with field -->
+    <field-label :field="Album.getField('title')"/>
+
+    <!-- with model instance -->
     <field-label :model="album" field-name="title"/>
     <!-- or directly with field -->
     <field-label :field="album.getField('title')"/>

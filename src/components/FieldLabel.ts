@@ -4,6 +4,7 @@ import mixins from '../utils/mixins'
 import { Field } from '../fields/Field'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
+import { BaseModel } from '../models/BaseModel'
 
 Vue.use(AsyncComputed)
 
@@ -20,6 +21,13 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
   inheritAttrs: false,
 
   props: {
+    model: {
+      default: null,
+      validator: value => value === null || value as any instanceof BaseModel ||
+        // Allow static BaseModel class
+        Boolean(value && (value as any).prototype instanceof BaseModel)
+    },
+
     tag: {
       type: String,
       default: 'span'

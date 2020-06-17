@@ -204,6 +204,28 @@ describe('models/BaseModel', () => {
     })
   })
 
+  describe('static getField', () => {
+    class NameField extends Field {
+    }
+
+    class TestModel extends BaseModel {
+      public static fieldsDef = {
+        name: new NameField({ label: 'Name' })
+      }
+    }
+
+    it('should return unbound field', () => {
+      const field = TestModel.getField('name')
+      expect(field).toBeInstanceOf(NameField)
+      expect(field).toBe(TestModel.fieldsDef.name)
+      expect(() => field.name).toThrow(FieldNotBoundException)
+    })
+
+    it('should throw NotDeclaredFieldException', () => {
+      expect(() => TestModel.getField('not_declared')).toThrow(NotDeclaredFieldException)
+    })
+  })
+
   describe('getField', () => {
     class NameField extends Field {
     }
