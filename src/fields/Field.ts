@@ -9,27 +9,31 @@ import { ComponentModule } from '../types/components'
 
 export class Field extends BaseClass {
   /**
-   * Field name
-   */
-  protected _name: (string | null) = null
-
-  /**
    * Field definition
    */
   protected _def: FieldDef
+
+  /**
+   * Field name
+   */
+  protected _name: (string | null) = null
 
   /**
    * Model instance
    */
   protected _model: BaseModel | null = null
 
+  /**
+   * Data structure when using field without model
+   */
+  protected _data: Dictionary<any> | null = null
+
   constructor (def: FieldDef = {}, fieldBind?: FieldBind) {
     super()
     this._def = def
-    if (fieldBind) {
-      this._name = fieldBind.name
-      this._model = fieldBind.model || null
-    }
+    this._name = (fieldBind && fieldBind.name) || null
+    this._model = (fieldBind && fieldBind.model) || null
+    this._data = (fieldBind && fieldBind.data) || null
   }
 
   /**
@@ -38,23 +42,16 @@ export class Field extends BaseClass {
   public clone (): Field {
     const FieldClass = this.cls as typeof Field
 
-    if (this._name) {
-      const fieldBind: FieldBind = {
-        name: this._name
-      }
-      if (this._model) {
-        fieldBind.model = this._model
-      }
+    const fieldBind: FieldBind = {}
+    this._name && (fieldBind.name = this._name)
+    this._model && (fieldBind.model = this._model)
+    this._data && (fieldBind.data = this._data)
 
-      return new FieldClass(this._def, fieldBind)
-    } else {
-      return new FieldClass(this._def)
-    }
+    return new FieldClass(this._def, fieldBind)
   }
 
   /**
    * Bind field with field name and return a new instance
-   * @param fieldBind
    */
   public bind (fieldBind: FieldBind): Field {
     const FieldClass = this.cls as typeof Field
@@ -63,8 +60,8 @@ export class Field extends BaseClass {
 
   /**
    * Field name
-   * Returns field name (Which has been set as key at fieldsDef
-   * Will throw FieldNotBoundException in case field has not been bound to a model
+   * Returns field name (Which has been set as key at fieldsDef)
+   * Will throw FieldNotBoundException in case field has not been bound
    */
   public get name (): string {
     if (this._name === null) {
@@ -78,7 +75,7 @@ export class Field extends BaseClass {
    * Name of attribute in data
    */
   public get attributeName (): string {
-    return this._def.attributeName || this.name
+    return this.definition.attributeName || this.name
   }
 
   /**
@@ -101,11 +98,19 @@ export class Field extends BaseClass {
   }
 
   /**
+   * Return bound data or data from bound model
+   * Will throw FieldNotBoundException if field is not bound to data or model
+   */
+  public get data (): Dictionary<any> {
+    return this._data || this.model.data
+  }
+
+  /**
    * Field value
    * Returns async field value from data by calling valueGetter with data of assigned model
    */
   public get value (): any {
-    return Promise.resolve(this.valueGetter(this.model.data))
+    return Promise.resolve(this.valueGetter(this.data))
   }
 
   /**
@@ -113,28 +118,28 @@ export class Field extends BaseClass {
    * Sets field value to model data by calling valueSetter with data of assigned model
    */
   public set value (value: any) {
-    this.valueSetter(value, this.model.data)
+    this.valueSetter(value, this.data)
   }
 
   /**
    * Field label
    */
   public get label (): Promise<string> {
-    return cu.promiseEval(this._def.label, this)
+    return cu.promiseEval(this.definition.label, this)
   }
 
   /**
    * Field hint
    */
   public get hint (): Promise<string> {
-    return cu.promiseEval(this._def.hint, this)
+    return cu.promiseEval(this.definition.hint, this)
   }
 
   /**
    * Returns async field options with validation and default values depending on field type
    */
   public get options (): Promise<FieldTypeOptions> {
-    return cu.promiseEval(this._def.options, this).then(options => this.validateOptions(options))
+    return cu.promiseEval(this.definition.options, this).then(options => this.validateOptions(options))
   }
 
   /**

@@ -3,16 +3,16 @@
 ```typescript
 class Field {
   // Constructor takes field definition
-  constructor (def: FieldDef)
+  constructor (def: FieldDef, fieldBind?: FieldBind)
 
   // Clone field instance
   public clone (): Field
 
   // Returns field name (Which has been set as key at fieldsDef.
-  // Will throw FieldNotBoundException in case field has not been bound to a model
+  // Will throw FieldNotBoundException in case field has not been bound
   public get name (): string
 
-  // Returns either attributeName from fieldsDef or field name
+  // Returns either attributeName from FieldDef or field name
   public get attributeName (): string
 
   // Returns field definition
@@ -21,6 +21,10 @@ class Field {
   // Assigned model
   // Will throw FieldNotBoundException in case field has not been bound to a model
   public get model (): BaseModel
+
+  // Return bound data or data from bound model
+  // Will throw FieldNotBoundException if field is not bound to data or model 
+  public get data (): Dictionary<any>
 
   // Returns async field value from data by calling valueGetter with data of assigned model
   public get value (): any
@@ -83,5 +87,51 @@ class Field {
   // For more information see Field - Rendering 
   public inputRender (h: CreateElement, renderData: any): VNode
 
+}
+```
+
+## FieldDef
+
+```typescript
+interface FieldDef {
+  // String which key should be used to retrieve value from.
+  // See Attribute name for more information
+  // Optional: default uses key from fieldsDef
+  attributeName?: string
+
+  // Label of field. See Field label and hint for more information
+  // Optional: Can either be a string, function or promise
+  label?: LazyValue<string>
+
+  // Hint of field. See Field label and hint for more information
+  // Optional: Can either be a string, function or promise
+  hint?: LazyValue<string>
+
+  // Boolean flag whether field is a primary key
+  // Optional: default is false
+  primaryKey?: boolean
+
+  // Optional field type specific options.
+  // Can either be an object, a function or a promise.
+  // See field Types
+  options?: LazyValue<FieldTypeOptions>
+}
+```
+
+## FieldBind
+
+```typescript
+interface FieldBind {
+  // Field name which has been set as key at fieldsDef
+  name?: string
+
+  // Model to bind field to
+  // Beware of manual bind your field to a model afterwards.
+  // The field will not be available by model.fields or model.getField()
+  model?: BaseModel
+
+  // Data to retrieve field value from
+  // If not set then model.data will be used
+  data?: Dictionary<any>
 }
 ```

@@ -32,7 +32,7 @@ describe('fields/Field', () => {
   })
 
   describe('clone', () => {
-    it('should clone field instance with bind', () => {
+    it('should clone field instance with model bind', () => {
       const fieldBind: FieldBind = { name: 'name', model }
       const field = new Field({}, fieldBind)
 
@@ -41,6 +41,20 @@ describe('fields/Field', () => {
       expect(cloned.definition).toBe(cloned.definition)
       expect(cloned.name).toBe(fieldBind.name)
       expect(cloned.model).toBe(fieldBind.model)
+      expect(cloned.data).toBe(model.data)
+    })
+
+    it('should clone field instance with data bind', () => {
+      const data = {}
+      const fieldBind: FieldBind = { name: 'name', data }
+      const field = new Field({}, fieldBind)
+
+      const cloned = field.clone()
+      expect(field).not.toBe(cloned)
+      expect(cloned.definition).toBe(cloned.definition)
+      expect(cloned.name).toBe(fieldBind.name)
+      expect(cloned.data).toBe(data)
+      expect(() => cloned.model).toThrow(FieldNotBoundException)
     })
 
     it('should clone field instance without bind', () => {
@@ -64,11 +78,12 @@ describe('fields/Field', () => {
       expect(field.definition).toBe(cloned.definition)
       expect(cloned.name).toBe(fieldBind.name)
       expect(() => cloned.model).toThrow(FieldNotBoundException)
+      expect(() => cloned.data).toThrow(FieldNotBoundException)
     })
   })
 
   describe('bind', () => {
-    it('should bind field and return new instance', () => {
+    it('should bind model to field and return new instance', () => {
       const field = new Field({})
       const fieldName = 'name'
 
@@ -78,6 +93,20 @@ describe('fields/Field', () => {
       expect(field.definition).toBe(bound.definition)
       expect(bound.name).toBe(fieldName)
       expect(bound.model).toBe(model)
+    })
+
+    it('should bind data to field and return new instance', () => {
+      const field = new Field({})
+      const fieldName = 'name'
+      const data = {}
+
+      const bound = field.bind({ name: fieldName, data })
+      expect(bound).toBeInstanceOf(Field)
+      expect(field).not.toBe(bound)
+      expect(field.definition).toBe(bound.definition)
+      expect(bound.name).toBe(fieldName)
+      expect(bound.data).toBe(data)
+      expect(() => bound.model).toThrow(FieldNotBoundException)
     })
   })
 
@@ -134,8 +163,44 @@ describe('fields/Field', () => {
     })
   })
 
+  describe('data', () => {
+    it('should return bound data', () => {
+      const data = {}
+      const field = new Field({}, { name: 'description', data })
+      expect(field.data).toBe(data)
+    })
+
+    it('should return bound model data', () => {
+      const field = new Field({}, { name: 'description', model })
+      expect(field.data).toBe(model.data)
+    })
+
+    it('should return bound data before model data', () => {
+      const data = {}
+      const field = new Field({}, { name: 'description', data, model })
+      expect(field.data).toBe(data)
+      expect(field.data).not.toBe(model.data)
+    })
+
+    it('should throw FieldNotBoundException', () => {
+      const field = new Field()
+      expect(() => field.model).toThrow(FieldNotBoundException)
+    })
+  })
+
   describe('get value', () => {
-    it('should return field value', async () => {
+    it('should return field value from data', async () => {
+      const data = { description: 'desc value' }
+      const field = new Field({}, { name: 'description', data })
+      const mockValueGetter = jest.spyOn(field, 'valueGetter')
+
+      expect(await field.value).toBe(data.description)
+
+      expect(mockValueGetter).toBeCalledTimes(1)
+      expect(mockValueGetter.mock.calls[0]).toEqual([data])
+    })
+
+    it('should return field value from model data', async () => {
       const data = { description: 'desc value' }
       const model = new TestModel(data)
 
@@ -155,7 +220,22 @@ describe('fields/Field', () => {
   })
 
   describe('set value', () => {
-    it('should return field value', () => {
+    it('should set field value to data', () => {
+      const data = { description: 'desc value' }
+      const value = 'new value'
+
+      const field = new Field({}, { name: 'description', data })
+      const mockValueSetter = jest.spyOn(field, 'valueSetter')
+
+      field.value = value
+
+      expect(data.description).toBe(value)
+
+      expect(mockValueSetter).toBeCalledTimes(1)
+      expect(mockValueSetter.mock.calls[0]).toEqual([value, data])
+    })
+
+    it('should set field value to model data', () => {
       const data = { description: 'desc value' }
       const model = new TestModel(data)
       const value = 'new value'

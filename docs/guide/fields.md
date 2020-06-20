@@ -100,6 +100,31 @@ await firstNameField.label // output: First name
 await firstNameField.hint // output: First name of the employee
 ```
 
+
+## Standalone Field
+
+In some cases you just want to work with a single field and don't need a model.
+So it is possible to create a standalone field:
+
+```js
+const data = {description: 'My description'}
+// Bind data when creating a new instance
+const myField = new Field({attributeName: 'description'}, {data: data})
+
+await myField.value // output: My description
+```
+
+You can also use the [components](/guide/components.html) to render your standalone field
+
+```vue
+<template>
+  [...]
+    <display-field :field="myField"/>
+  [...]
+</template>
+```
+
+
 ## Custom/Computed fields
 
 In case you want to define your own field class you just need to extend from `Field`. By overwriting the `valueGetter` method you are able to map the field value by yourself and create computed values.
