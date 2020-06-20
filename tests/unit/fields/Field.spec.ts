@@ -29,6 +29,38 @@ describe('fields/Field', () => {
       expect(field.name).toBe('name')
       expect(field.model).toBe(model)
     })
+
+    it('should create correct Field with value', () => {
+      const def = {}
+      const value = {}
+      const field = new Field(def, { value })
+      expect(field).toBeInstanceOf(Field)
+      expect(field.definition).toBe(def)
+      expect(field.name).toBe('value')
+      expect(field.data).toHaveProperty('value')
+      expect(field.data.value).toBe(value)
+    })
+
+    it('should create correct Field with value and field name', () => {
+      const value = {}
+      const field = new Field(null, { name: 'name', value })
+      expect(field).toBeInstanceOf(Field)
+      expect(field.definition).toEqual({})
+      expect(field.name).toBe('name')
+      expect(field.data).toHaveProperty('name')
+      expect(field.data.name).toBe(value)
+    })
+
+    it('should create correct Field with value and attribute name', () => {
+      const def = { attributeName: 'nested.field' }
+      const value = {}
+      const field = new Field(def, { value })
+      expect(field).toBeInstanceOf(Field)
+      expect(field.definition).toBe(def)
+      expect(field.name).toBe('value')
+      expect(field.data).toEqual({ nested: { field: value } })
+      expect(field.data.nested.field).toBe(value)
+    })
   })
 
   describe('clone', () => {
@@ -108,6 +140,21 @@ describe('fields/Field', () => {
       expect(bound.data).toBe(data)
       expect(() => bound.model).toThrow(FieldNotBoundException)
     })
+
+    it('should bind value to field and return new instance', () => {
+      const field = new Field({})
+      const fieldName = 'name'
+      const value = {}
+
+      const bound = field.bind({ name: fieldName, value })
+      expect(bound).toBeInstanceOf(Field)
+      expect(field).not.toBe(bound)
+      expect(field.definition).toBe(bound.definition)
+      expect(bound.name).toBe(fieldName)
+      expect(bound.data).toHaveProperty(fieldName)
+      expect(bound.data[fieldName]).toBe(value)
+      expect(() => bound.model).toThrow(FieldNotBoundException)
+    })
   })
 
   describe('name', () => {
@@ -182,6 +229,20 @@ describe('fields/Field', () => {
       expect(field.data).not.toBe(model.data)
     })
 
+    it('should return created data with value', () => {
+      const value = {}
+      const field = new Field({}, { value })
+      expect(field.data).toHaveProperty('value')
+      expect(field.data.value).toBe(value)
+    })
+
+    it('should return created data with value and field name', () => {
+      const value = {}
+      const field = new Field({}, { name: 'name', value })
+      expect(field.data).toHaveProperty('name')
+      expect(field.data.name).toBe(value)
+    })
+
     it('should throw FieldNotBoundException', () => {
       const field = new Field()
       expect(() => field.model).toThrow(FieldNotBoundException)
@@ -213,6 +274,17 @@ describe('fields/Field', () => {
       expect(mockValueGetter.mock.calls[0]).toEqual([data])
     })
 
+    it('should return field value from constructor value', async () => {
+      const value = 'desc value'
+      const field = new Field({}, { name: 'description', value })
+      const mockValueGetter = jest.spyOn(field, 'valueGetter')
+
+      expect(await field.value).toBe(value)
+
+      expect(mockValueGetter).toBeCalledTimes(1)
+      expect(mockValueGetter.mock.calls[0]).toEqual([{ description: value }])
+    })
+
     it('should throw FieldNotBoundException', () => {
       const field = new Field()
       expect(() => field.value).toThrow(FieldNotBoundException)
@@ -220,14 +292,16 @@ describe('fields/Field', () => {
   })
 
   describe('set value', () => {
-    it('should set field value to data', () => {
+    it('should set field value to data', async () => {
       const data = { description: 'desc value' }
       const value = 'new value'
 
       const field = new Field({}, { name: 'description', data })
       const mockValueSetter = jest.spyOn(field, 'valueSetter')
 
-      field.value = value
+      await expect(() => {
+        field.value = value
+      }).toUseReactivity(() => data.description)
 
       expect(data.description).toBe(value)
 
@@ -235,7 +309,7 @@ describe('fields/Field', () => {
       expect(mockValueSetter.mock.calls[0]).toEqual([value, data])
     })
 
-    it('should set field value to model data', () => {
+    it('should set field value to model data', async () => {
       const data = { description: 'desc value' }
       const model = new TestModel(data)
       const value = 'new value'
@@ -243,9 +317,28 @@ describe('fields/Field', () => {
       const field = new Field({}, { name: 'description', model })
       const mockValueSetter = jest.spyOn(field, 'valueSetter')
 
-      field.value = value
+      await expect(() => {
+        field.value = value
+      }).toUseReactivity(() => data.description)
 
       expect(data.description).toBe(value)
+
+      expect(mockValueSetter).toBeCalledTimes(1)
+      expect(mockValueSetter.mock.calls[0]).toEqual([value, data])
+    })
+
+    it('should set field value to data from value', async () => {
+      const value = 'new value'
+
+      const field = new Field(null, { value: 'desc value' })
+      const mockValueSetter = jest.spyOn(field, 'valueSetter')
+      const data = field.data
+
+      await expect(() => {
+        field.value = value
+      }).toUseReactivity(() => data.value)
+
+      expect(data.value).toBe(value)
 
       expect(mockValueSetter).toBeCalledTimes(1)
       expect(mockValueSetter.mock.calls[0]).toEqual([value, data])

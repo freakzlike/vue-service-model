@@ -1,10 +1,9 @@
 // jest config to test against compiled lib
+const jestConfig = require('./jest.config.js')
+
 module.exports = {
-  preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
+  ...jestConfig,
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/lib/$1'
-  },
-  collectCoverageFrom: [
-    'src/**/*.{!(json),}'
-  ]
+  }
 }

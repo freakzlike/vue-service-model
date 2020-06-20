@@ -28,12 +28,27 @@ export class Field extends BaseClass {
    */
   protected _data: Dictionary<any> | null = null
 
-  constructor (def: FieldDef = {}, fieldBind?: FieldBind) {
+  constructor (def: FieldDef | null = {}, fieldBind?: FieldBind) {
     super()
-    this._def = def
-    this._name = (fieldBind && fieldBind.name) || null
-    this._model = (fieldBind && fieldBind.model) || null
-    this._data = (fieldBind && fieldBind.data) || null
+    this._def = def || {}
+
+    if (fieldBind) {
+      this._name = fieldBind.name || null
+
+      if (Object.prototype.hasOwnProperty.call(fieldBind, 'value')) {
+        if (!this._name) {
+          this._name = 'value'
+        }
+
+        this._model = null
+        // Create private data structure to keep value reactive
+        this._data = Vue.observable({})
+        this.value = fieldBind.value
+      } else {
+        this._model = fieldBind.model || null
+        this._data = fieldBind.data ? Vue.observable(fieldBind.data) : null
+      }
+    }
   }
 
   /**
@@ -107,7 +122,7 @@ export class Field extends BaseClass {
 
   /**
    * Field value
-   * Returns async field value from data by calling valueGetter with data of assigned model
+   * Returns async field value from data by calling valueGetter with data
    */
   public get value (): any {
     return Promise.resolve(this.valueGetter(this.data))
@@ -115,7 +130,7 @@ export class Field extends BaseClass {
 
   /**
    * Field value setter
-   * Sets field value to model data by calling valueSetter with data of assigned model
+   * Sets field value to model data by calling valueSetter with data
    */
   public set value (value: any) {
     this.valueSetter(value, this.data)

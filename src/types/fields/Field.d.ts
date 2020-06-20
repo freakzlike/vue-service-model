@@ -40,4 +40,9 @@ export interface FieldBind {
   // Data to retrieve field value from
   // If not set then model.data will be used
   data?: Dictionary<any>
+
+  // Value which should be bound to field
+  // When using value then model and data will be ignored
+  // A custom data object will be created to keep the field reactive
+  value?: any
 }

@@ -104,7 +104,20 @@ await firstNameField.hint // output: First name of the employee
 ## Standalone Field
 
 In some cases you just want to work with a single field and don't need a model.
-So it is possible to create a standalone field:
+So it is possible to create a standalone field by directly passing an initial value.
+
+```js
+// Pass initial value when creating a new instance
+const myField = new Field({label: 'Description'}, {value: 'My description'})
+
+await myField.value // output: My description
+```
+
+::: tip note
+The value will be stored in a data object to keep the field reactive. Your can retrieve the data object with `myField.data`
+:::
+
+You can also directly pass a data object instead of an initial value
 
 ```js
 const data = {description: 'My description'}
