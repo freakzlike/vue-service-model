@@ -1,10 +1,16 @@
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import InputField from '@/components/InputField'
 import { BaseModel } from '@/models/BaseModel'
-import { waitRender } from '../../testUtils'
+import { installAsyncComputed, waitRender } from '../../testUtils'
 
-describe('components/InputField', () => {
+const TestInputField = (useAsyncComputed: boolean) => {
+  const localVue = createLocalVue()
+
+  if (useAsyncComputed) {
+    installAsyncComputed(localVue)
+  }
+
   const modelData = {
     name: 'Name 1',
     description: 'Description'
@@ -19,13 +25,12 @@ describe('components/InputField', () => {
 
   const model = new TestModel(modelData)
 
-  it('should render correctly with model and fieldName', async () => {
+  const checkCorrectRender = async (propsData: object) => {
     const wrapper = mount(InputField, {
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
+      localVue,
+      propsData
     })
+
     expect(wrapper.vm.inputComponent).toBeNull()
     expect(wrapper.html()).toBe('')
 
@@ -34,28 +39,27 @@ describe('components/InputField', () => {
     expect(wrapper.vm.inputComponent).not.toBeNull()
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe('<input type="text" value="Name 1">')
+
+    return wrapper
+  }
+
+  it('should render correctly with model and fieldName', async () => {
+    await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
+    })
   })
 
   it('should render correctly with field', async () => {
-    const wrapper = mount(InputField, {
-      propsData: {
-        field: model.getField('name')
-      }
+    await checkCorrectRender({
+      field: model.getField('name')
     })
-    expect(wrapper.vm.inputComponent).toBeNull()
-    expect(wrapper.html()).toBe('')
-
-    await waitRender.InputField(wrapper)
-
-    expect(wrapper.vm.inputComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.html()).toMatchSnapshot()
   })
 
   it('should not render without model', async () => {
     const wrapper = mount(InputField, {
+      localVue,
       propsData: {
         model: null,
         fieldName: 'name'
@@ -70,17 +74,11 @@ describe('components/InputField', () => {
   })
 
   it('should not render when model reset', async () => {
-    const wrapper = mount(InputField, {
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
     })
 
-    await waitRender.InputField(wrapper)
-
-    expect(wrapper.vm.inputComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
     const inputElement = wrapper.get('input')
     expect(inputElement.attributes('value')).toBe(modelData.name)
 
@@ -94,17 +92,10 @@ describe('components/InputField', () => {
   })
 
   it('should render correct when field name changed', async () => {
-    const wrapper = mount(InputField, {
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
     })
-
-    await waitRender.InputField(wrapper)
-
-    expect(wrapper.vm.inputComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
 
     const inputElement = wrapper.get('input')
     expect(inputElement.attributes('value')).toBe(modelData.name)
@@ -116,16 +107,10 @@ describe('components/InputField', () => {
   })
 
   it('should render correct when field changed', async () => {
-    const wrapper = mount(InputField, {
-      propsData: {
-        field: model.getField('name')
-      }
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
     })
-
-    await waitRender.InputField(wrapper)
-
-    expect(wrapper.vm.inputComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
 
     const inputElement = wrapper.get('input')
     expect(inputElement.attributes('value')).toBe(modelData.name)
@@ -138,6 +123,7 @@ describe('components/InputField', () => {
 
   it('should render correct loading slot', async () => {
     const wrapper = mount(InputField, {
+      localVue,
       propsData: {
         field: model.getField('name')
       },
@@ -150,6 +136,7 @@ describe('components/InputField', () => {
 
   it('should render correct loading scoped slot', async () => {
     const wrapper = mount(InputField, {
+      localVue,
       propsData: {
         field: model.getField('name')
       },
@@ -159,4 +146,8 @@ describe('components/InputField', () => {
     })
     expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
   })
-})
+}
+
+describe('components/InputField', () => TestInputField(false))
+
+describe('components/InputField asyncComputed', () => TestInputField(true))
