@@ -11,6 +11,8 @@ import { LazyValue } from './types/LazyValue'
 export type TranslationKey = LazyValue<string>
 
 export interface Config {
+  useAsyncComputed?: boolean
+
   /**
    * i18n translations
    */
