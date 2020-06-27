@@ -1,9 +1,16 @@
-import Vue, { shallowMount, Wrapper } from '@vue/test-utils'
+import Vue, { createLocalVue, shallowMount, Wrapper } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 import { BaseModel } from '@/models/BaseModel'
+import { installAsyncComputed } from '../../testUtils'
 
-describe('components/BaseInputFieldRender', () => {
+const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
+  const localVue = createLocalVue()
+
+  if (useAsyncComputed) {
+    installAsyncComputed(localVue)
+  }
+
   const modelData = { name: 'Name 1' }
 
   class TestModel extends BaseModel {
@@ -18,6 +25,7 @@ describe('components/BaseInputFieldRender', () => {
   const waitForRender = async (wrapper: Wrapper<Vue>) => {
     await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
   }
 
   it('should call and render correct inputRender', async () => {
@@ -25,6 +33,7 @@ describe('components/BaseInputFieldRender', () => {
     const spyInputRender = jest.spyOn(field, 'inputRender')
 
     const wrapper = shallowMount(BaseInputFieldRender, {
+      localVue,
       propsData: { field: field }
     })
     expect(wrapper.text()).toBe('')
@@ -54,6 +63,7 @@ describe('components/BaseInputFieldRender', () => {
     const spyValueSetter = jest.spyOn(field, 'valueSetter')
 
     const wrapper = shallowMount(BaseInputFieldRender, {
+      localVue,
       propsData: { field: field }
     })
     await waitForRender(wrapper)
@@ -71,9 +81,14 @@ describe('components/BaseInputFieldRender', () => {
   it('should render correctly', async () => {
     modelData.name = 'Name 1'
     const wrapper = shallowMount(BaseInputFieldRender, {
+      localVue,
       propsData: { field: field }
     })
     await waitForRender(wrapper)
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe('<input type="text" value="Name 1">')
   })
-})
+}
+
+describe('components/BaseInputFieldRender', () => TestBaseInputFieldRender(false))
+
+describe('components/BaseInputFieldRender asyncComputed', () => TestBaseInputFieldRender(true))

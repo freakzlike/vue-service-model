@@ -1,8 +1,9 @@
 import Vue, { VNode, CreateElement } from 'vue'
 import { Field } from '../fields/Field'
+import cu from '../utils/common'
+import { configHandler } from '../utils/ConfigHandler'
 
 export interface ComponentData {
-  resolvedRenderData: boolean,
   renderData: any
 }
 
@@ -18,30 +19,50 @@ export default Vue.extend({
   },
 
   data: (): ComponentData => ({
-    resolvedRenderData: false,
-    renderData: null
+    renderData: cu.NO_VALUE
   }),
+
+  computed: {
+    hasResolvedRenderData () {
+      return this.renderData !== cu.NO_VALUE
+    }
+  },
+
+  asyncComputed: {
+    renderData: {
+      default: cu.NO_VALUE,
+      get () {
+        const _self = this as {resolveRenderData: () => Promise<any>}
+        return _self.resolveRenderData()
+      }
+    }
+  },
 
   watch: {
     field () {
-      this.resolveRenderData()
+      this.setResolveRenderData()
     },
     'field.data': {
       deep: true,
       handler () {
-        this.resolveRenderData()
+        this.setResolveRenderData()
       }
     }
   },
 
   created () {
-    this.resolveRenderData()
+    this.setResolveRenderData()
   },
 
   methods: {
-    async resolveRenderData () {
-      this.renderData = await this.field.prepareDisplayRender()
-      this.resolvedRenderData = true
+    async setResolveRenderData () {
+      if (!configHandler.useAsyncComputed()) {
+        this.renderData = await this.resolveRenderData()
+      }
+    },
+
+    async resolveRenderData (): Promise<any> {
+      return this.field.prepareDisplayRender()
     },
 
     renderField (h: CreateElement): VNode {
@@ -50,7 +71,7 @@ export default Vue.extend({
   },
 
   render (h: CreateElement): VNode {
-    if (this.resolvedRenderData) {
+    if (this.hasResolvedRenderData) {
       return this.renderField(h)
     } else {
       return undefined as any

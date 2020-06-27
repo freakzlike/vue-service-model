@@ -15,8 +15,8 @@ export const waitRender = {
   DisplayField: waitFunc(4),
   DisplayFieldUpdate: waitFunc(3),
   InputField: waitFunc(4),
-  InputFieldUpdate: waitFunc(2),
-  FieldLabel: waitFunc(2)
+  InputFieldUpdate: waitFunc(3),
+  FieldLabel: waitFunc(3)
 }
 
 export const installAsyncComputed = (localVue: typeof Vue) => {
