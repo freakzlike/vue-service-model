@@ -1,10 +1,16 @@
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import FieldLabel from '@/components/FieldLabel'
 import { BaseModel } from '@/models/BaseModel'
-import { waitRender } from '../../testUtils'
+import { installAsyncComputed, waitRender } from '../../testUtils'
 
-describe('components/FieldLabel', () => {
+const TestFieldLabel = (useAsyncComputed: boolean) => {
+  const localVue = createLocalVue()
+
+  if (useAsyncComputed) {
+    installAsyncComputed(localVue)
+  }
+
   const fieldLabels = {
     name: 'Name',
     description: 'Description'
@@ -19,138 +25,94 @@ describe('components/FieldLabel', () => {
 
   const model = new TestModel({})
 
-  it('should render correctly with static model and fieldName', async () => {
+  const checkCorrectRender = async (propsData: object, expectedLabel: string | null, options?: object) => {
     const wrapper = mount(FieldLabel, {
-      propsData: {
-        model: TestModel,
-        fieldName: 'name'
-      }
+      localVue,
+      propsData,
+      ...(options || {})
     })
+
     expect(wrapper.vm.label).toBeNull()
     expect(wrapper.html()).toBe('')
 
     await waitRender.FieldLabel(wrapper)
 
-    expect(wrapper.vm.label).toBe(fieldLabels.name)
+    expect(wrapper.vm.label).toBe(expectedLabel)
 
-    expect(wrapper.html()).toMatchSnapshot()
+    return wrapper
+  }
+
+  it('should render correctly with static model and fieldName', async () => {
+    const wrapper = await checkCorrectRender({
+      model: TestModel,
+      fieldName: 'name'
+    }, fieldLabels.name)
+
+    expect(wrapper.html()).toBe('<span>Name</span>')
   })
 
   it('should render correctly with model and fieldName', async () => {
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
-    })
-    expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBe('')
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
+    }, fieldLabels.name)
 
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBe(fieldLabels.name)
-
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe('<span>Name</span>')
   })
 
   it('should render correctly with field', async () => {
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        field: model.getField('name')
-      }
-    })
-    expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBe('')
+    const wrapper = await checkCorrectRender({
+      field: model.getField('name')
+    }, fieldLabels.name)
 
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBe(fieldLabels.name)
-
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe('<span>Name</span>')
   })
 
   it('should render correctly with unbound field', async () => {
-    const field = new Field({ label: 'New Field' })
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        field: field
-      }
-    })
-    expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBe('')
+    const wrapper = await checkCorrectRender({
+      field: new Field({ label: 'New Field' })
+    }, 'New Field')
 
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBe('New Field')
-
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe('<span>New Field</span>')
   })
 
   it('should render correctly with other tag', async () => {
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        model: model,
-        fieldName: 'description',
-        tag: 'div'
-      }
-    })
-    expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBe('')
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'description',
+      tag: 'div'
+    }, fieldLabels.description)
 
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBe(fieldLabels.description)
-
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe('<div>Description</div>')
   })
 
   it('should render correctly with scoped slot', async () => {
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        field: model.getField('description'),
-        tag: 'div'
-      },
+    const wrapper = await checkCorrectRender({
+      field: model.getField('description'),
+      tag: 'div'
+    }, fieldLabels.description, {
       scopedSlots: {
         default: '<p>{{props.label}}</p>'
       }
     })
-    expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBe('')
 
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBe(fieldLabels.description)
-
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe('<div>\n  <p>Description</p>\n</div>')
   })
 
   it('should not render without model', async () => {
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        model: null,
-        fieldName: 'name'
-      }
-    })
+    const wrapper = await checkCorrectRender({
+      model: null,
+      fieldName: 'name'
+    }, null)
 
-    expect(wrapper.vm.label).toBeNull()
-
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBeNull()
     expect(wrapper.html()).toBe('')
   })
 
   it('should not render when model reset', async () => {
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
-    })
-
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBe(fieldLabels.name)
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
+    }, fieldLabels.name)
     expect(wrapper.text()).toBe(fieldLabels.name)
 
     wrapper.setProps({ model: null })
@@ -162,16 +124,10 @@ describe('components/FieldLabel', () => {
   })
 
   it('should render correct when field name changed', async () => {
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
-    })
-
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBe(fieldLabels.name)
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
+    }, fieldLabels.name)
     expect(wrapper.text()).toBe(fieldLabels.name)
 
     wrapper.setProps({ fieldName: 'description' })
@@ -183,15 +139,9 @@ describe('components/FieldLabel', () => {
   })
 
   it('should render correct when field changed', async () => {
-    const wrapper = mount(FieldLabel, {
-      propsData: {
-        field: model.getField('name')
-      }
-    })
-
-    await waitRender.FieldLabel(wrapper)
-
-    expect(wrapper.vm.label).toBe(fieldLabels.name)
+    const wrapper = await checkCorrectRender({
+      field: model.getField('name')
+    }, fieldLabels.name)
     expect(wrapper.text()).toBe(fieldLabels.name)
 
     wrapper.setProps({ field: model.getField('description') })
@@ -225,4 +175,8 @@ describe('components/FieldLabel', () => {
     })
     expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
   })
-})
+}
+
+describe('components/FieldLabel', () => TestFieldLabel(false))
+
+describe('components/FieldLabel asyncComputed', () => TestFieldLabel(true))

@@ -4,6 +4,7 @@ import { Field } from '../fields/Field'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
 import { BaseModel } from '../models/BaseModel'
+import { configHandler } from '../utils/ConfigHandler'
 
 export interface ComponentData {
   label: string | null
@@ -34,25 +35,39 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
     label: null
   }),
 
+  asyncComputed: {
+    async label (): Promise<string | null> {
+      configHandler.checkWarningUseAsyncComputed()
+      return this.resolveLabel()
+    }
+  },
+
   watch: {
     fieldObj () {
-      this.resolveLabel()
+      this.setResolveLabel()
     }
   },
 
   created () {
-    this.resolveLabel()
+    this.setResolveLabel()
   },
 
   methods: {
+    async setResolveLabel () {
+      if (!configHandler.useAsyncComputed()) {
+        this.label = await this.resolveLabel()
+      }
+    },
+
     async resolveLabel () {
       if (this.fieldObj) {
         const field = this.fieldObj as Field
-        this.label = await field.label
+        return field.label
       } else {
-        this.label = null
+        return null
       }
     },
+
     renderLabel (h: CreateElement): VNode {
       if (this.$scopedSlots && this.$scopedSlots.default) {
         return h(this.tag, this.$scopedSlots.default({
