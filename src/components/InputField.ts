@@ -1,14 +1,10 @@
-import AsyncComputed from 'vue-async-computed'
-import Vue, { CreateElement, VNode, Component } from 'vue'
+import { CreateElement, VNode, Component } from 'vue'
 import mixins from '../utils/mixins'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
 
-Vue.use(AsyncComputed)
-
 interface ComponentData {
-  // AsyncComputed
-  inputComponent?: Component | null
+  inputComponent: Component | null
 }
 
 /**
@@ -18,15 +14,27 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
   name: 'InputField',
   inheritAttrs: false,
 
-  data: (): ComponentData => ({}),
+  data: (): ComponentData => ({
+    inputComponent: null
+  }),
 
-  asyncComputed: {
-    async inputComponent () {
+  watch: {
+    fieldObj () {
+      this.resolveInputComponent()
+    }
+  },
+
+  created () {
+    this.resolveInputComponent()
+  },
+
+  methods: {
+    async resolveInputComponent () {
       if (this.fieldObj) {
         const componentModule = await this.fieldObj.inputComponent
-        return componentModule.default
+        this.inputComponent = componentModule.default
       } else {
-        return null
+        this.inputComponent = null
       }
     }
   },
