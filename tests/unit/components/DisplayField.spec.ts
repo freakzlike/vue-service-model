@@ -1,10 +1,16 @@
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import DisplayField from '@/components/DisplayField'
 import { BaseModel } from '@/models/BaseModel'
-import { waitRender } from '../../testUtils'
+import { waitRender, installAsyncComputed } from '../../testUtils'
 
-describe('components/DisplayField', () => {
+const TestDisplayField = (useAsyncComputed: boolean) => {
+  const localVue = createLocalVue()
+
+  if (useAsyncComputed) {
+    installAsyncComputed(localVue)
+  }
+
   const modelData = {
     name: 'Name 1',
     description: 'Description'
@@ -18,9 +24,11 @@ describe('components/DisplayField', () => {
   }
 
   const model = new TestModel(modelData)
+  const nameDisplayFieldHtml = '<span>Name 1</span>'
 
   it('should render correctly with model and fieldName', async () => {
     const wrapper = mount(DisplayField, {
+      localVue,
       propsData: {
         model: model,
         fieldName: 'name'
@@ -32,11 +40,12 @@ describe('components/DisplayField', () => {
     await waitRender.DisplayField(wrapper)
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe(nameDisplayFieldHtml)
   })
 
   it('should render correctly with field', async () => {
     const wrapper = mount(DisplayField, {
+      localVue,
       propsData: {
         field: model.getField('name')
       }
@@ -47,11 +56,12 @@ describe('components/DisplayField', () => {
     await waitRender.DisplayField(wrapper)
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe(nameDisplayFieldHtml)
   })
 
   it('should not render without model', async () => {
     const wrapper = mount(DisplayField, {
+      localVue,
       propsData: {
         model: null,
         fieldName: 'name'
@@ -66,6 +76,7 @@ describe('components/DisplayField', () => {
 
   it('should not render when model reset', async () => {
     const wrapper = mount(DisplayField, {
+      localVue,
       propsData: {
         model: model,
         fieldName: 'name'
@@ -89,6 +100,7 @@ describe('components/DisplayField', () => {
 
   it('should render correct when field name changed', async () => {
     const wrapper = mount(DisplayField, {
+      localVue,
       propsData: {
         model: model,
         fieldName: 'name'
@@ -110,6 +122,7 @@ describe('components/DisplayField', () => {
 
   it('should render correct when field changed', async () => {
     const wrapper = mount(DisplayField, {
+      localVue,
       propsData: {
         field: model.getField('name')
       }
@@ -130,6 +143,7 @@ describe('components/DisplayField', () => {
 
   it('should render correct loading slot', async () => {
     const wrapper = mount(DisplayField, {
+      localVue,
       propsData: {
         field: model.getField('name')
       },
@@ -142,6 +156,7 @@ describe('components/DisplayField', () => {
 
   it('should render correct loading scoped slot', async () => {
     const wrapper = mount(DisplayField, {
+      localVue,
       propsData: {
         field: model.getField('name')
       },
@@ -151,4 +166,8 @@ describe('components/DisplayField', () => {
     })
     expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
   })
-})
+}
+
+describe('components/DisplayField', () => TestDisplayField(false))
+
+describe('components/DisplayField asyncComputed', () => TestDisplayField(true))

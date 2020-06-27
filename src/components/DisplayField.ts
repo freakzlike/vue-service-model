@@ -2,6 +2,7 @@ import { CreateElement, VNode, Component } from 'vue'
 import mixins from '../utils/mixins'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
+import { configHandler } from '../utils/ConfigHandler'
 
 export interface ComponentData {
   displayComponent: Component | null
@@ -18,23 +19,36 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
     displayComponent: null
   }),
 
+  asyncComputed: {
+    async displayComponent (): Promise<Component | null> {
+      configHandler.checkWarningUseAsyncComputed()
+      return this.resolveDisplayComponent()
+    }
+  },
+
   watch: {
     fieldObj () {
-      this.resolveDisplayComponent()
+      this.setResolveDisplayComponent()
     }
   },
 
   created () {
-    this.resolveDisplayComponent()
+    this.setResolveDisplayComponent()
   },
 
   methods: {
+    async setResolveDisplayComponent () {
+      if (!configHandler.useAsyncComputed()) {
+        this.displayComponent = await this.resolveDisplayComponent()
+      }
+    },
+
     async resolveDisplayComponent () {
       if (this.fieldObj) {
         const componentModule = await this.fieldObj.displayComponent
-        this.displayComponent = componentModule.default
+        return componentModule.default
       } else {
-        this.displayComponent = null
+        return null
       }
     }
   },
