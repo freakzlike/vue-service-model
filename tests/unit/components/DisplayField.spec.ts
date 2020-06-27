@@ -24,39 +24,37 @@ const TestDisplayField = (useAsyncComputed: boolean) => {
   }
 
   const model = new TestModel(modelData)
-  const nameDisplayFieldHtml = '<span>Name 1</span>'
 
-  it('should render correctly with model and fieldName', async () => {
+  const checkCorrectRender = async (propsData: object) => {
     const wrapper = mount(DisplayField, {
       localVue,
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
+      propsData
     })
+
     expect(wrapper.vm.displayComponent).toBeNull()
     expect(wrapper.html()).toBe('')
 
-    await waitRender.DisplayField(wrapper)
+    await waitRender.InputField(wrapper)
 
     expect(wrapper.vm.displayComponent).not.toBeNull()
-    expect(wrapper.html()).toBe(nameDisplayFieldHtml)
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.html()).toBe('<span>Name 1</span>')
+
+    return wrapper
+  }
+
+  it('should render correctly with model and fieldName', async () => {
+    await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
+    })
   })
 
   it('should render correctly with field', async () => {
-    const wrapper = mount(DisplayField, {
-      localVue,
-      propsData: {
-        field: model.getField('name')
-      }
+    await checkCorrectRender({
+      field: model.getField('name')
     })
-    expect(wrapper.vm.displayComponent).toBeNull()
-    expect(wrapper.html()).toBe('')
-
-    await waitRender.DisplayField(wrapper)
-
-    expect(wrapper.vm.displayComponent).not.toBeNull()
-    expect(wrapper.html()).toBe(nameDisplayFieldHtml)
   })
 
   it('should not render without model', async () => {
@@ -75,18 +73,10 @@ const TestDisplayField = (useAsyncComputed: boolean) => {
   })
 
   it('should not render when model reset', async () => {
-    const wrapper = mount(DisplayField, {
-      localVue,
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
     })
-
-    await waitRender.DisplayField(wrapper)
-
-    expect(wrapper.vm.displayComponent).not.toBeNull()
-    expect(wrapper.text()).toBe(modelData.name)
 
     wrapper.setProps({ model: null })
 
@@ -99,19 +89,10 @@ const TestDisplayField = (useAsyncComputed: boolean) => {
   })
 
   it('should render correct when field name changed', async () => {
-    const wrapper = mount(DisplayField, {
-      localVue,
-      propsData: {
-        model: model,
-        fieldName: 'name'
-      }
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
     })
-
-    await waitRender.DisplayField(wrapper)
-
-    expect(wrapper.vm.displayComponent).not.toBeNull()
-
-    expect(wrapper.text()).toBe(modelData.name)
 
     wrapper.setProps({ fieldName: 'description' })
 
@@ -121,18 +102,10 @@ const TestDisplayField = (useAsyncComputed: boolean) => {
   })
 
   it('should render correct when field changed', async () => {
-    const wrapper = mount(DisplayField, {
-      localVue,
-      propsData: {
-        field: model.getField('name')
-      }
+    const wrapper = await checkCorrectRender({
+      model: model,
+      fieldName: 'name'
     })
-
-    await waitRender.DisplayField(wrapper)
-
-    expect(wrapper.vm.displayComponent).not.toBeNull()
-
-    expect(wrapper.text()).toBe(modelData.name)
 
     wrapper.setProps({ field: model.getField('description') })
 
