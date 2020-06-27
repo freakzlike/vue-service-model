@@ -1,13 +1,9 @@
-import AsyncComputed from 'vue-async-computed'
 import Vue, { VNode, CreateElement } from 'vue'
 import { Field } from '../fields/Field'
-import cu from '../utils/common'
-
-Vue.use(AsyncComputed)
 
 export interface ComponentData {
-  // AsyncComputed
-  renderData?: any
+  resolvedRenderData: boolean,
+  renderData: any
 }
 
 export default Vue.extend({
@@ -21,32 +17,40 @@ export default Vue.extend({
     }
   },
 
-  data: (): ComponentData => ({}),
+  data: (): ComponentData => ({
+    resolvedRenderData: false,
+    renderData: null
+  }),
 
-  computed: {
-    hasResolvedRenderData () {
-      return this.renderData !== cu.NO_VALUE
-    }
-  },
-
-  asyncComputed: {
-    renderData: {
-      default: cu.NO_VALUE,
-      get () {
-        const field = this.field as Field
-        return field.prepareDisplayRender()
+  watch: {
+    field () {
+      this.resolveRenderData()
+    },
+    'field.data': {
+      deep: true,
+      handler () {
+        this.resolveRenderData()
       }
     }
   },
 
+  created () {
+    this.resolveRenderData()
+  },
+
   methods: {
+    async resolveRenderData () {
+      this.renderData = await this.field.prepareDisplayRender()
+      this.resolvedRenderData = true
+    },
+
     renderField (h: CreateElement): VNode {
       return this.field.displayRender(h, this.renderData)
     }
   },
 
   render (h: CreateElement): VNode {
-    if (this.hasResolvedRenderData) {
+    if (this.resolvedRenderData) {
       return this.renderField(h)
     } else {
       return undefined as any

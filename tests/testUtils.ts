@@ -9,9 +9,9 @@ const waitFunc = (times: number) => {
 }
 
 export const waitRender = {
-  DisplayField: waitFunc(4),
-  DisplayFieldUpdate: waitFunc(3),
+  DisplayField: waitFunc(3),
+  DisplayFieldUpdate: waitFunc(2),
   InputField: waitFunc(4),
   InputFieldUpdate: waitFunc(2),
-  FieldLabel: waitFunc(2)
+  FieldLabel: waitFunc(1)
 }
