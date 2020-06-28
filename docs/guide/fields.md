@@ -202,6 +202,10 @@ class RedTextField extends Field {
 }
 ```
 
+::: tip
+In case you need to achieve more reactivity, then take a look at [Integration of `vue-async-computed`](/guide/installation.html#integration-of-vue-async-computed).
+:::
+
 ### Resolving asynchronous values before rendering
 
 In some cases you need to prepare or fetch other data before the field should be rendered. This can be done with the methods `prepareDisplayRender`/`prepareInputRender`.
@@ -241,6 +245,27 @@ class CustomField extends Field {
 <template>
   <span>{{ fieldValue }}</span>
 </template>
+
+<script>
+  import {BaseDisplayFieldRender} from 'vue-service-model'
+
+  export default {
+    extends: BaseDisplayFieldRender,
+    data: () => ({
+      fieldValue: null    
+    }),
+    created () {
+      this.field.value.then(value => (this.fieldValue = value))      
+    }
+  }
+</script>
+```
+
+To keep it simple and reactive you can install the package [`vue-async-computed`](https://github.com/foxbenjaminfox/vue-async-computed).
+See [Integration of `vue-async-computed`](/guide/installation.html#integration-of-vue-async-computed).
+
+```js
+[...]
 
 <script>
   import {BaseDisplayFieldRender} from 'vue-service-model'

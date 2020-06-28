@@ -1,13 +1,10 @@
-import AsyncComputed from 'vue-async-computed'
 import Vue, { VNode, CreateElement } from 'vue'
 import { Field } from '../fields/Field'
 import cu from '../utils/common'
-
-Vue.use(AsyncComputed)
+import { configHandler } from '../utils/ConfigHandler'
 
 export interface ComponentData {
-  // AsyncComputed
-  renderData?: any
+  renderData: any
 }
 
 export default Vue.extend({
@@ -21,7 +18,9 @@ export default Vue.extend({
     }
   },
 
-  data: (): ComponentData => ({}),
+  data: (): ComponentData => ({
+    renderData: cu.NO_VALUE
+  }),
 
   computed: {
     hasResolvedRenderData () {
@@ -33,13 +32,39 @@ export default Vue.extend({
     renderData: {
       default: cu.NO_VALUE,
       get () {
-        const field = this.field as Field
-        return field.prepareDisplayRender()
+        const _self = this as {resolveRenderData: () => Promise<any>}
+        return _self.resolveRenderData()
       }
     }
   },
 
+  watch: {
+    field () {
+      this.setResolveRenderData()
+    },
+    'field.data': {
+      deep: true,
+      handler () {
+        this.setResolveRenderData()
+      }
+    }
+  },
+
+  created () {
+    this.setResolveRenderData()
+  },
+
   methods: {
+    async setResolveRenderData () {
+      if (!configHandler.useAsyncComputed()) {
+        this.renderData = await this.resolveRenderData()
+      }
+    },
+
+    async resolveRenderData (): Promise<any> {
+      return this.field.prepareDisplayRender()
+    },
+
     renderField (h: CreateElement): VNode {
       return this.field.displayRender(h, this.renderData)
     }

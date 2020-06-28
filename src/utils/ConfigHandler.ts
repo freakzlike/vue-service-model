@@ -2,6 +2,7 @@ import { getConfig, Config } from '../config'
 import cu from '../utils/common'
 
 const defaultConfig: Config = {
+  useAsyncComputed: false,
   i18n: {
     no: 'No',
     yes: 'Yes'
@@ -22,6 +23,23 @@ export const configHandler = {
 
   getConfig () {
     return cu.mergeDeep({}, defaultConfig, getConfig())
+  },
+
+  /**
+   * Return flag whether asyncComputed package should be used
+   */
+  useAsyncComputed (): boolean {
+    const _config = this.getConfig()
+    return Boolean(_config.useAsyncComputed)
+  },
+
+  /**
+   * Check whether useAsyncComputed should be true and output warning if not
+   */
+  checkWarningUseAsyncComputed (): void {
+    if (!configHandler.useAsyncComputed()) {
+      console.warn('[vue-service-model] asyncComputed has been called, but useAsyncComputed config is false.')
+    }
   },
 
   /**

@@ -2,6 +2,10 @@
 
 [[toc]]
 
+::: tip
+In case you need to achieve more reactivity, then take a look at [Integration of `vue-async-computed`](/guide/installation.html#integration-of-vue-async-computed).
+:::
+
 ## DisplayField
 
 The `DisplayField` component can be used to display the value of the given field. The property `model` can either be a 

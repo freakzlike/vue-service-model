@@ -57,3 +57,10 @@ Some functions in `vue-service-model` will emit events where you can register a 
 | **onSendDeleteRequest** | When doing a delete request (ModelManager.sendDeleteRequest) |
 | **onResponseError** | When a error response has been received (ModelManager.handleResponseError) |
 
+## vue-async-computed
+
+In case you want `vue-service-model` to use [`vue-async-computed`](https://github.com/foxbenjaminfox/vue-async-computed) then you can enable it with:
+```js
+  useAsyncComputed: true
+```
+

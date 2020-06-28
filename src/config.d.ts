@@ -12,6 +12,11 @@ export type TranslationKey = LazyValue<string>
 
 export interface Config {
   /**
+   * Use vue-async-computed function in components
+   */
+  useAsyncComputed?: boolean
+
+  /**
    * i18n translations
    */
   i18n?: {

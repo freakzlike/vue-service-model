@@ -1,9 +1,16 @@
-import Vue, { shallowMount, Wrapper } from '@vue/test-utils'
+import Vue, { createLocalVue, shallowMount, Wrapper } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
 import { BaseModel } from '@/models/BaseModel'
+import { installAsyncComputed } from '../../testUtils'
 
-describe('components/BaseDisplayFieldRender', () => {
+const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
+  const localVue = createLocalVue()
+
+  if (useAsyncComputed) {
+    installAsyncComputed(localVue)
+  }
+
   const modelData = { name: 'Name 1' }
 
   class TestModel extends BaseModel {
@@ -18,6 +25,7 @@ describe('components/BaseDisplayFieldRender', () => {
   const waitForRender = async (wrapper: Wrapper<Vue>) => {
     await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
   }
 
   it('should call and render correct displayRender', async () => {
@@ -25,6 +33,7 @@ describe('components/BaseDisplayFieldRender', () => {
     const spyDisplayRender = jest.spyOn(field, 'displayRender')
 
     const wrapper = shallowMount(BaseDisplayFieldRender, {
+      localVue,
       propsData: { field: field }
     })
     expect(wrapper.text()).toBe('')
@@ -52,9 +61,14 @@ describe('components/BaseDisplayFieldRender', () => {
   it('should render correctly', async () => {
     modelData.name = 'Name 1'
     const wrapper = shallowMount(BaseDisplayFieldRender, {
+      localVue,
       propsData: { field: field }
     })
     await waitForRender(wrapper)
-    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.html()).toBe('<span>Name 1</span>')
   })
-})
+}
+
+describe('components/BaseDisplayFieldRender', () => TestBaseDisplayFieldRender(false))
+
+describe('components/BaseDisplayFieldRender asyncComputed', () => TestBaseDisplayFieldRender(true))

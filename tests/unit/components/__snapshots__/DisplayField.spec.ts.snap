@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`components/DisplayField should render correctly with field 1`] = `<span>Name 1</span>`;
-
-exports[`components/DisplayField should render correctly with model and fieldName 1`] = `<span>Name 1</span>`;

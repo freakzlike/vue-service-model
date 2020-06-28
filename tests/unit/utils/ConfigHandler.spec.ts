@@ -27,6 +27,44 @@ describe('utils/ConfigHandler', () => {
     })
   })
 
+  describe('useAsyncComputed', () => {
+    it('should not useAsyncComputed', async () => {
+      await withMockedConfig({}, async () => {
+        expect(configHandler.useAsyncComputed()).toBe(false)
+      })
+    })
+
+    it('should useAsyncComputed', async () => {
+      await withMockedConfig({
+        useAsyncComputed: true
+      }, () => {
+        expect(configHandler.useAsyncComputed()).toBe(true)
+      })
+    })
+  })
+
+  describe('checkWarningUseAsyncComputed', () => {
+    it('should output warning for disabled useAsyncComputed', async () => {
+      await withMockedConfig({}, async () => {
+        const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+        configHandler.checkWarningUseAsyncComputed()
+        expect(mockConsoleWarn).toBeCalledTimes(1)
+        mockConsoleWarn.mockRestore()
+      })
+    })
+
+    it('should not output warning disabled useAsyncComputed', async () => {
+      await withMockedConfig({
+        useAsyncComputed: true
+      }, () => {
+        const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation()
+        configHandler.checkWarningUseAsyncComputed()
+        expect(mockConsoleWarn).toBeCalledTimes(0)
+        mockConsoleWarn.mockRestore()
+      })
+    })
+  })
+
   describe('getTranslation', () => {
     it('should get default translation', async () => {
       await withMockedConfig({}, async () => {

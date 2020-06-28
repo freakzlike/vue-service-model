@@ -36,6 +36,7 @@ describe('fields/DecimalField', () => {
 
       await waitRender.InputField(wrapper)
       await wrapper.vm.$nextTick()
+      await wrapper.vm.$nextTick()
 
       expect(wrapper.html()).toMatchSnapshot()
 
@@ -61,6 +62,7 @@ describe('fields/DecimalField', () => {
       })
 
       await waitRender.InputField(wrapper)
+      await wrapper.vm.$nextTick()
       await wrapper.vm.$nextTick()
 
       const inputElement = wrapper.get('input')
