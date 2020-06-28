@@ -3,6 +3,11 @@
 ```typescript
 interface Config {
   /**
+   * Use vue-async-computed function in components
+   */
+  useAsyncComputed?: boolean // Default: false
+
+  /**
    * i18n translations
    * A TranslationKey can either be a string, a function returning a
    * string or a promise resolving a string 

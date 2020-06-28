@@ -13,7 +13,7 @@ For quick prototyping you can use this [Codepen example](https://codepen.io/frea
 You can find more information about the installation [here](/guide/installation.html).
 
 ```sh
-npm install vue-service-model vue vue-async-computed
+npm install vue-service-model
 ```
 
 ## Defining your model
