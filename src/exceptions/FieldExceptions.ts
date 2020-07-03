@@ -1,6 +1,7 @@
 import { Field } from '../fields'
+import { BaseException } from './BaseException'
 
-export class FieldNotBoundException extends Error {
+export class FieldNotBoundException extends BaseException {
   constructor (field: Field) {
     super('Field "' + field.cls.name + '" not bound or fieldName not set on new')
     this.constructor = FieldNotBoundException

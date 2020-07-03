@@ -1,6 +1,7 @@
 import { Response } from '../types/models/ModelManager'
+import { BaseException } from './BaseException'
 
-export class APIException extends Error {
+export class APIException extends BaseException {
   public static readonly statusCode: number
 
   private _response: Response
