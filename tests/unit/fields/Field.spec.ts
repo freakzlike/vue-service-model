@@ -285,9 +285,9 @@ describe('fields/Field', () => {
       expect(mockValueGetter.mock.calls[0]).toEqual([{ description: value }])
     })
 
-    it('should throw FieldNotBoundException', () => {
+    it('should throw FieldNotBoundException', async () => {
       const field = new Field()
-      expect(() => field.value).toThrow(FieldNotBoundException)
+      await expect(new Promise(resolve => resolve(field.value))).rejects.toBeInstanceOf(FieldNotBoundException)
     })
   })
 

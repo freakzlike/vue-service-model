@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fields/ForeignKeyField displayRender should render correct value 1`] = `<div>User name</div>`;
+
+exports[`fields/ForeignKeyField displayRender should render correct value 2`] = `<div>User 10</div>`;

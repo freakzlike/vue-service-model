@@ -121,18 +121,32 @@ export class Field extends BaseClass {
   }
 
   /**
+   * Property mapper for getValue
+   */
+  public get value (): any {
+    return this.getValue()
+  }
+
+  /**
    * Field value
    * Returns async field value from data by calling valueGetter with data
    */
-  public get value (): any {
-    return Promise.resolve(this.valueGetter(this.data))
+  public async getValue (): Promise<any> {
+    return this.valueGetter(this.data)
+  }
+
+  /**
+   * Property mapper for setValue
+   */
+  public set value (value: any) {
+    this.setValue(value)
   }
 
   /**
    * Field value setter
    * Sets field value to model data by calling valueSetter with data
    */
-  public set value (value: any) {
+  public setValue (value: any): void {
     this.valueSetter(value, this.data)
   }
 

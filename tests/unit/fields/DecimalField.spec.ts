@@ -76,13 +76,16 @@ describe('fields/DecimalField', () => {
 
       expect(await model.val.amount).toBe(20.45)
     })
+  })
 
+  describe('options', () => {
     it('should log error on missing options.decimalPlaces', async () => {
       class TestModel extends BaseModel {
         static fieldsDef = {
           amount: new DecimalField()
         }
       }
+
       const model = new TestModel({ amount: 17 })
 
       const mockValidateOptions = jest.spyOn(console, 'error').mockImplementation()
