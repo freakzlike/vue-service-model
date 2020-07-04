@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue, { CreateElement } from 'vue'
 import { mount } from '@vue/test-utils'
 import { BaseModel } from '@/models/BaseModel'
 import { ServiceModel } from '@/models/ServiceModel'
@@ -7,7 +7,6 @@ import { ForeignKeyField } from '@/fields/ForeignKeyField'
 import { InvalidFieldOptionsException, RequiredFieldOptionsException } from '@/exceptions/FieldExceptions'
 import DisplayField from '@/components/DisplayField'
 import { waitRender } from '../../testUtils'
-import { CreateElement } from 'vue'
 import { ComponentModule } from '@/types/components'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
 
