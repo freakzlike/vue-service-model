@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`fields/ForeignKeyField displayRender should render correct value 1`] = `<div>User name</div>`;
+exports[`fields/ForeignKeyField displayRender should render correct value 1`] = `<div>User 1</div>`;
 
-exports[`fields/ForeignKeyField displayRender should render correct value 2`] = `<div>User 10</div>`;
+exports[`fields/ForeignKeyField displayRender should render correct value 2`] = `<div>User 3</div>`;
+
+exports[`fields/ForeignKeyField inputRender should render correct input field 1`] = `
+<select>
+  <option value="1" selected="selected">User 1</option>
+  <option value="2">User 2</option>
+  <option value="3">User 3</option>
+</select>
+`;
+
+exports[`fields/ForeignKeyField inputRender should render correct input field 2`] = `
+<select>
+  <option value="1">User 1</option>
+  <option value="2">User 2</option>
+  <option value="3" selected="selected">User 3</option>
+</select>
+`;
+
+exports[`fields/ForeignKeyField inputRender should render correct input field without value 1`] = `
+<select>
+  <option value="1">User 1</option>
+  <option value="2">User 2</option>
+  <option value="3">User 3</option>
+</select>
+`;
+
+exports[`fields/ForeignKeyField inputRender should set value correct on change 1`] = `
+<select>
+  <option value="1">User 1</option>
+  <option value="2">User 2</option>
+  <option value="3" selected="selected">User 3</option>
+</select>
+`;
