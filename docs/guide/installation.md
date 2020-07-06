@@ -23,7 +23,7 @@ yarn add vue-service-model
 
 For production you should use a specific versions to avoid unexpected changes.
 ```html
-<script src="https://cdn.jsdelivr.net/npm/vue-service-model@0.15.0/dist/vue-service-model.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-service-model@0.16.0/dist/vue-service-model.min.js"></script>
 ```
 
 ::: warning
