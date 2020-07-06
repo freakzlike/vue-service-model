@@ -55,3 +55,71 @@ new DecimalField({
   }
 })
 ```
+
+## ForeignKeyField
+
+A `ForeignKeyField` can be used to handle a relation to another [ServiceModel](/guide/service-model/).
+The value is the primary key of your related model.
+
+```js
+import {ServiceModel, Field, CharField, ForeignKeyField} from 'vue-service-model'
+
+class User extends ServiceModel {
+  static urls = 'https://jsonplaceholder.typicode.com/users/'
+
+  static fieldsDef = {
+    id: new Field({primaryKey: true}),
+    name: new CharField()
+  }
+}
+
+class Album extends ServiceModel {
+  static urls = 'https://jsonplaceholder.typicode.com/albums/'
+
+  static fieldsDef = {
+    user: new ForeignKeyField({
+      options: {
+        model: User, // Related model
+        fieldName: 'name' // Related field which should be used for display and input
+      }    
+    })
+  }
+}
+```
+
+You need to define the related model in `options.model` which has to inherit from [ServiceModel](/guide/service-model/).
+The `options.fieldName` is used for representation. When you use [`DisplayField`](/guide/components.html#displayfield) with a
+`ForeignKeyField` (`user` field in `Album`) then will internally render the [`DisplayField`](/guide/components.html#displayfield)
+with the field `name` of your `User` model.
+
+```js
+const album = new Album({
+  user: 1 // Primary key of user
+})
+
+const user = await album.val.user // Request: GET ../users/1/
+// user is now an instance of the ServiceModel User
+
+await user.val.name // Output: Leanne Graham
+
+// Change the assigned user by passing the primary key
+album.val.user = 3
+```
+
+::: warning
+When using the default provided `inputRender` method. Be sure to use a Field which can be represent to a `string` with a `valueFormatter` 
+(e.g. `CharField`). 
+:::
+
+### Options
+
+```js
+new ForeignKeyField({
+  options: {
+    // Related model
+    model: User,
+    // Related field which should be used for display and input
+    fieldName: 'name'
+  }
+})
+```

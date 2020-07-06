@@ -26,11 +26,17 @@ class Field {
   // Will throw FieldNotBoundException if field is not bound to data or model 
   public get data (): Dictionary<any>
 
-  // Returns async field value from data by calling valueGetter with data of assigned model
+  // Property mapper for getValue()
   public get value (): any
 
-  // Sets field value to model data by calling valueSetter with data of assigned model
+  // Returns async field value from data by calling valueGetter with data of assigned model
+  public async getValue (): Promise<any>
+
+  // Property mapper for setValue()
   public set value (value: any)
+
+  // Sets field value to model data by calling valueSetter with data of assigned model
+  public setValue (value: any): void
 
   // Returns async field label from field definition
   public get label (): Promise<string>
