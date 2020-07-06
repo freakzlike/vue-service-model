@@ -10,7 +10,7 @@ import DisplayField from '@/components/DisplayField'
 import { waitRender } from '../../testUtils'
 import { ComponentModule } from '@/types/components'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
-import InputField from "@/components/InputField";
+import InputField from '@/components/InputField'
 
 describe('fields/ForeignKeyField', () => {
   class User extends ServiceModel {
