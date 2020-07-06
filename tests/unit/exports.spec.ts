@@ -5,7 +5,7 @@ describe('exports', () => {
     'InternalServerErrorAPIException'
   ]
   const fieldsExports = [
-    'Field', 'FormatStringField', 'CharField', 'BooleanField', 'IntegerField', 'DecimalField'
+    'Field', 'FormatStringField', 'CharField', 'BooleanField', 'IntegerField', 'DecimalField', 'ForeignKeyField'
   ]
   const modelsExports = ['BaseModel', 'ServiceModel', 'ModelManager']
   const storeExports = ['ServiceStore']
