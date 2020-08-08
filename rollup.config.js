@@ -1,8 +1,8 @@
-import typescript from 'rollup-plugin-typescript2'
-import pkg from './package.json'
-import { terser } from 'rollup-plugin-terser'
+const typescript = require('rollup-plugin-typescript2')
+const pkg = require('./package.json')
+const { terser } = require('rollup-plugin-terser')
 
-export default {
+module.exports = {
   input: 'src/index.ts',
   output: [
     {
