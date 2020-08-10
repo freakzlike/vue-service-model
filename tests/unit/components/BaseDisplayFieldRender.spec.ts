@@ -34,7 +34,7 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
 
     const wrapper = shallowMount(BaseDisplayFieldRender, {
       localVue,
-      propsData: { field: field }
+      propsData: { field }
     })
     expect(wrapper.text()).toBe('')
 
@@ -45,6 +45,7 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
 
     expect(wrapper.text()).toBe(modelData.name)
     expect(spyPrepareDisplayRender).toBeCalledTimes(1)
+    expect(spyPrepareDisplayRender.mock.calls[0]).toEqual([null])
     expect(spyDisplayRender).toBeCalledTimes(1)
 
     field.value = 'New Name'
@@ -62,10 +63,38 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
     modelData.name = 'Name 1'
     const wrapper = shallowMount(BaseDisplayFieldRender, {
       localVue,
-      propsData: { field: field }
+      propsData: { field }
     })
     await waitForRender(wrapper)
     expect(wrapper.html()).toBe('<span>Name 1</span>')
+  })
+
+  it('should pass render props to prepareDisplayRender', async () => {
+    const spyPrepareDisplayRender = jest.spyOn(field, 'prepareDisplayRender')
+
+    const wrapper = shallowMount(BaseDisplayFieldRender, {
+      localVue,
+      propsData: {
+        field,
+        renderProps: {
+          option: 5
+        }
+      }
+    })
+    expect(wrapper.text()).toBe('')
+
+    expect(spyPrepareDisplayRender).toBeCalledTimes(1)
+    expect(spyPrepareDisplayRender.mock.calls[0]).toEqual([{ option: 5 }])
+
+    await waitForRender(wrapper)
+
+    wrapper.setProps({ renderProps: { option: 7, newOption: 6 } })
+    await waitForRender(wrapper)
+
+    expect(spyPrepareDisplayRender).toBeCalledTimes(2)
+    expect(spyPrepareDisplayRender.mock.calls[1]).toEqual([{ option: 7, newOption: 6 }])
+
+    spyPrepareDisplayRender.mockRestore()
   })
 }
 

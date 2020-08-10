@@ -214,7 +214,7 @@ They will be called before `displayRender`/`inputRender` and will give any async
 ```js
 class AlbumTitleField extends Field {
   // Do any asynchronous operations before rendering with displayRender
-  async prepareDisplayRender () {
+  async prepareDisplayRender (renderProps) {
     const albumId = await this.value
     const album = await Album.objects.detail(albumId)
     return album.val.title
@@ -227,6 +227,10 @@ class AlbumTitleField extends Field {
   }
 }
 ```
+
+::: tip
+You can optionally use the `renderProps` argument which can be used to pass additional properties from [`DisplayField`](/guide/components.html#displayfield) component to [`prepareDisplayRender`](/guide/components.html#passing-additional-properties-to-preparedisplayrender)
+:::
 
 ### Custom field component
 

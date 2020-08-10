@@ -6,7 +6,7 @@ export default BaseDisplayFieldRender.extend({
 
   methods: {
     async resolveRenderData () {
-      return this.field.prepareInputRender()
+      return this.field.prepareInputRender(this.renderProps)
     },
 
     renderField (h: CreateElement): VNode {

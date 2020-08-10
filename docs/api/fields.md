@@ -75,7 +75,8 @@ class Field {
 
   // Async function to prepare before displayRender gets called
   // Can return any data which needs to be resolved for displayRender
-  public async prepareDisplayRender (): Promise<any>
+  // renderProps can be passed from DisplayField component 
+  public async prepareDisplayRender (renderProps?: object | null): Promise<any>
 
   // Simple Vue render function when using default displayComponent when displaying value with <display-field/>
   // For more information see Field - Rendering 
@@ -87,7 +88,8 @@ class Field {
 
   // Async function to prepare before inputRender gets called
   // Can return any data which needs to be resolved for inputRender
-  public async prepareInputRender (): Promise<any>
+// renderProps can be passed from InputField component
+  public async prepareInputRender (renderProps?: object | null): Promise<any>
 
   // Simple Vue render function when using default inputComponent for input of field value with <input-field/>
   // For more information see Field - Rendering 

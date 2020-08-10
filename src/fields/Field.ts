@@ -283,7 +283,7 @@ export class Field extends BaseClass {
    * Async function to prepare before displayRender gets called
    * Can return any data which needs to be resolved for displayRender
    */
-  public async prepareDisplayRender (): Promise<any> {
+  public async prepareDisplayRender (renderProps?: object | null): Promise<any> {
     return this.value
   }
 
@@ -305,7 +305,7 @@ export class Field extends BaseClass {
    * Async function to prepare before inputRender gets called
    * Can return any data which needs to be resolved for inputRender
    */
-  public async prepareInputRender (): Promise<any> {
+  public async prepareInputRender (renderProps?: object | null): Promise<any> {
     return this.value
   }
 

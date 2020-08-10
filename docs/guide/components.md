@@ -61,6 +61,31 @@ To display the loading state of the component, when the data is being fetched, y
 </template>
 ```
 
+### Passing additional properties to `prepareDisplayRender`
+
+You can optionally pass additional properties to `prepareDisplayRender` with the property `render-props`. This allows more control on how your custom field should be rendered. 
+
+```vue
+<template>
+  [...]
+    <display-field :field="noteField" :render-props="{ note: 'Warning' }"/>
+    <display-field :field="noteField" :render-props="{ note: 'Error' }"/>
+  [...]
+</template>
+
+<script>
+  [...]
+  class NoteField extends CharField {
+    async prepareDisplayRender (renderProps) {
+      const note = renderProps?.note || 'Info'
+      const value = await this.value
+      return value && `${note}: ${value}`
+    }
+  }
+  [...]
+</script>
+```
+
 ## InputField
 
 The `InputField` component is equal to the `DisplayField`. The input value will directly change the data of your model (using the `valueSetter`). 
@@ -110,6 +135,18 @@ To display the loading state of the component, when the data is being fetched, y
         <span>Loading title...</span>
       </template>
     </input-field>
+  [...]
+</template>
+```
+
+### Passing additional properties to `prepareInputRender`
+
+You can optionally pass additional properties to `prepareInputRender` with the property `render-props`. It works the same as for [`DisplayField`](/guide/components.html#passing-additional-properties-to-preparedisplayrender).
+
+```vue
+<template>
+  [...]
+    <input-field :field="myField" :render-props="{ anyOption: 7 }"/>
   [...]
 </template>
 ```

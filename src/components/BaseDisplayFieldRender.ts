@@ -1,22 +1,15 @@
-import Vue, { VNode, CreateElement } from 'vue'
-import { Field } from '../fields/Field'
+import { VNode, CreateElement } from 'vue'
 import cu from '../utils/common'
 import { configHandler } from '../utils/ConfigHandler'
+import FieldRenderPropsMixin from './FieldRenderPropsMixin'
 
 export interface ComponentData {
   renderData: any
 }
 
-export default Vue.extend({
+export default FieldRenderPropsMixin.extend({
   name: 'BaseDisplayFieldRender',
   inheritAttrs: false,
-
-  props: {
-    field: {
-      type: Field,
-      required: true
-    }
-  },
 
   data: (): ComponentData => ({
     renderData: cu.NO_VALUE
@@ -47,6 +40,12 @@ export default Vue.extend({
       handler () {
         this.setResolveRenderData()
       }
+    },
+    renderProps: {
+      deep: true,
+      handler () {
+        this.setResolveRenderData()
+      }
     }
   },
 
@@ -62,7 +61,7 @@ export default Vue.extend({
     },
 
     async resolveRenderData (): Promise<any> {
-      return this.field.prepareDisplayRender()
+      return this.field.prepareDisplayRender(this.renderProps)
     },
 
     renderField (h: CreateElement): VNode {

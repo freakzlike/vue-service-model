@@ -57,7 +57,8 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
     if (this.displayComponent && this.fieldObj) {
       return h(this.displayComponent, {
         props: {
-          field: this.fieldObj
+          field: this.fieldObj,
+          renderProps: this.renderProps
         }
       })
     } else {

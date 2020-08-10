@@ -34,6 +34,14 @@ export default Vue.extend({
     field: {
       default: null,
       validator: value => value === null || value as any instanceof Field
+    },
+
+    /**
+     * Additional render props
+     */
+    renderProps: {
+      type: Object,
+      default: null
     }
   },
 
