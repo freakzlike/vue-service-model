@@ -15,6 +15,17 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
   name: 'InputField',
   inheritAttrs: false,
 
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   data: (): ComponentData => ({
     inputComponent: null
   }),
@@ -58,7 +69,9 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
       return h(this.inputComponent, {
         props: {
           field: this.fieldObj,
-          renderProps: this.renderProps
+          renderProps: this.renderProps,
+          disabled: this.disabled,
+          readonly: this.readonly
         }
       })
     } else {

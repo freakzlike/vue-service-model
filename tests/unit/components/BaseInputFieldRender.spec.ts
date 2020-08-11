@@ -87,6 +87,25 @@ const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
     await waitForRender(wrapper)
     expect(wrapper.html()).toBe('<input type="text" value="Name 1">')
   })
+
+  it('should re-render on inputProps change', async () => {
+    modelData.name = 'Name 1'
+    const wrapper = shallowMount(BaseInputFieldRender, {
+      localVue,
+      propsData: {
+        field: field,
+        disabled: true
+      }
+    })
+
+    await waitForRender(wrapper)
+    expect(wrapper.html()).toBe('<input type="text" value="Name 1" disabled="disabled">')
+
+    wrapper.setProps({ disabled: false })
+
+    await waitForRender(wrapper)
+    expect(wrapper.html()).toBe('<input type="text" value="Name 1">')
+  })
 }
 
 describe('components/BaseInputFieldRender', () => TestBaseInputFieldRender(false))

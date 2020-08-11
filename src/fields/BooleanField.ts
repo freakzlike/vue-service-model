@@ -1,6 +1,7 @@
 import { FormatStringField } from './FormatStringField'
 import { CreateElement, VNode } from 'vue'
 import { configHandler } from '../utils/ConfigHandler'
+import { InputRenderData } from '../types/fields/Field'
 
 export class BooleanField extends FormatStringField {
   /**
@@ -14,13 +15,21 @@ export class BooleanField extends FormatStringField {
   /**
    * Simple Vue render function when using default inputComponent for input of field value with <input-field/>
    */
-  public inputRender (h: CreateElement, renderData: any): VNode {
+  public inputRender (h: CreateElement, { value, inputProps }: InputRenderData): VNode {
+    const { disabled, readonly } = inputProps
+
     return h('input', {
       attrs: {
         type: 'checkbox',
-        checked: Boolean(renderData)
+        checked: Boolean(value),
+        disabled
       },
       on: {
+        click: (event: InputEvent) => {
+          if (readonly) {
+            event.preventDefault()
+          }
+        },
         change: (event: InputEvent) => {
           const target = event.target as { checked?: boolean }
           this.value = Boolean(target.checked)

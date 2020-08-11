@@ -76,6 +76,38 @@ describe('fields/DecimalField', () => {
 
       expect(await model.val.amount).toBe(20.45)
     })
+
+    it('should render disabled input field', async () => {
+      const model = new TestModel({ amount: 17.02 })
+      const wrapper = mount(InputField, {
+        propsData: {
+          field: model.getField('amount'),
+          disabled: true
+        }
+      })
+
+      await waitRender.InputField(wrapper)
+      await wrapper.vm.$nextTick()
+      await wrapper.vm.$nextTick()
+
+      expect(wrapper.html()).toMatchSnapshot()
+    })
+
+    it('should render readonly input field', async () => {
+      const model = new TestModel({ amount: 17.02 })
+      const wrapper = mount(InputField, {
+        propsData: {
+          field: model.getField('amount'),
+          readonly: true
+        }
+      })
+
+      await waitRender.InputField(wrapper)
+      await wrapper.vm.$nextTick()
+      await wrapper.vm.$nextTick()
+
+      expect(wrapper.html()).toMatchSnapshot()
+    })
   })
 
   describe('options', () => {

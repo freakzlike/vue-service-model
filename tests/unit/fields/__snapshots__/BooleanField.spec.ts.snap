@@ -3,3 +3,7 @@
 exports[`fields/BooleanField inputRender should render correct input field 1`] = `<input type="checkbox" checked="checked">`;
 
 exports[`fields/BooleanField inputRender should render correct input field 2`] = `<input type="checkbox">`;
+
+exports[`fields/BooleanField inputRender should render disabled input field 1`] = `<input type="checkbox" checked="checked" disabled="disabled">`;
+
+exports[`fields/BooleanField inputRender should render readonly input field 1`] = `<input type="checkbox" checked="checked">`;

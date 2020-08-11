@@ -1,7 +1,7 @@
 import { CreateElement, VNode } from 'vue'
 import cu from '../utils/common'
 import { Field } from './Field'
-import { FieldTypeOptions } from '../types/fields/Field'
+import { FieldTypeOptions, InputProps } from '../types/fields/Field'
 import { ServiceModel } from '../models/ServiceModel'
 import { InvalidFieldOptionsException, RequiredFieldOptionsException } from '../exceptions/FieldExceptions'
 import { FormatStringField } from './FormatStringField'
@@ -21,9 +21,10 @@ export interface InputSelectList {
   text: string | null
 }
 
-export interface InputRenderData {
+export interface ForeignKeyFieldInputRenderData {
   value: any
   list: InputSelectList[]
+  inputProps: InputProps
 }
 
 export class ForeignKeyField extends Field {
@@ -88,12 +89,13 @@ export class ForeignKeyField extends Field {
   /**
    * Prepare value and list of entries for inputRender
    */
-  public async prepareInputRender (): Promise<InputRenderData> {
+  public async prepareInputRender (inputProps: InputProps): Promise<ForeignKeyFieldInputRenderData> {
     const [value, options] = await Promise.all([super.getValue(), this.options as Promise<ForeignKeyFieldOptions>])
 
     return {
       value: !cu.isNull(value) ? String(value) : null,
-      list: await this.mapInputSelectList(options)
+      list: await this.mapInputSelectList(options),
+      inputProps
     }
   }
 
@@ -135,8 +137,14 @@ export class ForeignKeyField extends Field {
   /**
    * Render select input element and options
    */
-  public inputRender (h: CreateElement, { value, list }: InputRenderData): VNode {
+  public inputRender (h: CreateElement, { value, list, inputProps }: ForeignKeyFieldInputRenderData): VNode {
+    const { disabled, readonly } = inputProps
+
     return h('select', {
+      attrs: {
+        disabled,
+        readonly
+      },
       on: {
         input: (event: InputEvent) => {
           const target = event.target as { value?: any }

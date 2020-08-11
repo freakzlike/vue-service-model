@@ -2,7 +2,13 @@ import Vue, { CreateElement, VNode } from 'vue'
 import cu from '../utils/common'
 import { BaseClass } from '../utils/BaseClass'
 import { FieldNotBoundException } from '../exceptions/FieldExceptions'
-import { FieldDef, FieldBind, FieldTypeOptions } from '../types/fields/Field'
+import {
+  FieldDef,
+  FieldBind,
+  FieldTypeOptions,
+  InputProps,
+  InputRenderData
+} from '../types/fields/Field'
 import { BaseModel } from '../models'
 import Dictionary from '../types/Dictionary'
 import { ComponentModule } from '../types/components'
@@ -305,18 +311,25 @@ export class Field extends BaseClass {
    * Async function to prepare before inputRender gets called
    * Can return any data which needs to be resolved for inputRender
    */
-  public async prepareInputRender (renderProps?: object | null): Promise<any> {
-    return this.value
+  public async prepareInputRender (inputProps: InputProps, renderProps?: object | null): Promise<InputRenderData> {
+    return {
+      value: await this.value,
+      inputProps
+    }
   }
 
   /**
    * Simple Vue render function when using default inputComponent for input of field value with <input-field/>
    */
-  public inputRender (h: CreateElement, renderData: any): VNode {
+  public inputRender (h: CreateElement, renderData: InputRenderData): VNode {
+    const { disabled, readonly } = renderData.inputProps
+
     return h('input', {
       attrs: {
         type: 'text',
-        value: renderData
+        value: renderData.value,
+        disabled,
+        readonly
       },
       on: {
         input: (event: InputEvent) => {

@@ -1,6 +1,6 @@
 import { Field } from '@/fields/Field'
 import { BaseModel } from '@/models/BaseModel'
-import { FieldDef, FieldBind, FieldTypeOptions } from '@/types/fields/Field'
+import { FieldDef, FieldBind, FieldTypeOptions, InputProps } from '@/types/fields/Field'
 import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
 import BaseInputFieldRender from '@/components/BaseInputFieldRender'
@@ -675,10 +675,14 @@ describe('fields/Field', () => {
     it('should return renderData', async () => {
       const data = { description: 'desc value' }
       const model = new TestModel(data)
+      const inputProps: InputProps = { disabled: false, readonly: true }
 
       const field = new Field({}, { name: 'description', model })
-      const renderData = await field.prepareInputRender()
-      expect(renderData).toBe(data.description)
+      const renderData = await field.prepareInputRender(inputProps)
+      expect(renderData).toEqual({
+        value: data.description,
+        inputProps
+      })
     })
   })
 

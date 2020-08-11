@@ -185,11 +185,18 @@ class RedTextField extends Field {
   }
 
   // Render an text input field for input
-  inputRender (h, resolvedValue) {
+  inputRender (h, { value, inputProps }) {
+    // Common input properties
+    const { disabled, readonly } = inputProps
+
     return h('input', {
       attrs: {
         type: 'text',
-        value: resolvedValue
+        // Set current value to input
+        value,
+        // Implement common input properties
+        disabled,
+        readonly
       },
       on: {
         input: (event) => {

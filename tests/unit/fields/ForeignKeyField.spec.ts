@@ -358,5 +358,41 @@ describe('fields/ForeignKeyField', () => {
       mockObjectsDetail.mockRestore()
       mockObjectsList.mockRestore()
     })
+
+    it('should render disabled input field', async () => {
+      const model = new TestModel({ user: user.pk })
+      const field = model.getField('user') as ForeignKeyField
+      const mockObjectsList = jest.spyOn(User.objects, 'list').mockImplementation(async () => userList)
+
+      const wrapper = mount(InputField, { propsData: { field, disabled: true } })
+      await waitRender.InputField(wrapper)
+
+      expect(mockObjectsList).toBeCalledTimes(1)
+
+      await waitRender.InputField(wrapper)
+      await wrapper.vm.$nextTick()
+
+      expect(wrapper.html()).toMatchSnapshot()
+
+      mockObjectsList.mockRestore()
+    })
+
+    it('should render readonly input field', async () => {
+      const model = new TestModel({ user: user.pk })
+      const field = model.getField('user') as ForeignKeyField
+      const mockObjectsList = jest.spyOn(User.objects, 'list').mockImplementation(async () => userList)
+
+      const wrapper = mount(InputField, { propsData: { field, readonly: true } })
+      await waitRender.InputField(wrapper)
+
+      expect(mockObjectsList).toBeCalledTimes(1)
+
+      await waitRender.InputField(wrapper)
+      await wrapper.vm.$nextTick()
+
+      expect(wrapper.html()).toMatchSnapshot()
+
+      mockObjectsList.mockRestore()
+    })
   })
 })

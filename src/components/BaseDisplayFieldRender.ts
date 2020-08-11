@@ -1,13 +1,13 @@
 import { VNode, CreateElement } from 'vue'
 import cu from '../utils/common'
 import { configHandler } from '../utils/ConfigHandler'
-import FieldRenderPropsMixin from './FieldRenderPropsMixin'
+import DisplayComponentPropsMixin from '../mixins/DisplayComponentPropsMixin'
 
 export interface ComponentData {
   renderData: any
 }
 
-export default FieldRenderPropsMixin.extend({
+export default DisplayComponentPropsMixin.extend({
   name: 'BaseDisplayFieldRender',
   inheritAttrs: false,
 

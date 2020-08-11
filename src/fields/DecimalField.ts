@@ -1,5 +1,5 @@
 import { FormatStringField } from './FormatStringField'
-import { FieldTypeOptions } from '../types/fields/Field'
+import { FieldTypeOptions, InputProps } from '../types/fields/Field'
 import { CreateElement, VNode } from 'vue'
 
 export interface DecimalFieldOptions extends FieldTypeOptions {
@@ -7,9 +7,10 @@ export interface DecimalFieldOptions extends FieldTypeOptions {
   decimalPlaces: number
 }
 
-export interface InputRenderData {
+export interface DecimalFieldInputRenderData {
   value: any
   decimalPlaces: number
+  inputProps: InputProps
 }
 
 export class DecimalField extends FormatStringField {
@@ -30,7 +31,7 @@ export class DecimalField extends FormatStringField {
   /**
    * Prepare data for input render
    */
-  public async prepareInputRender (): Promise<InputRenderData> {
+  public async prepareInputRender (inputProps: InputProps): Promise<DecimalFieldInputRenderData> {
     const [value, options] = await Promise.all([
       this.value,
       this.options as Promise<DecimalFieldOptions>
@@ -38,18 +39,22 @@ export class DecimalField extends FormatStringField {
 
     return {
       value,
-      decimalPlaces: options.decimalPlaces
+      decimalPlaces: options.decimalPlaces,
+      inputProps
     }
   }
 
-  public inputRender (h: CreateElement, renderData: InputRenderData): VNode {
-    const step = Math.pow(0.1, renderData.decimalPlaces).toPrecision(1)
+  public inputRender (h: CreateElement, { value, decimalPlaces, inputProps }: DecimalFieldInputRenderData): VNode {
+    const { disabled, readonly } = inputProps
+    const step = Math.pow(0.1, decimalPlaces).toPrecision(1)
 
     return h('input', {
       attrs: {
         type: 'number',
-        value: renderData.value,
-        step
+        value,
+        step,
+        disabled,
+        readonly
       },
       on: {
         input: (event: InputEvent) => {

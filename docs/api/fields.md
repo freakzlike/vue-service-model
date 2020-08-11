@@ -88,12 +88,12 @@ class Field {
 
   // Async function to prepare before inputRender gets called
   // Can return any data which needs to be resolved for inputRender
-// renderProps can be passed from InputField component
-  public async prepareInputRender (renderProps?: object | null): Promise<any>
+  // renderProps can be passed from InputField component
+  public async prepareInputRender (inputProps: InputProps, renderProps?: object | null): Promise<InputRenderData>
 
   // Simple Vue render function when using default inputComponent for input of field value with <input-field/>
   // For more information see Field - Rendering 
-  public inputRender (h: CreateElement, renderData: any): VNode
+  public inputRender (h: CreateElement, renderData: InputRenderData): VNode
 
 }
 ```
@@ -146,5 +146,29 @@ interface FieldBind {
   // When using value then model and data will be ignored
   // A custom data object will be created to keep the field reactive
   value?: any
+}
+```
+
+## InputProps
+
+```typescript
+interface InputProps {
+  // Input flag for disabled input
+  disabled: boolean
+
+  // Input flag for readonly input
+  readonly: boolean
+}
+```
+
+## InputRenderData
+
+```typescript
+interface InputRenderData {
+  // Resolved value of field
+  value: any
+
+  // Input properties
+  inputProps: InputProps
 }
 ```

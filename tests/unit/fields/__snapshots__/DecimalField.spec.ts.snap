@@ -3,3 +3,7 @@
 exports[`fields/DecimalField inputRender should render correct input field 1`] = `<input type="number" value="17.02" step="0.01">`;
 
 exports[`fields/DecimalField inputRender should render correct input field 2`] = `<input type="number" value="19.1" step="0.01">`;
+
+exports[`fields/DecimalField inputRender should render disabled input field 1`] = `<input type="number" value="17.02" step="0.01" disabled="disabled">`;
+
+exports[`fields/DecimalField inputRender should render readonly input field 1`] = `<input type="number" value="17.02" step="0.01" readonly="readonly">`;

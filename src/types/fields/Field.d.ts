@@ -46,3 +46,19 @@ export interface FieldBind {
   // A custom data object will be created to keep the field reactive
   value?: any
 }
+
+export interface InputProps {
+  // Input flag for disabled input
+  disabled: boolean
+
+  // Input flag for readonly input
+  readonly: boolean
+}
+
+export interface InputRenderData {
+  // Resolved value of field
+  value: any
+
+  // Input properties
+  inputProps: InputProps
+}

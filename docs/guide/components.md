@@ -47,6 +47,8 @@ been passed as `model`. To change the output for specific fields see [Fields ren
 When using direct `field` property, keep in mind that the model will be `null` during loading
 :::
 
+### Loading state
+
 To display the loading state of the component, when the data is being fetched, you can use the `loading` slot.
 
 ```vue
@@ -125,6 +127,8 @@ The `InputField` component is equal to the `DisplayField`. The input value will 
 When using direct `field` property, keep in mind that the model will be `null` during loading
 :::
 
+### Loading state
+
 To display the loading state of the component, when the data is being fetched, you can use the `loading` slot.
 
 ```vue
@@ -135,6 +139,22 @@ To display the loading state of the component, when the data is being fetched, y
         <span>Loading title...</span>
       </template>
     </input-field>
+  [...]
+</template>
+```
+
+### Common input properties
+
+There are two common input properties `disabled` and `readonly`. These should always be implemented when creating new field types.
+
+```vue
+<template>
+  [...]
+    <!-- disabled input -->
+    <input-field :model="album" field-name="title" disabled/>
+
+    <!-- readonly input -->
+    <input-field :model="album" field-name="title" readonly/>
   [...]
 </template>
 ```

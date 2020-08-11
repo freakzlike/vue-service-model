@@ -66,5 +66,33 @@ describe('fields/IntegerField', () => {
 
       expect(await model.val.amount).toBe(20)
     })
+
+    it('should render disabled input field', async () => {
+      const model = new TestModel({ amount: 17 })
+      const wrapper = mount(InputField, {
+        propsData: {
+          field: model.getField('amount'),
+          disabled: true
+        }
+      })
+
+      await waitRender.InputField(wrapper)
+
+      expect(wrapper.html()).toMatchSnapshot()
+    })
+
+    it('should render readonly input field', async () => {
+      const model = new TestModel({ amount: 17 })
+      const wrapper = mount(InputField, {
+        propsData: {
+          field: model.getField('amount'),
+          readonly: true
+        }
+      })
+
+      await waitRender.InputField(wrapper)
+
+      expect(wrapper.html()).toMatchSnapshot()
+    })
   })
 })

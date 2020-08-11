@@ -12,6 +12,7 @@ describe('exports', () => {
   const componentsExports = [
     'BaseDisplayFieldRender', 'BaseInputFieldRender', 'DisplayField', 'InputField', 'FieldLabel'
   ]
+  const mixinsExports = ['DisplayComponentPropsMixin', 'InputComponentPropsMixin']
   const configExports = ['getConfig', 'setConfig']
 
   const checkExports = (modules: object, expectedExports: string[]) => {
@@ -25,6 +26,7 @@ describe('exports', () => {
       ...modelsExports,
       ...storeExports,
       ...componentsExports,
+      ...mixinsExports,
       ...configExports
     ])
   })
@@ -47,5 +49,9 @@ describe('exports', () => {
 
   it('should import correct from components', async () => {
     checkExports(await import('@/components'), componentsExports)
+  })
+
+  it('should import correct from mixins', async () => {
+    checkExports(await import('@/mixins'), mixinsExports)
   })
 })
