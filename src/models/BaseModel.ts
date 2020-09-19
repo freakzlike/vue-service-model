@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { reactive } from 'vue'
 import Dictionary from '../types/Dictionary'
 import cu from '../utils/common'
 import { BaseClass } from '../utils/BaseClass'
@@ -54,7 +54,7 @@ export class BaseModel extends BaseClass {
   constructor (data: Dictionary<any> = {}) {
     super()
     this._data = data
-    Vue.observable(this._data)
+    reactive(this._data)
 
     this.cls.register()
 

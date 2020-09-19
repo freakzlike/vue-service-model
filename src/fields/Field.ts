@@ -1,4 +1,4 @@
-import Vue, { CreateElement, VNode } from 'vue'
+import { h, VNode, reactive } from 'vue'
 import cu from '../utils/common'
 import { BaseClass } from '../utils/BaseClass'
 import { FieldNotBoundException } from '../exceptions/FieldExceptions'
@@ -48,11 +48,11 @@ export class Field extends BaseClass {
 
         this._model = null
         // Create private data structure to keep value reactive
-        this._data = Vue.observable({})
+        this._data = reactive({})
         this.value = fieldBind.value
       } else {
         this._model = fieldBind.model || null
-        this._data = fieldBind.data ? Vue.observable(fieldBind.data) : null
+        this._data = fieldBind.data ? reactive(fieldBind.data) : null
       }
     }
   }
@@ -237,7 +237,7 @@ export class Field extends BaseClass {
    */
   public valueSetter (value: any, data: Dictionary<any>): void {
     if (!this.attributeName.includes('.')) {
-      Vue.set(data, this.attributeName, value)
+      data[this.attributeName] = value
     } else {
       const subFields = this.attributeName.split('.') as string[]
 
@@ -260,13 +260,11 @@ export class Field extends BaseClass {
       }
 
       // Build nested object which will be set as value
-      const setValue = subFields.splice(fieldIndex + 1).reduceRight((obj, subFieldName) => {
+      currentData[subFieldName] = subFields.splice(fieldIndex + 1).reduceRight((obj, subFieldName) => {
         const newObj: Dictionary<any> = {}
         newObj[subFieldName] = obj
         return newObj
       }, value)
-
-      Vue.set(currentData, subFieldName, setValue)
     }
   }
 
@@ -296,7 +294,8 @@ export class Field extends BaseClass {
   /**
    * Simple Vue render function when using default displayComponent when displaying value with <display-field/>
    */
-  public displayRender (h: CreateElement, renderData: any): VNode {
+  public displayRender (renderData: any): VNode {
+    console.log('displayRender')
     return h('span', renderData)
   }
 
@@ -321,7 +320,7 @@ export class Field extends BaseClass {
   /**
    * Simple Vue render function when using default inputComponent for input of field value with <input-field/>
    */
-  public inputRender (h: CreateElement, renderData: InputRenderData): VNode {
+  public inputRender (renderData: InputRenderData): VNode {
     const { disabled, readonly } = renderData.inputProps
 
     return h('input', {

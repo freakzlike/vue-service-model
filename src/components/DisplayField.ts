@@ -1,4 +1,4 @@
-import { CreateElement, VNode, Component } from 'vue'
+import { VNode, Component } from 'vue'
 import mixins from '../utils/mixins'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
@@ -53,7 +53,7 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
     }
   },
 
-  render (h: CreateElement): VNode {
+  render (): VNode {
     if (this.displayComponent && this.fieldObj) {
       return h(this.displayComponent, {
         props: {
@@ -62,7 +62,7 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
         }
       })
     } else {
-      return this.renderLoading(h)
+      return this.renderLoading()
     }
   }
 })

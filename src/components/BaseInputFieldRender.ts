@@ -1,33 +1,51 @@
-import { VNode, CreateElement } from 'vue'
-import mixins from '../utils/mixins'
-import BaseDisplayFieldRender from './BaseDisplayFieldRender'
-import InputComponentPropsMixin from '../mixins/InputComponentPropsMixin'
+import { defineComponent, computed, watch, toRefs } from 'vue'
+import { BaseDisplayFieldRender } from './BaseDisplayFieldRender'
+import props from '../mixins/InputComponentPropsMixin'
+import { Field } from "@/fields";
 
-export default mixins(BaseDisplayFieldRender, InputComponentPropsMixin).extend({
+export interface Props {
+  field: Field
+  renderProps: object | null
+  disabled: boolean
+  readonly: boolean
+}
+
+export const BaseInputFieldRender = (props: Props) => {
+  const { disabled, readonly } = toRefs(props)
+
+  const baseDisplayFieldRender = BaseDisplayFieldRender(props)
+  const {
+    field,
+    renderProps,
+    renderData,
+    setResolveRenderData
+  } = baseDisplayFieldRender
+
+  const inputProps = computed(() => ({
+    disabled: disabled.value,
+    readonly: readonly.value
+  }))
+
+  const resolveRenderData = async () => field.value.prepareInputRender(inputProps.value, renderProps.value)
+
+  const renderField = () => field.value.inputRender(renderData.value)
+
+  watch(inputProps, setResolveRenderData)
+
+  return {
+    ...baseDisplayFieldRender,
+    inputProps,
+    resolveRenderData,
+    renderField
+  }
+}
+
+export default defineComponent({
   name: 'BaseInputFieldRender',
+  props,
 
-  computed: {
-    inputProps () {
-      return {
-        disabled: this.disabled,
-        readonly: this.readonly
-      }
-    }
-  },
-
-  watch: {
-    inputProps () {
-      this.setResolveRenderData()
-    }
-  },
-
-  methods: {
-    async resolveRenderData () {
-      return this.field.prepareInputRender(this.inputProps, this.renderProps)
-    },
-
-    renderField (h: CreateElement): VNode {
-      return this.field.inputRender(h, this.renderData)
-    }
+  setup (props) {
+    const { hasResolvedRenderData, renderField } = BaseInputFieldRender(<Props> props)
+    return () => (hasResolvedRenderData ? renderField() : undefined as any)
   }
 })

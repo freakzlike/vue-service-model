@@ -1,77 +1,62 @@
-import { VNode, CreateElement } from 'vue'
+import { defineComponent, computed, ref, toRefs, watch } from 'vue'
 import cu from '../utils/common'
-import { configHandler } from '../utils/ConfigHandler'
-import DisplayComponentPropsMixin from '../mixins/DisplayComponentPropsMixin'
+import props from '../mixins/DisplayComponentPropsMixin'
+import { Field } from '@/fields/Field'
 
-export interface ComponentData {
-  renderData: any
+export interface Props {
+  field: Field
+  renderProps: object | null
 }
 
-export default DisplayComponentPropsMixin.extend({
+export const BaseDisplayFieldRender = (props: Props) => {
+  const { field, renderProps } = toRefs(props)
+
+  const renderData: { value: any } = ref(cu.NO_VALUE)
+  const hasResolvedRenderData = computed(() => renderData.value !== cu.NO_VALUE)
+
+  const resolveRenderData = async () => {
+    console.log('resolveRenderData')
+    return field.value.prepareDisplayRender(renderProps.value)
+  }
+  const setResolveRenderData = async () => {
+    console.log('setResolveRenderData')
+    return renderData.value = await resolveRenderData()
+  }
+
+  const renderField = () => field.value.displayRender(renderData.value)
+
+  setResolveRenderData()
+
+  // watch(field, setResolveRenderData)
+  // watch(field.value.data, setResolveRenderData)
+  // watch(renderProps, setResolveRenderData)
+
+  return {
+    field,
+    renderProps,
+    renderData,
+    hasResolvedRenderData,
+    resolveRenderData,
+    setResolveRenderData,
+    renderField
+  }
+}
+
+export default defineComponent({
   name: 'BaseDisplayFieldRender',
   inheritAttrs: false,
+  props,
 
-  data: (): ComponentData => ({
-    renderData: cu.NO_VALUE
-  }),
-
-  computed: {
-    hasResolvedRenderData () {
-      return this.renderData !== cu.NO_VALUE
-    }
+  setup (props) {
+    return BaseDisplayFieldRender(<Props> props)
   },
 
-  asyncComputed: {
-    renderData: {
-      default: cu.NO_VALUE,
-      get () {
-        const _self = this as {resolveRenderData: () => Promise<any>}
-        return _self.resolveRenderData()
-      }
-    }
-  },
-
-  watch: {
-    field () {
-      this.setResolveRenderData()
-    },
-    'field.data': {
-      deep: true,
-      handler () {
-        this.setResolveRenderData()
-      }
-    },
-    renderProps: {
-      deep: true,
-      handler () {
-        this.setResolveRenderData()
-      }
-    }
-  },
-
-  created () {
-    this.setResolveRenderData()
-  },
-
-  methods: {
-    async setResolveRenderData () {
-      if (!configHandler.useAsyncComputed()) {
-        this.renderData = await this.resolveRenderData()
-      }
-    },
-
-    async resolveRenderData (): Promise<any> {
-      return this.field.prepareDisplayRender(this.renderProps)
-    },
-
-    renderField (h: CreateElement): VNode {
-      return this.field.displayRender(h, this.renderData)
-    }
-  },
-
-  render (h: CreateElement): VNode {
+  render () {
+    // @ts-ignore
+    console.log('render')
     if (this.hasResolvedRenderData) {
-      return this.renderField(h)
+      // @ts-ignore
+      return this.renderField()
     } else {
       return undefined as any
     }

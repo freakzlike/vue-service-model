@@ -1,20 +1,18 @@
-import Vue, { CreateElement, VNode } from 'vue'
+import { defineComponent, h, VNode } from 'vue'
 
 /**
  * Mixin to add render of loading with loading slot
  */
-export default Vue.extend({
+export default defineComponent({
   methods: {
-    renderDefaultLoading (h: CreateElement): VNode {
+    renderDefaultLoading (): VNode {
       return undefined as any
     },
-    renderLoading (h: CreateElement): VNode {
+    renderLoading (): VNode {
       if (this.$slots && this.$slots.loading) {
-        return h('div', this.$slots.loading)
-      } else if (this.$scopedSlots && this.$scopedSlots.loading) {
-        return h('div', this.$scopedSlots.loading({}))
+        return h('div', this.$slots.loading())
       } else {
-        return this.renderDefaultLoading(h)
+        return this.renderDefaultLoading()
       }
     }
   }
