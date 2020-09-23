@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils'
-import { Field } from '@/fields/Field'
+import { RenderableField } from '@/fields/RenderableField'
 import DisplayField from '@/components/DisplayField'
 import { BaseModel } from '@/models/BaseModel'
 import { waitRender, installAsyncComputed } from '../../testUtils'
@@ -18,8 +18,8 @@ const TestDisplayField = (useAsyncComputed: boolean) => {
 
   class TestModel extends BaseModel {
     static fieldsDef = {
-      name: new Field(),
-      description: new Field()
+      name: new RenderableField(),
+      description: new RenderableField()
     }
   }
 

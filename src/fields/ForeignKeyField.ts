@@ -1,6 +1,6 @@
 import { CreateElement, VNode } from 'vue'
 import cu from '../utils/common'
-import { Field } from './Field'
+import { RenderableField } from './RenderableField'
 import { FieldTypeOptions, InputProps } from '../types/fields/Field'
 import { ServiceModel } from '../models/ServiceModel'
 import { InvalidFieldOptionsException, RequiredFieldOptionsException } from '../exceptions/FieldExceptions'
@@ -12,7 +12,7 @@ export interface ForeignKeyFieldOptions extends FieldTypeOptions {
 }
 
 export interface DisplayRenderData {
-  field: Field | null
+  field: RenderableField | null
   displayField: any
 }
 
@@ -27,7 +27,7 @@ export interface ForeignKeyFieldInputRenderData {
   inputProps: InputProps
 }
 
-export class ForeignKeyField extends Field {
+export class ForeignKeyField extends RenderableField {
   /**
    * Return instance of relation model as value
    */

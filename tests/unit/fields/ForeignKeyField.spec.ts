@@ -127,7 +127,7 @@ describe('fields/ForeignKeyField', () => {
 
     it('should return no field data', async () => {
       const model = new TestModel()
-      const field = model.getField('user')
+      const field = model.getField('user') as ForeignKeyField
 
       const renderData = await field.prepareDisplayRender()
 

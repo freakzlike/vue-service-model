@@ -1,9 +1,7 @@
 import { Field } from '@/fields/Field'
 import { BaseModel } from '@/models/BaseModel'
-import { FieldDef, FieldBind, FieldTypeOptions, InputProps } from '@/types/fields/Field'
+import { FieldDef, FieldBind, FieldTypeOptions } from '@/types/fields/Field'
 import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
-import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
-import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 import { Dictionary } from '@/types/Dictionary'
 
 describe('fields/Field', () => {
@@ -649,48 +647,6 @@ describe('fields/Field', () => {
         otherField: 1,
         field: null
       })
-    })
-  })
-
-  describe('prepareDisplayRender', () => {
-    it('should return renderData', async () => {
-      const data = { description: 'desc value' }
-      const model = new TestModel(data)
-
-      const field = new Field({}, { name: 'description', model })
-      const renderData = await field.prepareDisplayRender()
-      expect(renderData).toBe(data.description)
-    })
-  })
-
-  describe('displayComponent', () => {
-    it('should return BaseDisplayFieldRender', async () => {
-      const field = new Field()
-      const displayComponent = await field.displayComponent
-      expect(displayComponent.default).toBe(BaseDisplayFieldRender)
-    })
-  })
-
-  describe('prepareInputRender', () => {
-    it('should return renderData', async () => {
-      const data = { description: 'desc value' }
-      const model = new TestModel(data)
-      const inputProps: InputProps = { disabled: false, readonly: true }
-
-      const field = new Field({}, { name: 'description', model })
-      const renderData = await field.prepareInputRender(inputProps)
-      expect(renderData).toEqual({
-        value: data.description,
-        inputProps
-      })
-    })
-  })
-
-  describe('inputComponent', () => {
-    it('should return BaseInputFieldRender', async () => {
-      const field = new Field()
-      const inputComponent = await field.inputComponent
-      expect(inputComponent.default).toBe(BaseInputFieldRender)
     })
   })
 })

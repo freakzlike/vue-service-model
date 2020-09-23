@@ -2,6 +2,10 @@
 
 [[toc]]
 
+A `Field` provides information and methods to work with your data. An information can be the label which is used to
+display a name of the field for the user (e.g. as column header). A [`RenderableField`](/guide/fields.html#field-vs-renderablefield)
+inherits from `Field` and additionally provides a handling to render to field value to the user or render an input field.
+
 ## Field definition
 
 When instantiating a new field you can provide a specific definition for the field.
@@ -20,7 +24,8 @@ class Album extends BaseModel {
 Field definition structure:
 ```js
 {
-  // String which key should be used to retrieve value from. See Attribute name for more information
+  // String which key should be used to retrieve value from.
+  // See Attribute name for more information
   // Optional: default uses key from fieldsDef 
   attributeName: 'title',
 
@@ -127,7 +132,7 @@ const myField = new Field({attributeName: 'description'}, {data: data})
 await myField.value // output: My description
 ```
 
-You can also use the [components](/guide/components.html) to render your standalone field
+You can also use the [components](/guide/components.html) to render your standalone field. Be sure to use a [`RenderableField`](/guide/fields.html#field-vs-renderablefield).
 
 ```vue
 <template>
@@ -165,7 +170,16 @@ const myObj = new MyModel({
 await myObj.val.full_name // output: Joe Bloggs
 ```
 
+## `Field` vs `RenderableField`
+
+In case you don't need the rendering functions, then you can use the `Field` class and avoid unnecessary code which will make your bundle smaller.
+The `RenderableField` provides additional methods like `displayRender` to allow rendering of the field.
+
 ## Rendering
+
+::: warning
+Be sure to use a field which inherits from [`RenderableField`](/guide/fields.html#field-vs-renderablefield). The default `Field` class does not support rendering.
+:::
 
 By using the [`DisplayField`](/guide/components.html#displayfield) component you can render the value of a field for displaying purpose
 and [`InputField`](/guide/components.html#inputfield) when you want to render the input component for this field.
@@ -174,7 +188,7 @@ To customize the different output which should be rendered you can either set a 
 The `displayRender`/`inputRender` can be used for small changes of the output and is a simple render function (See [Vue.js render function](https://vuejs.org/v2/guide/render-function.html)).
 
 ```js
-class RedTextField extends Field {
+class RedTextField extends RenderableField {
   // Render a red text for display
   displayRender (h, resolvedValue) {
     return h('span', {
@@ -219,7 +233,7 @@ In some cases you need to prepare or fetch other data before the field should be
 They will be called before `displayRender`/`inputRender` and will give any async data to as 2. argument to them.
 
 ```js
-class AlbumTitleField extends Field {
+class AlbumTitleField extends RenderableField {
   // Do any asynchronous operations before rendering with displayRender
   async prepareDisplayRender (renderProps) {
     const albumId = await this.value
@@ -246,7 +260,7 @@ If you want to change the input component you can extend from `BaseInputFieldRen
 
 ```js
 // CustomField.js
-class CustomField extends Field {
+class CustomField extends RenderableField {
   get displayComponent () {
     return import('./CustomFieldComponent')
   }

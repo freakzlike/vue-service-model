@@ -1,5 +1,5 @@
 import Vue, { createLocalVue, shallowMount, Wrapper } from '@vue/test-utils'
-import { Field } from '@/fields/Field'
+import { RenderableField } from '@/fields/RenderableField'
 import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 import { BaseModel } from '@/models/BaseModel'
 import { installAsyncComputed } from '../../testUtils'
@@ -15,12 +15,12 @@ const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
 
   class TestModel extends BaseModel {
     static fieldsDef = {
-      name: new Field()
+      name: new RenderableField()
     }
   }
 
   const model = new TestModel(modelData)
-  const field = model.getField('name') as Field
+  const field = model.getField('name') as RenderableField
 
   const waitForRender = async (wrapper: Wrapper<Vue>) => {
     await wrapper.vm.$nextTick()

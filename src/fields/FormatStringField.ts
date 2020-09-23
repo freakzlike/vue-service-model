@@ -1,7 +1,7 @@
 import cu from '../utils/common'
-import { Field } from './Field'
+import { RenderableField } from './RenderableField'
 
-export class FormatStringField extends Field {
+export class FormatStringField extends RenderableField {
   /**
    * Prepare formatted value for display render
    */

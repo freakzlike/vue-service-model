@@ -68,7 +68,13 @@ class Field {
   // Map value from a data structure to another data structure.
   // Uses valueGetter and valueSetter
   public mapFieldValue (fromData: Dictionary<any>, toData: Dictionary<any>): void
+}
+```
 
+## RenderableField
+
+```typescript
+class RenderableField extends Field {
   // Display component to render when displaying value with <display-field/>
   // For more information see Field - Rendering 
   public get displayComponent (): Promise<ComponentModule>
@@ -94,7 +100,6 @@ class Field {
   // Simple Vue render function when using default inputComponent for input of field value with <input-field/>
   // For more information see Field - Rendering 
   public inputRender (h: CreateElement, renderData: InputRenderData): VNode
-
 }
 ```
 
