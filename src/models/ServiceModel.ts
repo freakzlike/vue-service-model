@@ -1,6 +1,6 @@
 import { BaseModel } from './BaseModel'
 import { ModelManager } from './ModelManager'
-import cu from '../utils/common'
+import { format, clone } from '../utils/common'
 import { ServiceStore } from '../store/ServiceStore'
 import { ServiceParent, ServiceModelUpdateOptions } from '../types/models/ServiceModel'
 import { MissingUrlException } from '../exceptions/ModelExceptions'
@@ -62,7 +62,7 @@ export class ServiceModel extends BaseModel {
    */
   constructor (data: Dictionary<any> = {}, parents: ServiceParent = {}) {
     super(data)
-    this._parents = cu.clone(parents)
+    this._parents = clone(parents)
   }
 
   /**
@@ -96,7 +96,7 @@ export class ServiceModel extends BaseModel {
     })()
 
     if (parents) {
-      return cu.format(url, parents)
+      return format(url, parents)
     } else {
       return url
     }
@@ -120,7 +120,7 @@ export class ServiceModel extends BaseModel {
       }
     })()
 
-    return cu.format(url, {
+    return format(url, {
       pk,
       ...parents || {}
     })
@@ -151,7 +151,7 @@ export class ServiceModel extends BaseModel {
    * Set deep copy of model parents to avoid unwanted mutations
    */
   public set parents (parents: ServiceParent) {
-    this._parents = cu.clone(parents)
+    this._parents = clone(parents)
   }
 
   /**

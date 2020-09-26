@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import cu from '../utils/common'
+import { promiseEval, isNull } from '../utils/common'
 import { BaseClass } from '../utils/BaseClass'
 import { FieldNotBoundException } from '../exceptions/FieldExceptions'
 import { FieldDef, FieldBind, FieldTypeOptions } from '../types/fields/Field'
@@ -162,14 +162,14 @@ export class Field extends BaseClass {
    * Field label
    */
   public get label (): Promise<string> {
-    return cu.promiseEval(this.definition.label, this)
+    return promiseEval(this.definition.label, this)
   }
 
   /**
    * Returns async field options with validation and default values depending on field type
    */
   public get options (): Promise<FieldTypeOptions> {
-    return cu.promiseEval(this.definition.options, this).then(options => this.validateOptions(options))
+    return promiseEval(this.definition.options, this).then(options => this.validateOptions(options))
   }
 
   /**
@@ -204,7 +204,7 @@ export class Field extends BaseClass {
     // No nested attribute name
     if (!this.isNestedAttribute) {
       const value = data[this.attributeName]
-      return !cu.isNull(value) ? value : null
+      return !isNull(value) ? value : null
     }
 
     // Attribute name contains nested attributes e.g. obj.nested.field
@@ -213,13 +213,13 @@ export class Field extends BaseClass {
     let subFieldName
     for (subFieldName of subFields) {
       currentObject = currentObject[subFieldName]
-      if (cu.isNull(currentObject)) {
+      if (isNull(currentObject)) {
         return null
       }
     }
 
     /* istanbul ignore else */
-    if (!cu.isNull(currentObject)) {
+    if (!isNull(currentObject)) {
       return currentObject
     } else {
       return null
@@ -241,7 +241,7 @@ export class Field extends BaseClass {
       let subFieldName = subFields[fieldIndex]
       let currentData = data
       while (true) {
-        if (Object.prototype.hasOwnProperty.call(currentData, subFieldName) && !cu.isNull(currentData[subFieldName])) {
+        if (Object.prototype.hasOwnProperty.call(currentData, subFieldName) && !isNull(currentData[subFieldName])) {
           currentData = currentData[subFieldName]
         } else {
           break

@@ -1,4 +1,4 @@
-import cu from '../utils/common'
+import { isNull } from '../utils/common'
 import { RenderableField } from './RenderableField'
 
 export class FormatStringField extends RenderableField {
@@ -14,6 +14,6 @@ export class FormatStringField extends RenderableField {
    */
   public async valueFormatter (): Promise<string | null> {
     const value = await this.value
-    return !cu.isNull(value) ? String(value) : null
+    return !isNull(value) ? String(value) : null
   }
 }

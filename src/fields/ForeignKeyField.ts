@@ -1,5 +1,5 @@
 import { CreateElement, VNode } from 'vue'
-import cu from '../utils/common'
+import { isNull } from '../utils/common'
 import { RenderableField } from './RenderableField'
 import { FieldTypeOptions, InputProps } from '../types/fields/Field'
 import { ServiceModel } from '../models/ServiceModel'
@@ -33,7 +33,7 @@ export class ForeignKeyField extends RenderableField {
    */
   public async getValue (): Promise<any> {
     const value = await super.getValue()
-    if (cu.isNull(value)) return null
+    if (isNull(value)) return null
 
     const options = await this.options as ForeignKeyFieldOptions
     const model = options.model
@@ -93,7 +93,7 @@ export class ForeignKeyField extends RenderableField {
     const [value, options] = await Promise.all([super.getValue(), this.options as Promise<ForeignKeyFieldOptions>])
 
     return {
-      value: !cu.isNull(value) ? String(value) : null,
+      value: !isNull(value) ? String(value) : null,
       list: await this.mapInputSelectList(options),
       inputProps
     }
@@ -106,7 +106,7 @@ export class ForeignKeyField extends RenderableField {
     const data = await this.getInputSelectList(options)
     return Promise.all(data.map(async entry => {
       const pk = entry.pk
-      if (cu.isNull(pk)) {
+      if (isNull(pk)) {
         console.warn('[vue-service-model] No primary key defined for model', entry.cls.name)
       }
 

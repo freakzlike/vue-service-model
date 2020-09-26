@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Dictionary from '../types/Dictionary'
-import cu from '../utils/common'
+import { isNull } from '../utils/common'
 import { BaseClass } from '../utils/BaseClass'
 import { Field } from '../fields/Field'
 import { NotDeclaredFieldException } from '../exceptions/ModelExceptions'
@@ -106,7 +106,7 @@ export class BaseModel extends BaseClass {
     if (!primaryKeyField) return null
 
     const pk = primaryKeyField.valueGetter(this.data)
-    return !cu.isNull(pk) ? pk : null
+    return !isNull(pk) ? pk : null
   }
 
   /**

@@ -1,13 +1,13 @@
 import { configHandler } from '@/utils/ConfigHandler'
 import { Config, getConfig } from '@/config'
-import cu from '@/utils/common'
+import { mergeDeep } from '@/utils/common'
 
 describe('utils/ConfigHandler', () => {
   const withMockedConfig = async (
     config: Config,
     callback: (config: Config) => void
   ) => {
-    const newConfig = cu.mergeDeep({}, configHandler.getConfig(), config)
+    const newConfig = mergeDeep({}, configHandler.getConfig(), config)
     const mockGetConfig = jest.spyOn(configHandler, 'getConfig').mockImplementation(() => newConfig)
 
     try {

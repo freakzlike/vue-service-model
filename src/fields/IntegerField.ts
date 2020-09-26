@@ -1,4 +1,4 @@
-import cu from '../utils/common'
+import { isNull } from '../utils/common'
 import { FormatStringField } from './FormatStringField'
 import { CreateElement, VNode } from 'vue'
 import { InputRenderData } from '../types/fields/Field'
@@ -30,6 +30,6 @@ export class IntegerField extends FormatStringField {
    * Parse value and convert to number or null
    */
   public async valueParser (rawValue: any): Promise<number | null> {
-    return cu.isNull(rawValue) ? null : parseInt(rawValue)
+    return isNull(rawValue) ? null : parseInt(rawValue)
   }
 }

@@ -1,5 +1,5 @@
 import { VNode, CreateElement } from 'vue'
-import cu from '../utils/common'
+import { NO_VALUE } from '../utils/common'
 import { configHandler } from '../utils/ConfigHandler'
 import DisplayComponentPropsMixin from '../mixins/DisplayComponentPropsMixin'
 
@@ -12,20 +12,20 @@ export default DisplayComponentPropsMixin.extend({
   inheritAttrs: false,
 
   data: (): ComponentData => ({
-    renderData: cu.NO_VALUE
+    renderData: NO_VALUE
   }),
 
   computed: {
     hasResolvedRenderData () {
-      return this.renderData !== cu.NO_VALUE
+      return this.renderData !== NO_VALUE
     }
   },
 
   asyncComputed: {
     renderData: {
-      default: cu.NO_VALUE,
+      default: NO_VALUE,
       get () {
-        const _self = this as {resolveRenderData: () => Promise<any>}
+        const _self = this as { resolveRenderData: () => Promise<any> }
         return _self.resolveRenderData()
       }
     }
