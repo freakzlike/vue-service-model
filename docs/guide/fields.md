@@ -29,13 +29,9 @@ Field definition structure:
   // Optional: default uses key from fieldsDef 
   attributeName: 'title',
 
-  // Label of field. See Field label and hint for more information
+  // Label of field. See Field label for more information
   // Optional: Can either be a string, function or promise
   label: () => Promise.resolve('Title'),
-
-  // Hint of field. See Field label and hint for more information
-  // Optional: Can either be a string, function or promise
-  hint: 'Title of album',
 
   // Boolean flag whether field is a primary key
   // Optional: default is false
@@ -80,10 +76,10 @@ await myObj.val.address_city // output: New York
 await myObj.val.address_street // output: Fifth Avenue
 ```
 
-### Field label and hint (`label`, `hint`)
+### Field label (`label`)
 
-With the `label` property you can set a descriptive name for your field. `hint` is used to provide a detail description of your field. `label` and `hint` can either be a `string` or a `function` which should return a `string` or a `Promise`.
-You can access your label/hint with the `label`/`hint` property of your field instance which will always return a `Promise`.
+With the `label` property you can set a descriptive name for your field. The `label` can either be a `string` or a `function` which should return a `string` or a `Promise`.
+You can access your label with the `label` property of your field instance which will always return a `Promise`.
 
 ```js
 class MyModel extends BaseModel {
@@ -91,8 +87,7 @@ class MyModel extends BaseModel {
 
   static fieldsDef = {
     first_name: new Field({
-      label: 'First name',
-      hint: () => 'First name of the employee'
+      label: 'First name'
     })
   }
 }
@@ -102,7 +97,6 @@ class MyModel extends BaseModel {
 const firstNameField = myObj.getField('first_name')
 
 await firstNameField.label // output: First name
-await firstNameField.hint // output: First name of the employee
 ```
 
 

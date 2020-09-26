@@ -41,9 +41,6 @@ class Field {
   // Returns async field label from field definition
   public get label (): Promise<string>
 
-  // Returns async field hint from field definition
-  public get hint (): Promise<string>
-
   // Returns async field options with validation and default values depending on field type
   public get options (): Promise<FieldTypeOptions>
 
@@ -112,13 +109,9 @@ interface FieldDef {
   // Optional: default uses key from fieldsDef
   attributeName?: string
 
-  // Label of field. See Field label and hint for more information
+  // Label of field. See Field label for more information
   // Optional: Can either be a string, function or promise
   label?: LazyValue<string>
-
-  // Hint of field. See Field label and hint for more information
-  // Optional: Can either be a string, function or promise
-  hint?: LazyValue<string>
 
   // Boolean flag whether field is a primary key
   // Optional: default is false

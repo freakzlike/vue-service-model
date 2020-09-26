@@ -384,42 +384,6 @@ describe('fields/Field', () => {
     })
   })
 
-  describe('hint', () => {
-    it('should get hint string', async () => {
-      const def: FieldDef = { hint: 'field hint' }
-
-      const field = new Field(def)
-      expect(field.hint).toBeInstanceOf(Promise)
-
-      const result = await field.hint
-      expect(typeof result).toBe('string')
-      expect(result).toBe(def.hint)
-    })
-
-    it('should get hint function', async () => {
-      const hint = 'field hint 1'
-      const def: FieldDef = {}
-      const field = new Field(def)
-      def.hint = function (...args: Array<any>) {
-        expect(args.length).toBe(0)
-        expect(this).toBe(field)
-        return hint
-      }
-
-      expect(await field.hint).toBe(hint)
-    })
-
-    it('should get hint Promise', async () => {
-      const hint = 'field hint 2'
-      const def: FieldDef = {
-        hint: () => new Promise(resolve => resolve(hint))
-      }
-
-      const field = new Field(def)
-      expect(await field.hint).toBe(hint)
-    })
-  })
-
   describe('options', () => {
     class TestField extends Field {
       public async validateOptions (options: FieldTypeOptions) {

@@ -157,13 +157,6 @@ export class Field extends BaseClass {
   }
 
   /**
-   * Field hint
-   */
-  public get hint (): Promise<string> {
-    return cu.promiseEval(this.definition.hint, this)
-  }
-
-  /**
    * Returns async field options with validation and default values depending on field type
    */
   public get options (): Promise<FieldTypeOptions> {
