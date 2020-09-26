@@ -60,9 +60,15 @@ describe('fields/IntegerField', () => {
 
       inputElement.setValue(19)
 
+      // Wait for value parser
+      await wrapper.vm.$nextTick()
+
       expect(await model.val.amount).toBe(19)
 
       inputElement.setValue('20')
+
+      // Wait for value parser
+      await wrapper.vm.$nextTick()
 
       expect(await model.val.amount).toBe(20)
     })
@@ -93,6 +99,22 @@ describe('fields/IntegerField', () => {
       await waitRender.InputField(wrapper)
 
       expect(wrapper.html()).toMatchSnapshot()
+    })
+  })
+
+  describe('valueParser', () => {
+    const field = new TestModel({}).getField('amount')
+
+    it('should return integer value', async () => {
+      expect(await field.valueParser(7)).toBe(7)
+      expect(await field.valueParser('8')).toBe(8)
+      expect(await field.valueParser(0)).toBe(0)
+      expect(await field.valueParser(9.2)).toBe(9)
+    })
+
+    it('should return null', async () => {
+      expect(await field.valueParser(null)).toBe(null)
+      expect(await field.valueParser(undefined)).toBe(null)
     })
   })
 })

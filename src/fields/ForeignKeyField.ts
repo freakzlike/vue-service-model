@@ -148,7 +148,7 @@ export class ForeignKeyField extends RenderableField {
       on: {
         input: (event: InputEvent) => {
           const target = event.target as { value?: any }
-          this.value = target.value
+          this.setParseValue(target.value)
         }
       }
     }, list.map(entry => h('option', {

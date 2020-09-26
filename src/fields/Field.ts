@@ -150,6 +150,15 @@ export class Field extends BaseClass {
   }
 
   /**
+   * Parses raw value with valueParser and sets field value by calling valueSetter
+   */
+  public async setParseValue (rawValue: any): Promise<any> {
+    const parsedValue = await this.valueParser(rawValue)
+    this.value = parsedValue
+    return parsedValue
+  }
+
+  /**
    * Field label
    */
   public get label (): Promise<string> {
@@ -254,6 +263,13 @@ export class Field extends BaseClass {
 
       Vue.set(currentData, subFieldName, setValue)
     }
+  }
+
+  /**
+   * Parse a raw value and return the parsed value with valid data type
+   */
+  public async valueParser (rawValue: any): Promise<any> {
+    return rawValue
   }
 
   /**

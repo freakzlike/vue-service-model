@@ -38,6 +38,9 @@ class Field {
   // Sets field value to model data by calling valueSetter with data of assigned model
   public setValue (value: any): void
 
+  // Parses raw value with valueParser and sets field value by calling valueSetter
+  public async setParseValue (rawValue: any): Promise<any>
+
   // Returns async field label from field definition
   public get label (): Promise<string>
 
@@ -61,6 +64,9 @@ class Field {
   // Set value to data by using attributeName
   // Will create nested structure from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
   public valueSetter (value: any, data: Dictionary<any>): void
+
+  // Parse a raw value and return the parsed value with valid data type
+  public async valueParser (rawValue: any): Promise<any>
 
   // Map value from a data structure to another data structure.
   // Uses valueGetter and valueSetter

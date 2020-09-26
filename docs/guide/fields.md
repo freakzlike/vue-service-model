@@ -99,7 +99,6 @@ const firstNameField = myObj.getField('first_name')
 await firstNameField.label // output: First name
 ```
 
-
 ## Standalone Field
 
 In some cases you just want to work with a single field and don't need a model.
@@ -136,7 +135,6 @@ You can also use the [components](/guide/components.html) to render your standal
 </template>
 ```
 
-
 ## Custom/Computed fields
 
 In case you want to define your own field class you just need to extend from `Field`. By overwriting the `valueGetter` method you are able to map the field value by yourself and create computed values.
@@ -144,7 +142,7 @@ In case you want to define your own field class you just need to extend from `Fi
 ```js
 class FullNameField extends Field {
   valueGetter (data) {
-    return data ? data.first_name + ' ' + data.last_name : null
+    return data ? `${data.first_name} ${data.last_name}` : null
   }
 }
 
@@ -162,6 +160,31 @@ const myObj = new MyModel({
 })
 
 await myObj.val.full_name // output: Joe Bloggs
+```
+
+## Value parsing
+
+To avoid unexpected data types of your field value, then you should use the `setParseValue` method of your field. This will
+ensure that your Field (e.g. `IntegerField`) always contains a `number`.
+
+```js
+// Set value without parsing
+myIntegerField.value = '5'
+// -> Field value will be string with value '5'
+
+// Parse and set value
+myIntegerField.setParseValue('5')
+// -> Field value will be number with value 5
+```
+
+You can customize your parsing logic by overwriting the `valueParser`.
+
+```js
+class StringField extends Field {
+  valueparser (rawValue) {
+    return String(rawValue)
+  }
+}
 ```
 
 ## `Field` vs `RenderableField`
@@ -208,8 +231,8 @@ class RedTextField extends RenderableField {
       },
       on: {
         input: (event) => {
-          // Set input value to field.value
-          this.value = event.target.value
+          // Parse and set input value to field.value
+          this.setParseValue(event.target.value)
         }
       }
     })

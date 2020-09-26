@@ -60,7 +60,7 @@ export class RenderableField extends Field {
       on: {
         input: (event: InputEvent) => {
           const target = event.target as { value?: any }
-          this.value = target.value
+          this.setParseValue(target.value)
         }
       }
     })

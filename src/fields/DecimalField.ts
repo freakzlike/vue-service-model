@@ -1,3 +1,4 @@
+import cu from '../utils/common'
 import { FormatStringField } from './FormatStringField'
 import { FieldTypeOptions, InputProps } from '../types/fields/Field'
 import { CreateElement, VNode } from 'vue'
@@ -59,9 +60,16 @@ export class DecimalField extends FormatStringField {
       on: {
         input: (event: InputEvent) => {
           const target = event.target as { value?: any }
-          this.value = parseFloat(target.value)
+          this.setParseValue(target.value)
         }
       }
     })
+  }
+
+  /**
+   * Parse value and convert to number or null
+   */
+  public async valueParser (rawValue: any): Promise<number | null> {
+    return cu.isNull(rawValue) ? null : parseFloat(rawValue)
   }
 }

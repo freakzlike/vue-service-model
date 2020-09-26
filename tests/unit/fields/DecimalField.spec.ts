@@ -18,8 +18,7 @@ describe('fields/DecimalField', () => {
 
   describe('constructor', () => {
     it('should inherit from FormatStringField', async () => {
-      const model = new TestModel({})
-      const field = model.getField('amount')
+      const field = new TestModel({}).getField('amount')
 
       expect(field).toBeInstanceOf(FormatStringField)
     })
@@ -70,9 +69,15 @@ describe('fields/DecimalField', () => {
 
       inputElement.setValue(19.01)
 
+      // Wait for value parser
+      await wrapper.vm.$nextTick()
+
       expect(await model.val.amount).toBe(19.01)
 
       inputElement.setValue('20.45')
+
+      // Wait for value parser
+      await wrapper.vm.$nextTick()
 
       expect(await model.val.amount).toBe(20.45)
     })
@@ -128,6 +133,21 @@ describe('fields/DecimalField', () => {
 
       expect(mockValidateOptions).toBeCalledTimes(1)
       mockValidateOptions.mockRestore()
+    })
+  })
+
+  describe('valueParser', () => {
+    const field = new TestModel({}).getField('amount')
+
+    it('should return float value', async () => {
+      expect(await field.valueParser(11.5)).toBe(11.5)
+      expect(await field.valueParser('15.84')).toBe(15.84)
+      expect(await field.valueParser(0)).toBe(0)
+    })
+
+    it('should return null', async () => {
+      expect(await field.valueParser(null)).toBe(null)
+      expect(await field.valueParser(undefined)).toBe(null)
     })
   })
 })

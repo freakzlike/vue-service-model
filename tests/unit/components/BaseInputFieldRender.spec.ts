@@ -74,6 +74,8 @@ const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
 
     inputElement.setValue('Name 2')
 
+    await wrapper.vm.$nextTick()
+
     expect(modelData.name).toBe('Name 2')
     expect(spyValueSetter).toBeCalledTimes(1)
   })
