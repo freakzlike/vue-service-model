@@ -10,13 +10,9 @@ export interface FieldDef {
   // Optional: default uses key from fieldsDef
   attributeName?: string
 
-  // Label of field. See Field label and hint for more information
+  // Label of field. See Field label for more information
   // Optional: Can either be a string, function or promise
   label?: LazyValue<string>
-
-  // Hint of field. See Field label and hint for more information
-  // Optional: Can either be a string, function or promise
-  hint?: LazyValue<string>
 
   // Boolean flag whether field is a primary key
   // Optional: default is false

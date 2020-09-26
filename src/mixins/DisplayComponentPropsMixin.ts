@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Field } from '../fields/Field'
+import { RenderableField } from '../fields/RenderableField'
 
 export default Vue.extend({
   props: {
@@ -7,7 +7,7 @@ export default Vue.extend({
      * Field instance
      */
     field: {
-      type: Field,
+      type: RenderableField,
       required: true
     },
 

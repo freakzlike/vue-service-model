@@ -13,6 +13,13 @@ export class BooleanField extends FormatStringField {
   }
 
   /**
+   * Parse value and convert to boolean
+   */
+  public async valueParser (rawValue: any): Promise<boolean> {
+    return Boolean(rawValue)
+  }
+
+  /**
    * Simple Vue render function when using default inputComponent for input of field value with <input-field/>
    */
   public inputRender (h: CreateElement, { value, inputProps }: InputRenderData): VNode {
@@ -32,7 +39,7 @@ export class BooleanField extends FormatStringField {
         },
         change: (event: InputEvent) => {
           const target = event.target as { checked?: boolean }
-          this.value = Boolean(target.checked)
+          this.setParseValue(target.checked)
         }
       }
     })

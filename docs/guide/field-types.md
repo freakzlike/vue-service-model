@@ -7,7 +7,7 @@
 
 A `CharField` uses a `valueFormatter` to format any value (except `undefined` and `null`) to a `string` for display purpose.
 
-As input element a textbox will be rendered (equal to default `Field` input).
+As input element a textbox will be rendered (equal to default `RenderableField` input).
 
 
 ## BooleanField

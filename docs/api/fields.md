@@ -38,11 +38,11 @@ class Field {
   // Sets field value to model data by calling valueSetter with data of assigned model
   public setValue (value: any): void
 
+  // Parses raw value with valueParser and sets field value by calling valueSetter
+  public async setParseValue (rawValue: any): Promise<any>
+
   // Returns async field label from field definition
   public get label (): Promise<string>
-
-  // Returns async field hint from field definition
-  public get hint (): Promise<string>
 
   // Returns async field options with validation and default values depending on field type
   public get options (): Promise<FieldTypeOptions>
@@ -65,10 +65,19 @@ class Field {
   // Will create nested structure from attributeName (e.g. "address.city" -> {address: {city: 'New York'}})
   public valueSetter (value: any, data: Dictionary<any>): void
 
+  // Parse a raw value and return the parsed value with valid data type
+  public async valueParser (rawValue: any): Promise<any>
+
   // Map value from a data structure to another data structure.
   // Uses valueGetter and valueSetter
   public mapFieldValue (fromData: Dictionary<any>, toData: Dictionary<any>): void
+}
+```
 
+## RenderableField
+
+```typescript
+class RenderableField extends Field {
   // Display component to render when displaying value with <display-field/>
   // For more information see Field - Rendering 
   public get displayComponent (): Promise<ComponentModule>
@@ -94,7 +103,6 @@ class Field {
   // Simple Vue render function when using default inputComponent for input of field value with <input-field/>
   // For more information see Field - Rendering 
   public inputRender (h: CreateElement, renderData: InputRenderData): VNode
-
 }
 ```
 
@@ -107,13 +115,9 @@ interface FieldDef {
   // Optional: default uses key from fieldsDef
   attributeName?: string
 
-  // Label of field. See Field label and hint for more information
+  // Label of field. See Field label for more information
   // Optional: Can either be a string, function or promise
   label?: LazyValue<string>
-
-  // Hint of field. See Field label and hint for more information
-  // Optional: Can either be a string, function or promise
-  hint?: LazyValue<string>
 
   // Boolean flag whether field is a primary key
   // Optional: default is false

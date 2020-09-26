@@ -21,7 +21,7 @@ npm install vue-service-model
 To declare your models create a class which extends from [`ServiceModel`](/guide/service-model.html).
 
 ```js
-import {ServiceModel, Field} from 'vue-service-model'
+import {ServiceModel, Field, RenderableField} from 'vue-service-model'
 
 class Album extends ServiceModel {
   // Define service url
@@ -30,7 +30,7 @@ class Album extends ServiceModel {
   // Define model fields
   static fieldsDef = {
     id: new Field({primaryKey: true}),
-    title: new Field()
+    title: new RenderableField()
   }
 }
 ```

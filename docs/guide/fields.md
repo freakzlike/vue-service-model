@@ -2,6 +2,10 @@
 
 [[toc]]
 
+A `Field` provides information and methods to work with your data. An information can be the label which is used to
+display a name of the field for the user (e.g. as column header). A [`RenderableField`](/guide/fields.html#field-vs-renderablefield)
+inherits from `Field` and additionally provides a handling to render to field value to the user or render an input field.
+
 ## Field definition
 
 When instantiating a new field you can provide a specific definition for the field.
@@ -20,17 +24,14 @@ class Album extends BaseModel {
 Field definition structure:
 ```js
 {
-  // String which key should be used to retrieve value from. See Attribute name for more information
+  // String which key should be used to retrieve value from.
+  // See Attribute name for more information
   // Optional: default uses key from fieldsDef 
   attributeName: 'title',
 
-  // Label of field. See Field label and hint for more information
+  // Label of field. See Field label for more information
   // Optional: Can either be a string, function or promise
   label: () => Promise.resolve('Title'),
-
-  // Hint of field. See Field label and hint for more information
-  // Optional: Can either be a string, function or promise
-  hint: 'Title of album',
 
   // Boolean flag whether field is a primary key
   // Optional: default is false
@@ -75,10 +76,10 @@ await myObj.val.address_city // output: New York
 await myObj.val.address_street // output: Fifth Avenue
 ```
 
-### Field label and hint (`label`, `hint`)
+### Field label (`label`)
 
-With the `label` property you can set a descriptive name for your field. `hint` is used to provide a detail description of your field. `label` and `hint` can either be a `string` or a `function` which should return a `string` or a `Promise`.
-You can access your label/hint with the `label`/`hint` property of your field instance which will always return a `Promise`.
+With the `label` property you can set a descriptive name for your field. The `label` can either be a `string` or a `function` which should return a `string` or a `Promise`.
+You can access your label with the `label` property of your field instance which will always return a `Promise`.
 
 ```js
 class MyModel extends BaseModel {
@@ -86,8 +87,7 @@ class MyModel extends BaseModel {
 
   static fieldsDef = {
     first_name: new Field({
-      label: 'First name',
-      hint: () => 'First name of the employee'
+      label: 'First name'
     })
   }
 }
@@ -97,9 +97,7 @@ class MyModel extends BaseModel {
 const firstNameField = myObj.getField('first_name')
 
 await firstNameField.label // output: First name
-await firstNameField.hint // output: First name of the employee
 ```
-
 
 ## Standalone Field
 
@@ -127,7 +125,7 @@ const myField = new Field({attributeName: 'description'}, {data: data})
 await myField.value // output: My description
 ```
 
-You can also use the [components](/guide/components.html) to render your standalone field
+You can also use the [components](/guide/components.html) to render your standalone field. Be sure to use a [`RenderableField`](/guide/fields.html#field-vs-renderablefield).
 
 ```vue
 <template>
@@ -137,7 +135,6 @@ You can also use the [components](/guide/components.html) to render your standal
 </template>
 ```
 
-
 ## Custom/Computed fields
 
 In case you want to define your own field class you just need to extend from `Field`. By overwriting the `valueGetter` method you are able to map the field value by yourself and create computed values.
@@ -145,7 +142,7 @@ In case you want to define your own field class you just need to extend from `Fi
 ```js
 class FullNameField extends Field {
   valueGetter (data) {
-    return data ? data.first_name + ' ' + data.last_name : null
+    return data ? `${data.first_name} ${data.last_name}` : null
   }
 }
 
@@ -165,7 +162,41 @@ const myObj = new MyModel({
 await myObj.val.full_name // output: Joe Bloggs
 ```
 
+## Value parsing
+
+To avoid unexpected data types of your field value, then you should use the `setParseValue` method of your field. This will
+ensure that your Field (e.g. `IntegerField`) always contains a `number`.
+
+```js
+// Set value without parsing
+myIntegerField.value = '5'
+// -> Field value will be string with value '5'
+
+// Parse and set value
+myIntegerField.setParseValue('5')
+// -> Field value will be number with value 5
+```
+
+You can customize your parsing logic by overwriting the `valueParser`.
+
+```js
+class StringField extends Field {
+  valueparser (rawValue) {
+    return String(rawValue)
+  }
+}
+```
+
+## `Field` vs `RenderableField`
+
+In case you don't need the rendering functions, then you can use the `Field` class and avoid unnecessary code which will make your bundle smaller.
+The `RenderableField` provides additional methods like `displayRender` to allow rendering of the field.
+
 ## Rendering
+
+::: warning
+Be sure to use a field which inherits from [`RenderableField`](/guide/fields.html#field-vs-renderablefield). The default `Field` class does not support rendering.
+:::
 
 By using the [`DisplayField`](/guide/components.html#displayfield) component you can render the value of a field for displaying purpose
 and [`InputField`](/guide/components.html#inputfield) when you want to render the input component for this field.
@@ -174,7 +205,7 @@ To customize the different output which should be rendered you can either set a 
 The `displayRender`/`inputRender` can be used for small changes of the output and is a simple render function (See [Vue.js render function](https://vuejs.org/v2/guide/render-function.html)).
 
 ```js
-class RedTextField extends Field {
+class RedTextField extends RenderableField {
   // Render a red text for display
   displayRender (h, resolvedValue) {
     return h('span', {
@@ -200,8 +231,8 @@ class RedTextField extends Field {
       },
       on: {
         input: (event) => {
-          // Set input value to field.value
-          this.value = event.target.value
+          // Parse and set input value to field.value
+          this.setParseValue(event.target.value)
         }
       }
     })
@@ -219,7 +250,7 @@ In some cases you need to prepare or fetch other data before the field should be
 They will be called before `displayRender`/`inputRender` and will give any async data to as 2. argument to them.
 
 ```js
-class AlbumTitleField extends Field {
+class AlbumTitleField extends RenderableField {
   // Do any asynchronous operations before rendering with displayRender
   async prepareDisplayRender (renderProps) {
     const albumId = await this.value
@@ -246,7 +277,7 @@ If you want to change the input component you can extend from `BaseInputFieldRen
 
 ```js
 // CustomField.js
-class CustomField extends Field {
+class CustomField extends RenderableField {
   get displayComponent () {
     return import('./CustomFieldComponent')
   }

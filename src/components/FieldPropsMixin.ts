@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { BaseModel } from '../models/BaseModel'
-import { Field } from '../fields/Field'
+import { RenderableField } from '../fields/RenderableField'
 
 /**
  * Mixin to input field by props
@@ -33,7 +33,7 @@ export default Vue.extend({
      */
     field: {
       default: null,
-      validator: value => value === null || value as any instanceof Field
+      validator: value => value === null || value as any instanceof RenderableField
     },
 
     /**
@@ -46,12 +46,12 @@ export default Vue.extend({
   },
 
   computed: {
-    fieldObj (): Field | null {
+    fieldObj (): RenderableField | null {
       if (this.field) {
         return this.field
       } else if (this.model && this.fieldName) {
         const model = this.model as unknown as BaseModel
-        return model.getField(this.fieldName) as Field
+        return model.getField(this.fieldName) as RenderableField
       } else {
         return null
       }

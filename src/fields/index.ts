@@ -1,4 +1,5 @@
 export { Field } from './Field'
+export { RenderableField } from './RenderableField'
 export { FormatStringField } from './FormatStringField'
 
 export { CharField } from './CharField'

@@ -1,5 +1,5 @@
 import { getConfig, Config } from '../config'
-import cu from '../utils/common'
+import { mergeDeep, promiseEval } from '../utils/common'
 
 const defaultConfig: Config = {
   useAsyncComputed: false,
@@ -22,7 +22,7 @@ export const configHandler = {
   defaultConfig,
 
   getConfig () {
-    return cu.mergeDeep({}, defaultConfig, getConfig())
+    return mergeDeep({}, defaultConfig, getConfig())
   },
 
   /**
@@ -51,7 +51,7 @@ export const configHandler = {
       throw new Error('Try to get unknown translation key: ' + key)
     }
 
-    return cu.promiseEval(_config.i18n[key], null, key)
+    return promiseEval(_config.i18n[key], null, key)
   },
 
   /**
