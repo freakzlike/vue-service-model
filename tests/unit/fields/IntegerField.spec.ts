@@ -35,14 +35,14 @@ describe('fields/IntegerField', () => {
       expect(wrapper.html()).toMatchSnapshot()
 
       const inputElement = wrapper.get('input')
-      expect(inputElement.attributes('value')).toBe('17')
+      expect(inputElement.element.value).toBe('17')
 
       model.val.amount = 19
 
       await waitRender.InputFieldUpdate(wrapper)
 
       expect(wrapper.html()).toMatchSnapshot()
-      expect(inputElement.attributes('value')).toBe('19')
+      expect(inputElement.element.value).toBe('19')
     })
 
     it('should set value correct on change', async () => {
@@ -56,7 +56,7 @@ describe('fields/IntegerField', () => {
       await waitRender.InputField(wrapper)
 
       const inputElement = wrapper.get('input')
-      expect(inputElement.attributes('value')).toBe('17')
+      expect(inputElement.element.value).toBe('17')
 
       inputElement.setValue(19)
 

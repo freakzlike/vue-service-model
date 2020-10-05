@@ -1,29 +1,25 @@
-import { defineComponent, computed, ref, toRefs, watch } from 'vue'
-import cu from '../utils/common'
-import props from '../mixins/DisplayComponentPropsMixin'
+import { defineComponent, reactive, toRefs, watch, VNode } from 'vue'
+import props, { DisplayComponentProps } from '../mixins/DisplayComponentPropsMixin'
 import { Field } from '@/fields/Field'
 
-export interface Props {
-  field: Field
-  renderProps: object | null
-}
+export type RenderField = (field: Field, renderData: any) => VNode
+export type ResolveRenderData = (field: Field, renderProps: object | null) => Promise<any>
 
-export const BaseDisplayFieldRender = (props: Props) => {
+export const BaseDisplayFieldRender = (
+  props: DisplayComponentProps,
+  renderField: RenderField,
+  resolveRenderData: ResolveRenderData
+) => {
   const { field, renderProps } = toRefs(props)
 
-  const renderData: { value: any } = ref(cu.NO_VALUE)
-  const hasResolvedRenderData = computed(() => renderData.value !== cu.NO_VALUE)
+  const renderData: { data: any, resolved: boolean } = reactive({ data: null, resolved: false})
 
-  const resolveRenderData = async () => {
-    return field.value.prepareDisplayRender(renderProps.value)
-  }
   const setResolveRenderData = async () => {
-    return renderData.value = await resolveRenderData()
+    renderData.data = await resolveRenderData(field.value, renderProps.value)
+    renderData.resolved = true
   }
 
-  const renderField = () => field.value.displayRender(renderData.value)
-
-  const renderIfResolved = () => (hasResolvedRenderData ? renderField() : undefined)
+  const renderIfResolved = () => renderData.resolved ? renderField(field.value, renderData.data) : undefined
 
   setResolveRenderData()
 
@@ -35,7 +31,6 @@ export const BaseDisplayFieldRender = (props: Props) => {
     field,
     renderProps,
     renderData,
-    hasResolvedRenderData,
     resolveRenderData,
     setResolveRenderData,
     renderField,
@@ -49,10 +44,12 @@ export default defineComponent({
   props,
 
   setup (props) {
-    return BaseDisplayFieldRender(<Props> props)
-  },
+    const renderField: RenderField = (field, renderData) => field.displayRender(renderData)
+    const resolveRenderData: ResolveRenderData = (field, renderProps) =>
+      field.prepareDisplayRender(renderProps)
 
-  render () {
-    return this.renderIfResolved()
-  }
+    const { renderIfResolved } = BaseDisplayFieldRender(<DisplayComponentProps> props, renderField,
+      resolveRenderData)
+    return renderIfResolved
+  },
 })

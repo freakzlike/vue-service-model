@@ -80,7 +80,7 @@ const TestInputField = (useAsyncComputed: boolean) => {
     })
 
     const inputElement = wrapper.get('input')
-    expect(inputElement.attributes('value')).toBe(modelData.name)
+    expect(inputElement.element.value).toBe(modelData.name)
 
     wrapper.setProps({ model: null })
 
@@ -98,12 +98,12 @@ const TestInputField = (useAsyncComputed: boolean) => {
     })
 
     const inputElement = wrapper.get('input')
-    expect(inputElement.attributes('value')).toBe(modelData.name)
+    expect(inputElement.element.value).toBe(modelData.name)
 
     wrapper.setProps({ fieldName: 'description' })
 
     await waitRender.InputField(wrapper)
-    expect(inputElement.attributes('value')).toBe(modelData.description)
+    expect(inputElement.element.value).toBe(modelData.description)
   })
 
   it('should render correct when field changed', async () => {
@@ -113,12 +113,12 @@ const TestInputField = (useAsyncComputed: boolean) => {
     })
 
     const inputElement = wrapper.get('input')
-    expect(inputElement.attributes('value')).toBe(modelData.name)
+    expect(inputElement.element.value).toBe(modelData.name)
 
     wrapper.setProps({ field: model.getField('description') })
 
     await waitRender.InputField(wrapper)
-    expect(inputElement.attributes('value')).toBe(modelData.description)
+    expect(inputElement.element.value).toBe(modelData.description)
   })
 
   it('should render correct loading slot', async () => {

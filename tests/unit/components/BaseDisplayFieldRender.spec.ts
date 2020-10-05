@@ -38,21 +38,21 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
     expect(wrapper.text()).toBe('')
 
     expect(spyPrepareDisplayRender).toBeCalledTimes(1)
-    expect(spyDisplayRender).toBeCalledTimes(1)
+    expect(spyDisplayRender).toBeCalledTimes(0)
 
     await waitForRender()
 
     expect(wrapper.text()).toBe(modelData.name)
     expect(spyPrepareDisplayRender).toBeCalledTimes(1)
     expect(spyPrepareDisplayRender.mock.calls[0]).toEqual([null])
-    expect(spyDisplayRender).toBeCalledTimes(2)
+    expect(spyDisplayRender).toBeCalledTimes(1)
 
     field.value = 'New Name'
     await waitForRender()
 
     expect(wrapper.text()).toBe('New Name')
     expect(spyPrepareDisplayRender).toBeCalledTimes(2)
-    expect(spyDisplayRender).toBeCalledTimes(3)
+    expect(spyDisplayRender).toBeCalledTimes(2)
 
     spyPrepareDisplayRender.mockRestore()
     spyDisplayRender.mockRestore()

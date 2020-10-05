@@ -1,4 +1,9 @@
-import DisplayComponentPropsMixin from './DisplayComponentPropsMixin'
+import DisplayComponentPropsMixin, { DisplayComponentProps } from './DisplayComponentPropsMixin'
+
+export interface InputComponentProps extends DisplayComponentProps {
+  disabled: boolean
+  readonly: boolean
+}
 
 export default {
   ...DisplayComponentPropsMixin,

@@ -295,7 +295,6 @@ export class Field extends BaseClass {
    * Simple Vue render function when using default displayComponent when displaying value with <display-field/>
    */
   public displayRender (renderData: any): VNode {
-    console.log('displayRender')
     return h('span', renderData)
   }
 
@@ -324,17 +323,13 @@ export class Field extends BaseClass {
     const { disabled, readonly } = renderData.inputProps
 
     return h('input', {
-      attrs: {
-        type: 'text',
-        value: renderData.value,
-        disabled,
-        readonly
-      },
-      on: {
-        input: (event: InputEvent) => {
-          const target = event.target as { value?: any }
-          this.value = target.value
-        }
+      type: 'text',
+      value: renderData.value,
+      disabled,
+      readonly,
+      onInput: (event: InputEvent) => {
+        const target = event.target as { value?: any }
+        this.value = target.value
       }
     })
   }

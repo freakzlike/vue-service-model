@@ -41,7 +41,7 @@ describe('fields/DecimalField', () => {
       expect(wrapper.html()).toMatchSnapshot()
 
       const inputElement = wrapper.get('input')
-      expect(inputElement.attributes('value')).toBe('17.02')
+      expect(inputElement.element.value).toBe('17.02')
 
       model.val.amount = 19.1
 
@@ -50,7 +50,7 @@ describe('fields/DecimalField', () => {
       await wrapper.vm.$nextTick()
 
       expect(wrapper.html()).toMatchSnapshot()
-      expect(inputElement.attributes('value')).toBe('19.1')
+      expect(inputElement.element.value).toBe('19.1')
     })
 
     it('should set value correct on change', async () => {
@@ -66,7 +66,7 @@ describe('fields/DecimalField', () => {
       await wrapper.vm.$nextTick()
 
       const inputElement = wrapper.get('input')
-      expect(inputElement.attributes('value')).toBe('17')
+      expect(inputElement.element.value).toBe('17')
 
       inputElement.setValue(19.01)
 
