@@ -1,12 +1,11 @@
-import Vue from 'vue'
-import { Wrapper } from '@vue/test-utils'
+import Vue, { nextTick } from 'vue'
 import AsyncComputed from 'vue-async-computed'
 import { configHandler } from '@/utils/ConfigHandler'
 
 const waitFunc = (times: number) => {
-  return async (wrapper: Wrapper<Vue>) => {
+  return async () => {
     for (let i = 0; i < times; i++) {
-      await wrapper.vm.$nextTick()
+      await nextTick()
     }
   }
 }
@@ -20,7 +19,8 @@ export const waitRender = {
 }
 
 export const installAsyncComputed = (localVue: typeof Vue) => {
-  localVue.use(AsyncComputed)
+  // TODO
+  // localVue.use(AsyncComputed)
   let mockGetConfig: any = null
   beforeAll(() => {
     mockGetConfig = jest.spyOn(configHandler, 'getConfig').mockImplementation(() => ({

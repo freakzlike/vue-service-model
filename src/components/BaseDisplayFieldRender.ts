@@ -15,21 +15,21 @@ export const BaseDisplayFieldRender = (props: Props) => {
   const hasResolvedRenderData = computed(() => renderData.value !== cu.NO_VALUE)
 
   const resolveRenderData = async () => {
-    console.log('resolveRenderData')
     return field.value.prepareDisplayRender(renderProps.value)
   }
   const setResolveRenderData = async () => {
-    console.log('setResolveRenderData')
     return renderData.value = await resolveRenderData()
   }
 
   const renderField = () => field.value.displayRender(renderData.value)
 
+  const renderIfResolved = () => (hasResolvedRenderData ? renderField() : undefined)
+
   setResolveRenderData()
 
-  // watch(field, setResolveRenderData)
-  // watch(field.value.data, setResolveRenderData)
-  // watch(renderProps, setResolveRenderData)
+  watch(field, setResolveRenderData)
+  watch(field.value.data, setResolveRenderData, {deep: true})
+  watch(renderProps, setResolveRenderData)
 
   return {
     field,
@@ -38,7 +38,8 @@ export const BaseDisplayFieldRender = (props: Props) => {
     hasResolvedRenderData,
     resolveRenderData,
     setResolveRenderData,
-    renderField
+    renderField,
+    renderIfResolved
   }
 }
 
@@ -52,13 +53,6 @@ export default defineComponent({
   },
 
   render () {
-    // @ts-ignore
-    console.log('render')
-    if (this.hasResolvedRenderData) {
-      // @ts-ignore
-      return this.renderField()
-    } else {
-      return undefined as any
-    }
+    return this.renderIfResolved()
   }
 })

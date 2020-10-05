@@ -53,8 +53,7 @@ export class BaseModel extends BaseClass {
    */
   constructor (data: Dictionary<any> = {}) {
     super()
-    this._data = data
-    reactive(this._data)
+    this._data = reactive(data)
 
     this.cls.register()
 
@@ -69,7 +68,7 @@ export class BaseModel extends BaseClass {
   }
 
   public set data (value: Dictionary<any>) {
-    this._data = value
+    this._data = reactive(value)
   }
 
   /**

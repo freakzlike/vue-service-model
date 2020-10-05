@@ -25,6 +25,7 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
     await nextTick()
     await nextTick()
     await nextTick()
+    await nextTick()
   }
 
   it('should call and render correct displayRender', async () => {
@@ -51,7 +52,7 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
 
     expect(wrapper.text()).toBe('New Name')
     expect(spyPrepareDisplayRender).toBeCalledTimes(2)
-    expect(spyDisplayRender).toBeCalledTimes(2)
+    expect(spyDisplayRender).toBeCalledTimes(3)
 
     spyPrepareDisplayRender.mockRestore()
     spyDisplayRender.mockRestore()

@@ -1,18 +1,11 @@
-import { createApp } from 'vue'
+import { watch } from 'vue'
 
 expect.extend({
   toUseReactivity: async (received, computed, times = 1) => {
-    const watchCaller = jest.fn(() => {
-    })
-    const vm = createApp({
-      created () {
-        this.$watch(computed, watchCaller)
-      }
-    })
+    const watchCaller = jest.fn()
+    watch(computed, watchCaller)
 
     await Promise.resolve(received())
-
-    // TODO vm.$destroy
 
     const calledTimes = watchCaller.mock.calls.length
     if (calledTimes === times) {

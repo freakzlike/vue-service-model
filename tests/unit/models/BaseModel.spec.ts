@@ -2,6 +2,7 @@ import { BaseModel } from '@/models/BaseModel'
 import { Field } from '@/fields/Field'
 import { NotDeclaredFieldException } from '@/exceptions/ModelExceptions'
 import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
+import { isReactive } from 'vue'
 
 describe('models/BaseModel', () => {
   describe('constructor', () => {
@@ -17,7 +18,8 @@ describe('models/BaseModel', () => {
 
       expect(console.error).toHaveBeenCalledTimes(0)
 
-      expect(model.data).toBe(data)
+      expect(model.data).toEqual(data)
+      expect(isReactive(model.data)).toBe(true)
       spy.mockRestore()
     })
 
@@ -33,6 +35,7 @@ describe('models/BaseModel', () => {
       expect(console.error).toHaveBeenCalledTimes(0)
 
       expect(model.data).toEqual({})
+      expect(isReactive(model.data)).toBe(true)
       spy.mockRestore()
     })
 
@@ -102,7 +105,7 @@ describe('models/BaseModel', () => {
     it('should return correct data', () => {
       const modelData = { x: 1 }
       expect(new TestModel().data).toEqual({})
-      expect(new TestModel(modelData).data).toBe(modelData)
+      expect(new TestModel(modelData).data).toEqual(modelData)
     })
 
     it('should set correct data', () => {
@@ -110,7 +113,8 @@ describe('models/BaseModel', () => {
       const model = new TestModel()
       expect(model.data).toEqual({})
       model.data = modelData
-      expect(model.data).toBe(modelData)
+      expect(model.data).toEqual(modelData)
+      expect(isReactive(model.data)).toBe(true)
     })
   })
 
@@ -154,7 +158,7 @@ describe('models/BaseModel', () => {
 
     it('should return correct values', async () => {
       expect(await model.val.name).toBe(data.name)
-      expect(await model.val.obj).toBe(data.obj)
+      expect(await model.val.obj).toEqual(data.obj)
       expect(await model.val.description).toBeNull()
       expect(() => model.val.no_field).toThrow(NotDeclaredFieldException)
     })

@@ -1,5 +1,5 @@
 declare namespace jest {
   interface Matchers<R> {
-    toUseReactivity(computed: () => {}, times?: number): CustomMatcherResult;
+    toUseReactivity(computed: (() => object) | object, times?: number): CustomMatcherResult;
   }
 }

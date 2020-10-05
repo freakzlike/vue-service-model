@@ -3,6 +3,7 @@ import { BaseModel } from '@/models/BaseModel'
 import { ServiceParent } from '@/types/models/ServiceModel'
 import { MissingUrlException, NotDeclaredFieldException } from '@/exceptions/ModelExceptions'
 import { Field } from '@/fields/Field'
+import { isReactive } from 'vue'
 
 describe('models/ServiceModel', () => {
   describe('constructor', () => {
@@ -23,7 +24,8 @@ describe('models/ServiceModel', () => {
       const data = { x: 1 }
       const model = new TestModel(data)
 
-      expect(model.data).toBe(data)
+      expect(model.data).toEqual(data)
+      expect(isReactive(model.data)).toBe(true)
       expect(model.parents).toEqual({})
     })
 
@@ -32,6 +34,7 @@ describe('models/ServiceModel', () => {
       const model = new TestModel(undefined, parents)
 
       expect(model.data).toEqual({})
+      expect(isReactive(model.data)).toBe(true)
       expect(model.parents).not.toBe(parents)
       expect(model.parents).toEqual(parents)
     })
@@ -405,7 +408,8 @@ describe('models/ServiceModel', () => {
       const model = new TestModel(modelData)
       expect(await model.create()).toBe(true)
 
-      expect(model.data).toBe(newModelData)
+      expect(model.data).toEqual(newModelData)
+      expect(isReactive(model.data)).toBe(true)
 
       expect(mockModelManagerCreate).toBeCalledTimes(1)
       expect(mockModelManagerCreate.mock.calls[0]).toEqual([modelData, { parents: {} }])
@@ -426,7 +430,8 @@ describe('models/ServiceModel', () => {
       const model = new ParentTestModel(modelData, parents)
       expect(await model.create()).toBe(true)
 
-      expect(model.data).toBe(newModelData)
+      expect(model.data).toEqual(newModelData)
+      expect(isReactive(model.data)).toBe(true)
 
       expect(mockModelManagerCreate).toBeCalledTimes(1)
       expect(mockModelManagerCreate.mock.calls[0]).toEqual([modelData, { parents }])
@@ -441,7 +446,8 @@ describe('models/ServiceModel', () => {
       expect(await model.create()).toBe(true)
 
       expect(model.data).not.toBeNull()
-      expect(model.data).toBe(modelData)
+      expect(model.data).toEqual(modelData)
+      expect(isReactive(model.data)).toBe(true)
 
       expect(mockModelManagerCreate).toBeCalledTimes(1)
       expect(mockModelManagerCreate.mock.calls[0]).toEqual([modelData, { parents: {} }])
@@ -466,7 +472,8 @@ describe('models/ServiceModel', () => {
       const model = new TestModel(modelData)
       expect(await model.update()).toBe(true)
 
-      expect(model.data).toBe(newModelData)
+      expect(model.data).toEqual(newModelData)
+      expect(isReactive(model.data)).toBe(true)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
       expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {}, partial: false }])
@@ -487,7 +494,8 @@ describe('models/ServiceModel', () => {
       const model = new ParentTestModel(modelData, parents)
       expect(await model.update()).toBe(true)
 
-      expect(model.data).toBe(newModelData)
+      expect(model.data).toEqual(newModelData)
+      expect(isReactive(model.data)).toBe(true)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
       expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents, partial: false }])
@@ -502,7 +510,8 @@ describe('models/ServiceModel', () => {
       expect(await model.update()).toBe(true)
 
       expect(model.data).not.toBeNull()
-      expect(model.data).toBe(modelData)
+      expect(model.data).toEqual(modelData)
+      expect(isReactive(model.data)).toBe(true)
 
       expect(mockModelManagerUpdate).toBeCalledTimes(1)
       expect(mockModelManagerUpdate.mock.calls[0]).toEqual([modelData.id, modelData, { parents: {}, partial: false }])

@@ -5,6 +5,7 @@ import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
 import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 import { Dictionary } from '@/types/Dictionary'
+import { watch, nextTick } from 'vue'
 
 describe('fields/Field', () => {
   class TestModel extends BaseModel {
@@ -38,7 +39,7 @@ describe('fields/Field', () => {
       expect(field.definition).toBe(def)
       expect(field.name).toBe('value')
       expect(field.data).toHaveProperty('value')
-      expect(field.data.value).toBe(value)
+      expect(field.data.value).toEqual(value)
     })
 
     it('should create correct Field with value and field name', () => {
@@ -48,7 +49,7 @@ describe('fields/Field', () => {
       expect(field.definition).toEqual({})
       expect(field.name).toBe('name')
       expect(field.data).toHaveProperty('name')
-      expect(field.data.name).toBe(value)
+      expect(field.data.name).toEqual(value)
     })
 
     it('should create correct Field with value and attribute name', () => {
@@ -59,7 +60,7 @@ describe('fields/Field', () => {
       expect(field.definition).toBe(def)
       expect(field.name).toBe('value')
       expect(field.data).toEqual({ nested: { field: value } })
-      expect(field.data.nested.field).toBe(value)
+      expect(field.data.nested.field).toEqual(value)
     })
   })
 
@@ -85,7 +86,7 @@ describe('fields/Field', () => {
       expect(field).not.toBe(cloned)
       expect(cloned.definition).toBe(cloned.definition)
       expect(cloned.name).toBe(fieldBind.name)
-      expect(cloned.data).toBe(data)
+      expect(cloned.data).toEqual(data)
       expect(() => cloned.model).toThrow(FieldNotBoundException)
     })
 
@@ -137,7 +138,7 @@ describe('fields/Field', () => {
       expect(field).not.toBe(bound)
       expect(field.definition).toBe(bound.definition)
       expect(bound.name).toBe(fieldName)
-      expect(bound.data).toBe(data)
+      expect(bound.data).toEqual(data)
       expect(() => bound.model).toThrow(FieldNotBoundException)
     })
 
@@ -152,7 +153,7 @@ describe('fields/Field', () => {
       expect(field.definition).toBe(bound.definition)
       expect(bound.name).toBe(fieldName)
       expect(bound.data).toHaveProperty(fieldName)
-      expect(bound.data[fieldName]).toBe(value)
+      expect(bound.data[fieldName]).toEqual(value)
       expect(() => bound.model).toThrow(FieldNotBoundException)
     })
   })
@@ -214,7 +215,7 @@ describe('fields/Field', () => {
     it('should return bound data', () => {
       const data = {}
       const field = new Field({}, { name: 'description', data })
-      expect(field.data).toBe(data)
+      expect(field.data).toEqual(data)
     })
 
     it('should return bound model data', () => {
@@ -225,7 +226,7 @@ describe('fields/Field', () => {
     it('should return bound data before model data', () => {
       const data = {}
       const field = new Field({}, { name: 'description', data, model })
-      expect(field.data).toBe(data)
+      expect(field.data).toEqual(data)
       expect(field.data).not.toBe(model.data)
     })
 
@@ -233,14 +234,14 @@ describe('fields/Field', () => {
       const value = {}
       const field = new Field({}, { value })
       expect(field.data).toHaveProperty('value')
-      expect(field.data.value).toBe(value)
+      expect(field.data.value).toEqual(value)
     })
 
     it('should return created data with value and field name', () => {
       const value = {}
       const field = new Field({}, { name: 'name', value })
       expect(field.data).toHaveProperty('name')
-      expect(field.data.name).toBe(value)
+      expect(field.data.name).toEqual(value)
     })
 
     it('should throw FieldNotBoundException', () => {
@@ -301,7 +302,7 @@ describe('fields/Field', () => {
 
       await expect(() => {
         field.value = value
-      }).toUseReactivity(() => data.description)
+      }).toUseReactivity(field.data)
 
       expect(data.description).toBe(value)
 
@@ -319,7 +320,7 @@ describe('fields/Field', () => {
 
       await expect(() => {
         field.value = value
-      }).toUseReactivity(() => data.description)
+      }).toUseReactivity(field.data)
 
       expect(data.description).toBe(value)
 
