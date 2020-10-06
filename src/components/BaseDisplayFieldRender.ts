@@ -12,7 +12,7 @@ export const BaseDisplayFieldRender = (
 ) => {
   const { field, renderProps } = toRefs(props)
 
-  const renderData: { data: any, resolved: boolean } = reactive({ data: null, resolved: false})
+  const renderData: { data: any, resolved: boolean } = reactive({ data: null, resolved: false })
 
   const setResolveRenderData = async () => {
     renderData.data = await resolveRenderData(field.value, renderProps.value)
@@ -24,7 +24,7 @@ export const BaseDisplayFieldRender = (
   setResolveRenderData()
 
   watch(field, setResolveRenderData)
-  watch(field.value.data, setResolveRenderData, {deep: true})
+  watch(field.value.data, setResolveRenderData, { deep: true })
   watch(renderProps, setResolveRenderData)
 
   return {
@@ -51,5 +51,5 @@ export default defineComponent({
     const { renderIfResolved } = BaseDisplayFieldRender(<DisplayComponentProps> props, renderField,
       resolveRenderData)
     return renderIfResolved
-  },
+  }
 })
