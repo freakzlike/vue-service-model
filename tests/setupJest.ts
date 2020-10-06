@@ -19,5 +19,19 @@ expect.extend({
         message: () => `Expected to be reactive ${times} times but was ${calledTimes} times`
       }
     }
+  },
+
+  toRenderNothing: (received) => {
+    if (received === '' || received === '<!---->') {
+      return {
+        pass: true,
+        message: () => 'Expected to render nothing'
+      }
+    } else {
+      return {
+        pass: false,
+        message: () => `Expected to render nothing but received: ${received}`
+      }
+    }
   }
 })

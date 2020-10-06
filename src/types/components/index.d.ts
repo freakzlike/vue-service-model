@@ -1,5 +1,5 @@
-import { Component } from 'vue'
+import { DefineComponent } from 'vue'
 
 export interface ComponentModule {
-  default: Component
+  default: DefineComponent
 }

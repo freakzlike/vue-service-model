@@ -1,30 +1,31 @@
-import { VNode, Component } from 'vue'
-import mixins from '../utils/mixins'
+import { VNode, DefineComponent, defineComponent, h, toRaw } from 'vue'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
 import { configHandler } from '../utils/ConfigHandler'
 
 export interface ComponentData {
-  displayComponent: Component | null
+  displayComponent: DefineComponent | null
 }
 
 /**
  * Main component to display value of a field
  */
-export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
+export default defineComponent({
   name: 'DisplayField',
   inheritAttrs: false,
+  mixins: [FieldPropsMixin, LoadingSlotMixin],
 
   data: (): ComponentData => ({
     displayComponent: null
   }),
 
-  asyncComputed: {
-    async displayComponent (): Promise<Component | null> {
-      configHandler.checkWarningUseAsyncComputed()
-      return this.resolveDisplayComponent()
-    }
-  },
+  // TODO: vue-async-computed
+  // asyncComputed: {
+  //   async displayComponent (): Promise<Component | null> {
+  //     configHandler.checkWarningUseAsyncComputed()
+  //     return this.resolveDisplayComponent()
+  //   }
+  // },
 
   watch: {
     fieldObj () {
@@ -55,11 +56,9 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
 
   render (): VNode {
     if (this.displayComponent && this.fieldObj) {
-      return h(this.displayComponent, {
-        props: {
-          field: this.fieldObj,
-          renderProps: this.renderProps
-        }
+      return h(toRaw(this.displayComponent), {
+        field: this.fieldObj,
+        renderProps: this.renderProps
       })
     } else {
       return this.renderLoading()

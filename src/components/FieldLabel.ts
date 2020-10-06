@@ -36,6 +36,7 @@ export default defineComponent({
     label: null
   }),
 
+  // TODO: vue-async-computed
   // asyncComputed: {
   //   async label (): Promise<string | null> {
   //     configHandler.checkWarningUseAsyncComputed()

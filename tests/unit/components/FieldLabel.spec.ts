@@ -32,7 +32,7 @@ const TestFieldLabel = (useAsyncComputed: boolean) => {
     })
 
     expect(wrapper.vm.label).toBeNull()
-    expect(wrapper.html()).toBe('<!---->')
+    expect(wrapper.html()).toRenderNothing()
 
     await waitRender.FieldLabel()
 
@@ -104,7 +104,7 @@ const TestFieldLabel = (useAsyncComputed: boolean) => {
       fieldName: 'name'
     }, null)
 
-    expect(wrapper.html()).toBe('<!---->')
+    expect(wrapper.html()).toRenderNothing()
   })
 
   it('should not render when model reset', async () => {
@@ -118,7 +118,7 @@ const TestFieldLabel = (useAsyncComputed: boolean) => {
 
     await waitRender.FieldLabel()
 
-    expect(wrapper.html()).toBe('<!---->')
+    expect(wrapper.html()).toRenderNothing()
     expect(wrapper.vm.label).toBeNull()
   })
 
