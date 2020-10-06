@@ -1,15 +1,15 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { Field } from '@/fields/Field'
 import InputField from '@/components/InputField'
 import { BaseModel } from '@/models/BaseModel'
-import { installAsyncComputed, waitRender } from '../../testUtils'
+import { waitRender } from '../../testUtils'
+import { h, nextTick } from 'vue'
 
 const TestInputField = (useAsyncComputed: boolean) => {
-  const localVue = createLocalVue()
-
-  if (useAsyncComputed) {
-    installAsyncComputed(localVue)
-  }
+  // TODO: vue-async-computed
+  // if (useAsyncComputed) {
+  //   installAsyncComputed(localVue)
+  // }
 
   const modelData = {
     name: 'Name 1',
@@ -25,21 +25,22 @@ const TestInputField = (useAsyncComputed: boolean) => {
 
   const model = new TestModel(modelData)
 
-  const checkCorrectRender = async (propsData: object) => {
+  const checkCorrectRender = async (props: object) => {
     const wrapper = mount(InputField, {
-      localVue,
-      propsData
+      props
     })
 
     expect(wrapper.vm.inputComponent).toBeNull()
-    expect(wrapper.html()).toBe('')
+    expect(wrapper.html()).toRenderNothing()
 
-    await waitRender.InputField(wrapper)
+    await waitRender.InputField()
 
     expect(wrapper.vm.inputComponent).not.toBeNull()
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
-    expect(wrapper.html()).toBe('<input type="text" value="Name 1">')
+    expect(wrapper.html()).toBe('<input type="text">')
+    const inputElement = wrapper.get('input')
+    expect(inputElement.element.value).toBe(modelData.name)
 
     return wrapper
   }
@@ -59,18 +60,17 @@ const TestInputField = (useAsyncComputed: boolean) => {
 
   it('should not render without model', async () => {
     const wrapper = mount(InputField, {
-      localVue,
-      propsData: {
+      props: {
         model: null,
         fieldName: 'name'
       }
     })
 
-    await waitRender.InputField(wrapper)
+    await waitRender.InputField()
 
     expect(wrapper.vm.inputComponent).toBeNull()
-    await wrapper.vm.$nextTick()
-    expect(wrapper.html()).toBe('')
+    await nextTick()
+    expect(wrapper.html()).toRenderNothing()
   })
 
   it('should not render when model reset', async () => {
@@ -84,10 +84,10 @@ const TestInputField = (useAsyncComputed: boolean) => {
 
     wrapper.setProps({ model: null })
 
-    await wrapper.vm.$nextTick()
-    expect(wrapper.html()).toBe('')
+    await nextTick()
+    expect(wrapper.html()).toRenderNothing()
 
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.vm.inputComponent).toBeNull()
   })
 
@@ -102,7 +102,7 @@ const TestInputField = (useAsyncComputed: boolean) => {
 
     wrapper.setProps({ fieldName: 'description' })
 
-    await waitRender.InputField(wrapper)
+    await waitRender.InputField()
     expect(inputElement.element.value).toBe(modelData.description)
   })
 
@@ -117,31 +117,17 @@ const TestInputField = (useAsyncComputed: boolean) => {
 
     wrapper.setProps({ field: model.getField('description') })
 
-    await waitRender.InputField(wrapper)
+    await waitRender.InputField()
     expect(inputElement.element.value).toBe(modelData.description)
   })
 
   it('should render correct loading slot', async () => {
     const wrapper = mount(InputField, {
-      localVue,
-      propsData: {
+      props: {
         field: model.getField('name')
       },
       slots: {
-        loading: '<span>Loading</span>'
-      }
-    })
-    expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
-  })
-
-  it('should render correct loading scoped slot', async () => {
-    const wrapper = mount(InputField, {
-      localVue,
-      propsData: {
-        field: model.getField('name')
-      },
-      scopedSlots: {
-        loading: '<span>Loading</span>'
+        loading: () => h('span', 'Loading')
       }
     })
     expect(wrapper.html()).toBe('<div><span>Loading</span></div>')
@@ -150,4 +136,4 @@ const TestInputField = (useAsyncComputed: boolean) => {
 
 describe('components/InputField', () => TestInputField(false))
 
-describe('components/InputField asyncComputed', () => TestInputField(true))
+// describe('components/InputField asyncComputed', () => TestInputField(true))

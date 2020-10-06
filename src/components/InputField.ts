@@ -1,19 +1,19 @@
-import { CreateElement, VNode, Component } from 'vue'
-import mixins from '../utils/mixins'
+import { VNode, defineComponent, DefineComponent, h, toRaw } from 'vue'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
 import { configHandler } from '../utils/ConfigHandler'
 
 interface ComponentData {
-  inputComponent: Component | null
+  inputComponent: DefineComponent | null
 }
 
 /**
  * Main component to display value of a field
  */
-export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
+export default defineComponent({
   name: 'InputField',
   inheritAttrs: false,
+  mixins: [FieldPropsMixin, LoadingSlotMixin],
 
   props: {
     disabled: {
@@ -30,12 +30,13 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
     inputComponent: null
   }),
 
-  asyncComputed: {
-    async inputComponent (): Promise<Component | null> {
-      configHandler.checkWarningUseAsyncComputed()
-      return this.resolveInputComponent()
-    }
-  },
+  // TODO: vue-async-computed
+  // asyncComputed: {
+  //   async inputComponent (): Promise<DefineComponent | null> {
+  //     configHandler.checkWarningUseAsyncComputed()
+  //     return this.resolveInputComponent()
+  //   }
+  // },
 
   watch: {
     fieldObj () {
@@ -64,18 +65,16 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
     }
   },
 
-  render (h: CreateElement): VNode {
+  render (): VNode {
     if (this.inputComponent && this.fieldObj) {
-      return h(this.inputComponent, {
-        props: {
-          field: this.fieldObj,
-          renderProps: this.renderProps,
-          disabled: this.disabled,
-          readonly: this.readonly
-        }
+      return h(toRaw(this.inputComponent), {
+        field: this.fieldObj,
+        renderProps: this.renderProps,
+        disabled: this.disabled,
+        readonly: this.readonly
       })
     } else {
-      return this.renderLoading(h)
+      return this.renderLoading()
     }
   }
 })

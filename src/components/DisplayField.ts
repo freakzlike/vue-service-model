@@ -21,7 +21,7 @@ export default defineComponent({
 
   // TODO: vue-async-computed
   // asyncComputed: {
-  //   async displayComponent (): Promise<Component | null> {
+  //   async displayComponent (): Promise<DefineComponent | null> {
   //     configHandler.checkWarningUseAsyncComputed()
   //     return this.resolveDisplayComponent()
   //   }
