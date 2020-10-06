@@ -25,12 +25,12 @@ describe('fields/IntegerField', () => {
     it('should render correct input field', async () => {
       const model = new TestModel({ amount: 17 })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('amount')
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
 
@@ -39,7 +39,7 @@ describe('fields/IntegerField', () => {
 
       model.val.amount = 19
 
-      await waitRender.InputFieldUpdate(wrapper)
+      await waitRender.InputFieldUpdate()
 
       expect(wrapper.html()).toMatchSnapshot()
       expect(inputElement.element.value).toBe('19')
@@ -48,12 +48,12 @@ describe('fields/IntegerField', () => {
     it('should set value correct on change', async () => {
       const model = new TestModel({ amount: 17 })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('amount')
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       const inputElement = wrapper.get('input')
       expect(inputElement.element.value).toBe('17')
@@ -70,13 +70,13 @@ describe('fields/IntegerField', () => {
     it('should render disabled input field', async () => {
       const model = new TestModel({ amount: 17 })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('amount'),
           disabled: true
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
     })
@@ -84,13 +84,13 @@ describe('fields/IntegerField', () => {
     it('should render readonly input field', async () => {
       const model = new TestModel({ amount: 17 })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('amount'),
           readonly: true
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
     })
