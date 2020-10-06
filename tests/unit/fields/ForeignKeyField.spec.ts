@@ -1,4 +1,4 @@
-import Vue, { CreateElement } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { BaseModel } from '@/models/BaseModel'
 import { ServiceModel } from '@/models/ServiceModel'
@@ -20,14 +20,14 @@ describe('fields/ForeignKeyField', () => {
         // Custom displayComponent to test DisplayField usage
         get displayComponent (): Promise<ComponentModule> {
           return Promise.resolve({
-            default: Vue.extend({
+            default: defineComponent({
               props: {
                 field: {
                   type: Object,
                   required: true
                 }
               },
-              render (h: CreateElement) {
+              render () {
                 return h('div', this.field.data.name)
               }
             })
@@ -144,29 +144,32 @@ describe('fields/ForeignKeyField', () => {
         async pk => pk === 1 ? userList[0] : userList[2])
 
       const wrapper = mount(BaseDisplayFieldRender, {
-        propsData: { field: field }
+        props: { field: field }
       })
 
-      await waitRender.DisplayField(wrapper)
-      await waitRender.DisplayField(wrapper)
-      expect(wrapper.html()).toBe('')
+      await waitRender.DisplayField()
+      await waitRender.DisplayField()
+      expect(wrapper.html()).toRenderNothing()
 
       expect(mockObjectsDetail).toBeCalledTimes(1)
       expect(mockObjectsDetail.mock.calls[0]).toEqual([1])
 
-      await waitRender.DisplayField(wrapper)
+      await waitRender.DisplayField()
+      await waitRender.DisplayField()
       expect(wrapper.html()).toMatchSnapshot()
 
       model.val.user = 3
       expect(model.data).toEqual({ user: 3 })
 
-      await waitRender.DisplayFieldUpdate(wrapper)
-      await waitRender.DisplayFieldUpdate(wrapper)
+      await waitRender.DisplayFieldUpdate()
+      await waitRender.DisplayFieldUpdate()
 
       expect(mockObjectsDetail).toBeCalledTimes(2)
       expect(mockObjectsDetail.mock.calls[1]).toEqual([3])
 
-      await waitRender.DisplayFieldUpdate(wrapper)
+      await waitRender.DisplayFieldUpdate()
+      await waitRender.DisplayFieldUpdate()
+      await waitRender.DisplayFieldUpdate()
 
       expect(wrapper.html()).toMatchSnapshot()
 
@@ -261,31 +264,38 @@ describe('fields/ForeignKeyField', () => {
       const field = model.getField('user') as ForeignKeyField
       const mockObjectsList = jest.spyOn(User.objects, 'list').mockImplementation(async () => userList)
 
-      const wrapper = mount(InputField, { propsData: { field } })
-      await waitRender.InputField(wrapper)
+      const wrapper = mount(InputField, { props: { field } })
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(mockObjectsList).toBeCalledTimes(1)
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
 
       const selectElement = wrapper.get('select')
       const options = selectElement.findAll('option')
-      expect(options.at(0).attributes('selected')).toBe('selected')
+      expect(options[0].element.selected).toBe(true)
+      expect(options[1].element.selected).toBe(false)
+      expect(options[2].element.selected).toBe(false)
 
       model.val.user = 3
 
-      await waitRender.InputFieldUpdate(wrapper)
+      await waitRender.InputFieldUpdate()
+      await waitRender.InputFieldUpdate()
 
       expect(mockObjectsList).toBeCalledTimes(2)
 
-      await waitRender.InputFieldUpdate(wrapper)
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
+      await waitRender.InputFieldUpdate()
+      await waitRender.InputFieldUpdate()
 
       expect(wrapper.html()).toMatchSnapshot()
+
+      expect(options[0].element.selected).toBe(false)
+      expect(options[1].element.selected).toBe(false)
+      expect(options[2].element.selected).toBe(true)
 
       mockObjectsList.mockRestore()
     })
@@ -295,13 +305,14 @@ describe('fields/ForeignKeyField', () => {
       const field = model.getField('user') as ForeignKeyField
       const mockObjectsList = jest.spyOn(User.objects, 'list').mockImplementation(async () => userList)
 
-      const wrapper = mount(InputField, { propsData: { field } })
-      await waitRender.InputField(wrapper)
+      const wrapper = mount(InputField, { props: { field } })
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(mockObjectsList).toBeCalledTimes(1)
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
 
@@ -315,43 +326,48 @@ describe('fields/ForeignKeyField', () => {
       const mockObjectsList = jest.spyOn(User.objects, 'list').mockImplementation(async () => userList)
       const mockObjectsDetail = jest.spyOn(User.objects, 'detail').mockImplementation(async () => userList[2])
 
-      const wrapper = mount(InputField, { propsData: { field } })
-      await waitRender.InputField(wrapper)
+      const wrapper = mount(InputField, { props: { field } })
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(mockObjectsList).toBeCalledTimes(1)
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       const selectElement = wrapper.get('select')
       const options = selectElement.findAll('option')
-      expect(options.at(0).attributes('selected')).toBe('selected')
-
-      const newOption = options.at(2).element as HTMLOptionElement
-
-      newOption.selected = true
-      selectElement.trigger('input')
-
-      await waitRender.InputFieldUpdate(wrapper)
-      await waitRender.InputFieldUpdate(wrapper)
-      await waitRender.InputFieldUpdate(wrapper)
-      await waitRender.InputFieldUpdate(wrapper)
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
-
-      expect(wrapper.html()).toMatchSnapshot()
-      expect(options.at(2).attributes('selected')).toBe('selected')
+      expect(options[0].element.selected).toBe(true)
+      expect(options[1].element.selected).toBe(false)
+      expect(options[2].element.selected).toBe(false)
 
       expect(mockObjectsDetail).toBeCalledTimes(0)
+
+      options[2].setValue(true)
+      selectElement.trigger('input')
+
+      await waitRender.InputFieldUpdate()
+      await waitRender.InputFieldUpdate()
+      await waitRender.InputFieldUpdate()
+      await waitRender.InputFieldUpdate()
+      await nextTick()
+      await nextTick()
+      await nextTick()
+      await nextTick()
+
+      expect(wrapper.html()).toMatchSnapshot()
+      expect(options[0].element.selected).toBe(false)
+      expect(options[1].element.selected).toBe(false)
+      expect(options[2].element.selected).toBe(true)
+
+      expect(mockObjectsDetail).toBeCalledTimes(1)
 
       const selectedUser = await model.val.user
       expect(selectedUser).toBe(userList[2])
       expect(model.data).toEqual({ user: '3' })
 
-      expect(mockObjectsDetail).toBeCalledTimes(1)
-      expect(mockObjectsDetail.mock.calls[0]).toEqual(['3'])
+      expect(mockObjectsDetail).toBeCalledTimes(2)
+      expect(mockObjectsDetail.mock.calls[1]).toEqual(['3'])
 
       expect(mockObjectsList).toBeCalledTimes(2)
 
@@ -364,13 +380,14 @@ describe('fields/ForeignKeyField', () => {
       const field = model.getField('user') as ForeignKeyField
       const mockObjectsList = jest.spyOn(User.objects, 'list').mockImplementation(async () => userList)
 
-      const wrapper = mount(InputField, { propsData: { field, disabled: true } })
-      await waitRender.InputField(wrapper)
+      const wrapper = mount(InputField, { props: { field, disabled: true } })
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(mockObjectsList).toBeCalledTimes(1)
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
 
@@ -382,13 +399,14 @@ describe('fields/ForeignKeyField', () => {
       const field = model.getField('user') as ForeignKeyField
       const mockObjectsList = jest.spyOn(User.objects, 'list').mockImplementation(async () => userList)
 
-      const wrapper = mount(InputField, { propsData: { field, readonly: true } })
-      await waitRender.InputField(wrapper)
+      const wrapper = mount(InputField, { props: { field, readonly: true } })
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(mockObjectsList).toBeCalledTimes(1)
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
 

@@ -1,4 +1,4 @@
-import { CreateElement, VNode } from 'vue'
+import { VNode, h, toRaw } from 'vue'
 import cu from '../utils/common'
 import { Field } from './Field'
 import { FieldTypeOptions, InputProps } from '../types/fields/Field'
@@ -82,8 +82,8 @@ export class ForeignKeyField extends Field {
   /**
    * Render DisplayField with foreign field
    */
-  public displayRender (h: CreateElement, { field, displayField }: DisplayRenderData): VNode {
-    return h(displayField, { props: { field } })
+  public displayRender ({ field, displayField }: DisplayRenderData): VNode {
+    return h(toRaw(displayField), { field })
   }
 
   /**
@@ -137,25 +137,19 @@ export class ForeignKeyField extends Field {
   /**
    * Render select input element and options
    */
-  public inputRender (h: CreateElement, { value, list, inputProps }: ForeignKeyFieldInputRenderData): VNode {
+  public inputRender ({ value, list, inputProps }: ForeignKeyFieldInputRenderData): VNode {
     const { disabled, readonly } = inputProps
 
     return h('select', {
-      attrs: {
-        disabled,
-        readonly
-      },
-      on: {
-        input: (event: InputEvent) => {
-          const target = event.target as { value?: any }
-          this.value = target.value
-        }
+      disabled,
+      readonly,
+      onInput: (event: InputEvent) => {
+        const target = event.target as { value?: any }
+        this.value = target.value
       }
     }, list.map(entry => h('option', {
-      attrs: {
-        value: entry.value,
-        selected: value !== null && value === entry.value
-      }
-    }, entry.text)))
+      value: entry.value,
+      selected: value !== null && value === entry.value
+    }, <string> entry.text)))
   }
 }

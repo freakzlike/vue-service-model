@@ -6,7 +6,7 @@ exports[`fields/ForeignKeyField displayRender should render correct value 2`] = 
 
 exports[`fields/ForeignKeyField inputRender should render correct input field 1`] = `
 <select>
-  <option value="1" selected="selected">User 1</option>
+  <option value="1">User 1</option>
   <option value="2">User 2</option>
   <option value="3">User 3</option>
 </select>
@@ -16,7 +16,7 @@ exports[`fields/ForeignKeyField inputRender should render correct input field 2`
 <select>
   <option value="1">User 1</option>
   <option value="2">User 2</option>
-  <option value="3" selected="selected">User 3</option>
+  <option value="3">User 3</option>
 </select>
 `;
 
@@ -29,16 +29,16 @@ exports[`fields/ForeignKeyField inputRender should render correct input field wi
 `;
 
 exports[`fields/ForeignKeyField inputRender should render disabled input field 1`] = `
-<select disabled="disabled">
-  <option value="1" selected="selected">User 1</option>
+<select disabled="">
+  <option value="1">User 1</option>
   <option value="2">User 2</option>
   <option value="3">User 3</option>
 </select>
 `;
 
 exports[`fields/ForeignKeyField inputRender should render readonly input field 1`] = `
-<select readonly="readonly">
-  <option value="1" selected="selected">User 1</option>
+<select readonly="">
+  <option value="1">User 1</option>
   <option value="2">User 2</option>
   <option value="3">User 3</option>
 </select>
@@ -48,6 +48,6 @@ exports[`fields/ForeignKeyField inputRender should set value correct on change 1
 <select>
   <option value="1">User 1</option>
   <option value="2">User 2</option>
-  <option value="3" selected="selected">User 3</option>
+  <option value="3">User 3</option>
 </select>
 `;

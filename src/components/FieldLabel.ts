@@ -3,7 +3,6 @@ import { Field } from '../fields/Field'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
 import { BaseModel } from '../models/BaseModel'
-import { configHandler } from '../utils/ConfigHandler'
 
 export interface ComponentData {
   label: string | null
@@ -56,9 +55,9 @@ export default defineComponent({
 
   methods: {
     async setResolveLabel () {
-      if (!configHandler.useAsyncComputed()) {
-        this.label = await this.resolveLabel()
-      }
+      // if (!configHandler.useAsyncComputed()) {
+      this.label = await this.resolveLabel()
+      // }
     },
 
     async resolveLabel () {

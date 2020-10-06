@@ -280,7 +280,7 @@ export class Field extends BaseClass {
    * Display component to render when displaying value with <display-field/>
    */
   public get displayComponent (): Promise<ComponentModule> {
-    return import('../components/BaseDisplayFieldRender')
+    return <Promise<ComponentModule>> import('../components/BaseDisplayFieldRender')
   }
 
   /**
@@ -302,7 +302,7 @@ export class Field extends BaseClass {
    * Input component to render when showing input for field with <input-field/>
    */
   public get inputComponent (): Promise<ComponentModule> {
-    return import('../components/BaseInputFieldRender')
+    return <Promise<ComponentModule>> import('../components/BaseInputFieldRender')
   }
 
   /**

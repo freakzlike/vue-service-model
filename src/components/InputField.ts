@@ -1,7 +1,6 @@
 import { VNode, defineComponent, DefineComponent, h, toRaw } from 'vue'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
-import { configHandler } from '../utils/ConfigHandler'
 
 interface ComponentData {
   inputComponent: DefineComponent | null
@@ -50,9 +49,9 @@ export default defineComponent({
 
   methods: {
     async setResolveInputComponent () {
-      if (!configHandler.useAsyncComputed()) {
-        this.inputComponent = await this.resolveInputComponent()
-      }
+      // if (!configHandler.useAsyncComputed()) {
+      this.inputComponent = await this.resolveInputComponent()
+      // }
     },
 
     async resolveInputComponent () {
