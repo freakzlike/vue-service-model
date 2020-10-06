@@ -1,6 +1,6 @@
 import { FormatStringField } from './FormatStringField'
 import { FieldTypeOptions, InputProps } from '../types/fields/Field'
-import { CreateElement, VNode } from 'vue'
+import { VNode, h } from 'vue'
 
 export interface DecimalFieldOptions extends FieldTypeOptions {
   // Set number of decimal places
@@ -44,23 +44,19 @@ export class DecimalField extends FormatStringField {
     }
   }
 
-  public inputRender (h: CreateElement, { value, decimalPlaces, inputProps }: DecimalFieldInputRenderData): VNode {
+  public inputRender ({ value, decimalPlaces, inputProps }: DecimalFieldInputRenderData): VNode {
     const { disabled, readonly } = inputProps
     const step = Math.pow(0.1, decimalPlaces).toPrecision(1)
 
     return h('input', {
-      attrs: {
-        type: 'number',
-        value,
-        step,
-        disabled,
-        readonly
-      },
-      on: {
-        input: (event: InputEvent) => {
-          const target = event.target as { value?: any }
-          this.value = parseFloat(target.value)
-        }
+      type: 'number',
+      value,
+      step,
+      disabled,
+      readonly,
+      onInput: (event: InputEvent) => {
+        const target = event.target as { value?: any }
+        this.value = parseFloat(target.value)
       }
     })
   }

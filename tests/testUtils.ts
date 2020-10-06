@@ -1,5 +1,4 @@
 import Vue, { nextTick } from 'vue'
-import AsyncComputed from 'vue-async-computed'
 import { configHandler } from '@/utils/ConfigHandler'
 
 const waitFunc = (times: number) => {

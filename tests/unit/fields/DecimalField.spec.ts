@@ -34,9 +34,8 @@ describe('fields/DecimalField', () => {
         }
       })
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
 
@@ -45,9 +44,8 @@ describe('fields/DecimalField', () => {
 
       model.val.amount = 19.1
 
-      await waitRender.InputFieldUpdate(wrapper)
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
+      await waitRender.InputFieldUpdate()
+      await waitRender.InputFieldUpdate()
 
       expect(wrapper.html()).toMatchSnapshot()
       expect(inputElement.element.value).toBe('19.1')
@@ -61,9 +59,8 @@ describe('fields/DecimalField', () => {
         }
       })
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       const inputElement = wrapper.get('input')
       expect(inputElement.element.value).toBe('17')
@@ -86,9 +83,8 @@ describe('fields/DecimalField', () => {
         }
       })
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
     })
@@ -102,9 +98,8 @@ describe('fields/DecimalField', () => {
         }
       })
 
-      await waitRender.InputField(wrapper)
-      await wrapper.vm.$nextTick()
-      await wrapper.vm.$nextTick()
+      await waitRender.InputField()
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
     })
