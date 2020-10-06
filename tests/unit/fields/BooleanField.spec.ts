@@ -61,78 +61,78 @@ describe('fields/BooleanField', () => {
     it('should render correct input field', async () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('active')
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
 
       const inputElement = wrapper.get('input')
-      expect(inputElement.attributes('checked')).toBe('checked')
+      expect(inputElement.element.checked).toBe(true)
 
       model.val.active = false
 
-      await waitRender.InputFieldUpdate(wrapper)
+      await waitRender.InputFieldUpdate()
 
       expect(wrapper.html()).toMatchSnapshot()
-      expect(inputElement.attributes('checked')).not.toBe('checked')
+      expect(inputElement.element.checked).toBe(false)
     })
 
     it('should set value correct on change', async () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('active')
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       const inputElement = wrapper.get('input')
-      expect(inputElement.attributes('checked')).toBe('checked')
+      expect(inputElement.element.checked).toBe(true)
 
-      inputElement.setChecked(false)
+      inputElement.setValue(false)
 
       expect(await model.val.active).toBe(false)
 
-      await waitRender.InputFieldUpdate(wrapper)
-      expect(inputElement.attributes('checked')).not.toBe('checked')
+      await waitRender.InputFieldUpdate()
+      expect(inputElement.element.checked).toBe(false)
     })
 
     it('should set value correct on click', async () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('active')
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       const inputElement = wrapper.get('input')
-      expect(inputElement.attributes('checked')).toBe('checked')
+      expect(inputElement.element.checked).toBe(true)
 
       inputElement.trigger('click')
 
       expect(await model.val.active).toBe(false)
 
-      await waitRender.InputFieldUpdate(wrapper)
-      expect(inputElement.attributes('checked')).not.toBe('checked')
+      await waitRender.InputFieldUpdate()
+      expect(inputElement.element.checked).toBe(false)
     })
 
     it('should render disabled input field', async () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('active'),
           disabled: true
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
     })
@@ -140,24 +140,24 @@ describe('fields/BooleanField', () => {
     it('should render readonly input field', async () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
-        propsData: {
+        props: {
           field: model.getField('active'),
           readonly: true
         }
       })
 
-      await waitRender.InputField(wrapper)
+      await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
 
       const inputElement = wrapper.get('input')
-      expect(inputElement.attributes('checked')).toBe('checked')
+      expect(inputElement.element.checked).toBe(true)
 
       inputElement.trigger('click')
 
-      await waitRender.InputFieldUpdate(wrapper)
+      await waitRender.InputFieldUpdate()
 
-      expect(inputElement.attributes('checked')).toBe('checked')
+      expect(await model.val.active).toBe(false)
     })
   })
 })
