@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { BaseModel } from '../models/BaseModel'
 import { Field } from '../fields/Field'
 
@@ -6,7 +6,7 @@ import { Field } from '../fields/Field'
  * Mixin to input field by props
  * Takes field instance or model and field name
  */
-export default Vue.extend({
+export default defineComponent({
   inheritAttrs: false,
 
   props: {
@@ -15,6 +15,7 @@ export default Vue.extend({
      * Use in combination with fieldName
      */
     model: {
+      type: Object as PropType<null | BaseModel>,
       default: null,
       validator: value => value === null || value as any instanceof BaseModel
     },
@@ -32,6 +33,7 @@ export default Vue.extend({
      * Field instance
      */
     field: {
+      type: Object as PropType<null | Field>,
       default: null,
       validator: value => value === null || value as any instanceof Field
     },

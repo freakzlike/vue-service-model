@@ -1,5 +1,4 @@
-import { VNode, CreateElement } from 'vue'
-import mixins from '../utils/mixins'
+import { VNode, h, defineComponent, PropType } from 'vue'
 import { Field } from '../fields/Field'
 import FieldPropsMixin from './FieldPropsMixin'
 import LoadingSlotMixin from './LoadingSlotMixin'
@@ -13,14 +12,16 @@ export interface ComponentData {
 /**
  * Main component to display label of a field
  */
-export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
+export default defineComponent({
   name: 'FieldLabel',
   inheritAttrs: false,
+  mixins: [FieldPropsMixin, LoadingSlotMixin],
 
   props: {
     model: {
+      type: [Function, Object] as PropType<null | BaseModel | typeof BaseModel>,
       default: null,
-      validator: value => value === null || value as any instanceof BaseModel ||
+      validator: (value: any) => value === null || value as any instanceof BaseModel ||
         // Allow static BaseModel class
         Boolean(value && (value as any).prototype instanceof BaseModel)
     },
@@ -35,12 +36,12 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
     label: null
   }),
 
-  asyncComputed: {
-    async label (): Promise<string | null> {
-      configHandler.checkWarningUseAsyncComputed()
-      return this.resolveLabel()
-    }
-  },
+  // asyncComputed: {
+  //   async label (): Promise<string | null> {
+  //     configHandler.checkWarningUseAsyncComputed()
+  //     return this.resolveLabel()
+  //   }
+  // },
 
   watch: {
     fieldObj () {
@@ -68,22 +69,22 @@ export default mixins(LoadingSlotMixin, FieldPropsMixin).extend({
       }
     },
 
-    renderLabel (h: CreateElement): VNode {
-      if (this.$scopedSlots && this.$scopedSlots.default) {
-        return h(this.tag, this.$scopedSlots.default({
+    renderLabel (): VNode {
+      if (this.$slots && this.$slots.default) {
+        return h(this.tag, this.$slots.default({
           label: this.label
         }))
-      } else {
-        return h(this.tag, this.label)
       }
+
+      return h(this.tag, <string> this.label)
     }
   },
 
-  render (h: CreateElement): VNode {
+  render (): VNode {
     if (this.label) {
-      return this.renderLabel(h)
+      return this.renderLabel()
     } else {
-      return this.renderLoading(h)
+      return this.renderLoading()
     }
   }
 })
