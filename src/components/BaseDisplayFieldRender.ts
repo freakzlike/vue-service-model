@@ -1,9 +1,9 @@
 import { defineComponent, reactive, toRefs, watch, VNode } from 'vue'
 import props, { DisplayComponentProps } from '../mixins/DisplayComponentPropsMixin'
-import { Field } from '../fields/Field'
+import { RenderableField } from '../fields/RenderableField'
 
-export type RenderField = (field: Field, renderData: any) => VNode
-export type ResolveRenderData = (field: Field, renderProps: object | null) => Promise<any>
+export type RenderField = (field: RenderableField, renderData: any) => VNode
+export type ResolveRenderData = (field: RenderableField, renderProps: object | null) => Promise<any>
 
 export const BaseDisplayFieldRender = (
   props: DisplayComponentProps,

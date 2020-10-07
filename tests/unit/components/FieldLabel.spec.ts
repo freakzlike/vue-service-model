@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { h } from 'vue'
-import { Field } from '@/fields/Field'
+import { RenderableField } from '@/fields/RenderableField'
 import FieldLabel from '@/components/FieldLabel'
 import { BaseModel } from '@/models/BaseModel'
 import { waitRender } from '../../testUtils'
@@ -18,8 +18,8 @@ const TestFieldLabel = (useAsyncComputed: boolean) => {
 
   class TestModel extends BaseModel {
     static fieldsDef = {
-      name: new Field({ label: fieldLabels.name }),
-      description: new Field({ label: () => Promise.resolve(fieldLabels.description) })
+      name: new RenderableField({ label: fieldLabels.name }),
+      description: new RenderableField({ label: () => Promise.resolve(fieldLabels.description) })
     }
   }
 
@@ -69,7 +69,7 @@ const TestFieldLabel = (useAsyncComputed: boolean) => {
 
   it('should render correctly with unbound field', async () => {
     const wrapper = await checkCorrectRender({
-      field: new Field({ label: 'New Field' })
+      field: new RenderableField({ label: 'New Field' })
     }, 'New Field')
 
     expect(wrapper.html()).toBe('<span>New Field</span>')
@@ -154,7 +154,7 @@ const TestFieldLabel = (useAsyncComputed: boolean) => {
   it('should render correct loading slot', async () => {
     const wrapper = mount(FieldLabel, {
       props: {
-        field: model.getField('name')
+        field: model.getField('name') as RenderableField
       },
       slots: {
         loading: () => h('span', 'Loading')

@@ -1,4 +1,4 @@
-import cu from '@/utils/common'
+import { format } from '@/utils/common'
 import axios from 'axios'
 import { ServiceModel } from '@/models/ServiceModel'
 import { ServiceParent } from '@/types/models/ServiceModel'
@@ -144,7 +144,7 @@ describe('models/ModelManager', () => {
 
         expect(mockCheckServiceParents).toBeCalledTimes(1)
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
-        expect(mockedAxios.get.mock.calls).toEqual([[cu.format(PARENT_BASE_URL, parents), {}]])
+        expect(mockedAxios.get.mock.calls).toEqual([[format(PARENT_BASE_URL, parents), {}]])
 
         expect(mockSendListRequest).toBeCalledTimes(1)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
@@ -170,7 +170,7 @@ describe('models/ModelManager', () => {
 
         expect(mockCheckServiceParents).toBeCalledTimes(1)
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
-        expect(mockedAxios.get.mock.calls).toEqual([[cu.format(PARENT_BASE_URL, parents), { params: filterParams }]])
+        expect(mockedAxios.get.mock.calls).toEqual([[format(PARENT_BASE_URL, parents), { params: filterParams }]])
 
         expect(mockSendListRequest).toBeCalledTimes(1)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
@@ -195,7 +195,7 @@ describe('models/ModelManager', () => {
 
         await CachedTestModel.objects.list({ parents: parents1, filter: filter1, noCache: false })
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
-        expect(mockedAxios.get.mock.calls[0]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents1), { params: filter1 }])
+        expect(mockedAxios.get.mock.calls[0]).toEqual([format(CACHED_TEST_MODEL_URL, parents1), { params: filter1 }])
         expect(mockSendListRequest).toBeCalledTimes(1)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(1)
 
@@ -208,14 +208,14 @@ describe('models/ModelManager', () => {
         // Check with other filter
         await CachedTestModel.objects.list({ parents: parents1, filter: filter2, noCache: false })
         expect(mockedAxios.get.mock.calls).toHaveLength(2)
-        expect(mockedAxios.get.mock.calls[1]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents1), { params: filter2 }])
+        expect(mockedAxios.get.mock.calls[1]).toEqual([format(CACHED_TEST_MODEL_URL, parents1), { params: filter2 }])
         expect(mockSendListRequest).toBeCalledTimes(2)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(2)
 
         // Check with other parent
         await CachedTestModel.objects.list({ parents: parents2, filter: filter1, noCache: false })
         expect(mockedAxios.get.mock.calls).toHaveLength(3)
-        expect(mockedAxios.get.mock.calls[2]).toEqual([cu.format(CACHED_TEST_MODEL_URL, parents2), { params: filter1 }])
+        expect(mockedAxios.get.mock.calls[2]).toEqual([format(CACHED_TEST_MODEL_URL, parents2), { params: filter1 }])
         expect(mockSendListRequest).toBeCalledTimes(3)
         expect(mockMapListResponseBeforeCache).toBeCalledTimes(3)
 
@@ -347,7 +347,7 @@ describe('models/ModelManager', () => {
         const parents: ServiceParent = { parent1: 'parent-1', parent2: 8 }
         const entry = await ParentTestModel.objects.detail(pk, { parents })
 
-        const url = cu.format(PARENT_BASE_URL, parents) + pk + '/'
+        const url = format(PARENT_BASE_URL, parents) + pk + '/'
         expect(mockCheckServiceParents).toBeCalledTimes(1)
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
         expect(mockedAxios.get.mock.calls).toEqual([[url, {}]])
@@ -375,7 +375,7 @@ describe('models/ModelManager', () => {
 
         let entry = await CachedTestModel.objects.detail(pk, { parents: parents1 })
         expect(mockedAxios.get.mock.calls).toHaveLength(1)
-        let url = cu.format(CACHED_TEST_MODEL_URL, parents1) + pk.toString() + '/'
+        let url = format(CACHED_TEST_MODEL_URL, parents1) + pk.toString() + '/'
         expect(mockedAxios.get.mock.calls[0]).toEqual([url, {}])
         expect(mockSendDetailRequest).toBeCalledTimes(1)
         expect(mockMapDetailResponseBeforeCache).toBeCalledTimes(1)
@@ -391,7 +391,7 @@ describe('models/ModelManager', () => {
         // Check with other parent
         entry = await CachedTestModel.objects.detail(pk, { parents: parents2 })
         expect(mockedAxios.get.mock.calls).toHaveLength(2)
-        url = cu.format(CACHED_TEST_MODEL_URL, parents2) + pk.toString() + '/'
+        url = format(CACHED_TEST_MODEL_URL, parents2) + pk.toString() + '/'
         expect(mockedAxios.get.mock.calls[1]).toEqual([url, {}])
         expect(mockSendDetailRequest).toBeCalledTimes(2)
         expect(mockMapDetailResponseBeforeCache).toBeCalledTimes(2)
@@ -456,7 +456,7 @@ describe('models/ModelManager', () => {
         const parents: ServiceParent = { parent1: 'parent-1', parent2: 8 }
         const result = await ParentTestModel.objects.create(postData, { parents })
 
-        const url = cu.format(PARENT_BASE_URL, parents)
+        const url = format(PARENT_BASE_URL, parents)
         expect(mockedAxios.post.mock.calls).toHaveLength(1)
         expect(mockedAxios.post.mock.calls).toEqual([[url, postData]])
         expect(mockCheckServiceParents).toBeCalledTimes(1)
@@ -524,7 +524,7 @@ describe('models/ModelManager', () => {
         const parents: ServiceParent = { parent1: 'parent-1', parent2: 8 }
         const result = await ParentTestModel.objects.update(1, putData, { parents })
 
-        const url = cu.format(PARENT_BASE_URL, parents) + pk + '/'
+        const url = format(PARENT_BASE_URL, parents) + pk + '/'
         expect(mockedAxios.put.mock.calls).toHaveLength(1)
         expect(mockedAxios.put.mock.calls).toEqual([[url, putData]])
         expect(mockCheckServiceParents).toBeCalledTimes(1)
@@ -631,7 +631,7 @@ describe('models/ModelManager', () => {
         const parents: ServiceParent = { parent1: 'parent-1', parent2: 8 }
         const result = await ParentTestModel.objects.delete(pk, { parents })
 
-        const url = cu.format(PARENT_BASE_URL, parents) + pk + '/'
+        const url = format(PARENT_BASE_URL, parents) + pk + '/'
         expect(mockedAxios.delete.mock.calls).toHaveLength(1)
         expect(mockedAxios.delete.mock.calls).toEqual([[url]])
         expect(mockCheckServiceParents).toBeCalledTimes(1)

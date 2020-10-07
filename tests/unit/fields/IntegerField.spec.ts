@@ -4,6 +4,7 @@ import { FormatStringField } from '@/fields/FormatStringField'
 import { mount } from '@vue/test-utils'
 import InputField from '@/components/InputField'
 import { waitRender } from '../../testUtils'
+import { RenderableField } from '@/fields'
 
 describe('fields/IntegerField', () => {
   class TestModel extends BaseModel {
@@ -26,7 +27,7 @@ describe('fields/IntegerField', () => {
       const model = new TestModel({ amount: 17 })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('amount')
+          field: model.getField('amount') as RenderableField
         }
       })
 
@@ -49,7 +50,7 @@ describe('fields/IntegerField', () => {
       const model = new TestModel({ amount: 17 })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('amount')
+          field: model.getField('amount') as RenderableField
         }
       })
 
@@ -60,9 +61,15 @@ describe('fields/IntegerField', () => {
 
       inputElement.setValue(19)
 
+      // Wait for value parser
+      await wrapper.vm.$nextTick()
+
       expect(await model.val.amount).toBe(19)
 
       inputElement.setValue('20')
+
+      // Wait for value parser
+      await wrapper.vm.$nextTick()
 
       expect(await model.val.amount).toBe(20)
     })
@@ -71,7 +78,7 @@ describe('fields/IntegerField', () => {
       const model = new TestModel({ amount: 17 })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('amount'),
+          field: model.getField('amount') as RenderableField,
           disabled: true
         }
       })
@@ -85,7 +92,7 @@ describe('fields/IntegerField', () => {
       const model = new TestModel({ amount: 17 })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('amount'),
+          field: model.getField('amount') as RenderableField,
           readonly: true
         }
       })
@@ -93,6 +100,22 @@ describe('fields/IntegerField', () => {
       await waitRender.InputField()
 
       expect(wrapper.html()).toMatchSnapshot()
+    })
+  })
+
+  describe('valueParser', () => {
+    const field = new TestModel({}).getField('amount')
+
+    it('should return integer value', async () => {
+      expect(await field.valueParser(7)).toBe(7)
+      expect(await field.valueParser('8')).toBe(8)
+      expect(await field.valueParser(0)).toBe(0)
+      expect(await field.valueParser(9.2)).toBe(9)
+    })
+
+    it('should return null', async () => {
+      expect(await field.valueParser(null)).toBe(null)
+      expect(await field.valueParser(undefined)).toBe(null)
     })
   })
 })

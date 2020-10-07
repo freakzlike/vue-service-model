@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { Field } from '@/fields/Field'
+import { RenderableField } from '@/fields/RenderableField'
 import InputField from '@/components/InputField'
 import { BaseModel } from '@/models/BaseModel'
 import { waitRender } from '../../testUtils'
@@ -18,8 +18,8 @@ const TestInputField = (useAsyncComputed: boolean) => {
 
   class TestModel extends BaseModel {
     static fieldsDef = {
-      name: new Field(),
-      description: new Field()
+      name: new RenderableField(),
+      description: new RenderableField()
     }
   }
 
@@ -124,7 +124,7 @@ const TestInputField = (useAsyncComputed: boolean) => {
   it('should render correct loading slot', async () => {
     const wrapper = mount(InputField, {
       props: {
-        field: model.getField('name')
+        field: model.getField('name') as RenderableField
       },
       slots: {
         loading: () => h('span', 'Loading')

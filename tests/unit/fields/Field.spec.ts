@@ -1,11 +1,8 @@
 import { Field } from '@/fields/Field'
 import { BaseModel } from '@/models/BaseModel'
-import { FieldDef, FieldBind, FieldTypeOptions, InputProps } from '@/types/fields/Field'
+import { FieldDef, FieldBind, FieldTypeOptions } from '@/types/fields/Field'
 import { FieldNotBoundException } from '@/exceptions/FieldExceptions'
-import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
-import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 import { Dictionary } from '@/types/Dictionary'
-import { watch, nextTick } from 'vue'
 
 describe('fields/Field', () => {
   class TestModel extends BaseModel {
@@ -387,42 +384,6 @@ describe('fields/Field', () => {
     })
   })
 
-  describe('hint', () => {
-    it('should get hint string', async () => {
-      const def: FieldDef = { hint: 'field hint' }
-
-      const field = new Field(def)
-      expect(field.hint).toBeInstanceOf(Promise)
-
-      const result = await field.hint
-      expect(typeof result).toBe('string')
-      expect(result).toBe(def.hint)
-    })
-
-    it('should get hint function', async () => {
-      const hint = 'field hint 1'
-      const def: FieldDef = {}
-      const field = new Field(def)
-      def.hint = function (...args: Array<any>) {
-        expect(args.length).toBe(0)
-        expect(this).toBe(field)
-        return hint
-      }
-
-      expect(await field.hint).toBe(hint)
-    })
-
-    it('should get hint Promise', async () => {
-      const hint = 'field hint 2'
-      const def: FieldDef = {
-        hint: () => new Promise(resolve => resolve(hint))
-      }
-
-      const field = new Field(def)
-      expect(await field.hint).toBe(hint)
-    })
-  })
-
   describe('options', () => {
     class TestField extends Field {
       public async validateOptions (options: FieldTypeOptions) {
@@ -650,48 +611,6 @@ describe('fields/Field', () => {
         otherField: 1,
         field: null
       })
-    })
-  })
-
-  describe('prepareDisplayRender', () => {
-    it('should return renderData', async () => {
-      const data = { description: 'desc value' }
-      const model = new TestModel(data)
-
-      const field = new Field({}, { name: 'description', model })
-      const renderData = await field.prepareDisplayRender()
-      expect(renderData).toBe(data.description)
-    })
-  })
-
-  describe('displayComponent', () => {
-    it('should return BaseDisplayFieldRender', async () => {
-      const field = new Field()
-      const displayComponent = await field.displayComponent
-      expect(displayComponent.default).toBe(BaseDisplayFieldRender)
-    })
-  })
-
-  describe('prepareInputRender', () => {
-    it('should return renderData', async () => {
-      const data = { description: 'desc value' }
-      const model = new TestModel(data)
-      const inputProps: InputProps = { disabled: false, readonly: true }
-
-      const field = new Field({}, { name: 'description', model })
-      const renderData = await field.prepareInputRender(inputProps)
-      expect(renderData).toEqual({
-        value: data.description,
-        inputProps
-      })
-    })
-  })
-
-  describe('inputComponent', () => {
-    it('should return BaseInputFieldRender', async () => {
-      const field = new Field()
-      const inputComponent = await field.inputComponent
-      expect(inputComponent.default).toBe(BaseInputFieldRender)
     })
   })
 })

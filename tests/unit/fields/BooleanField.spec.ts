@@ -4,6 +4,7 @@ import { FormatStringField } from '@/fields/FormatStringField'
 import { mount } from '@vue/test-utils'
 import InputField from '@/components/InputField'
 import { waitRender } from '../../testUtils'
+import { RenderableField } from '@/fields'
 
 describe('fields/BooleanField', () => {
   class TestModel extends BaseModel {
@@ -57,12 +58,34 @@ describe('fields/BooleanField', () => {
     })
   })
 
+  describe('valueParser', () => {
+    it('should return true boolean value', async () => {
+      const field = new TestModel({}).getField('active') as BooleanField
+
+      expect(await field.valueParser(true)).toBe(true)
+      expect(await field.valueParser(1)).toBe(true)
+      expect(await field.valueParser('string')).toBe(true)
+      expect(await field.valueParser([])).toBe(true)
+      expect(await field.valueParser({})).toBe(true)
+    })
+
+    it('should return false boolean value', async () => {
+      const field = new TestModel({}).getField('active') as BooleanField
+
+      expect(await field.valueParser(false)).toBe(false)
+      expect(await field.valueParser(null)).toBe(false)
+      expect(await field.valueParser('')).toBe(false)
+      expect(await field.valueParser(undefined)).toBe(false)
+      expect(await field.valueParser(0)).toBe(false)
+    })
+  })
+
   describe('inputRender', () => {
     it('should render correct input field', async () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('active')
+          field: model.getField('active') as RenderableField
         }
       })
 
@@ -85,7 +108,7 @@ describe('fields/BooleanField', () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('active')
+          field: model.getField('active') as RenderableField
         }
       })
 
@@ -95,6 +118,9 @@ describe('fields/BooleanField', () => {
       expect(inputElement.element.checked).toBe(true)
 
       inputElement.setValue(false)
+
+      // Wait for value parser
+      await wrapper.vm.$nextTick()
 
       expect(await model.val.active).toBe(false)
 
@@ -106,7 +132,7 @@ describe('fields/BooleanField', () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('active')
+          field: model.getField('active') as RenderableField
         }
       })
 
@@ -116,6 +142,9 @@ describe('fields/BooleanField', () => {
       expect(inputElement.element.checked).toBe(true)
 
       inputElement.trigger('click')
+
+      // Wait for value parser
+      await wrapper.vm.$nextTick()
 
       expect(await model.val.active).toBe(false)
 
@@ -127,7 +156,7 @@ describe('fields/BooleanField', () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('active'),
+          field: model.getField('active') as RenderableField,
           disabled: true
         }
       })
@@ -141,7 +170,7 @@ describe('fields/BooleanField', () => {
       const model = new TestModel({ active: true })
       const wrapper = mount(InputField, {
         props: {
-          field: model.getField('active'),
+          field: model.getField('active') as RenderableField,
           readonly: true
         }
       })

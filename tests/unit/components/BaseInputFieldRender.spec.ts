@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { Field } from '@/fields/Field'
+import { RenderableField } from '@/fields/RenderableField'
 import BaseInputFieldRender from '@/components/BaseInputFieldRender'
 import { BaseModel } from '@/models/BaseModel'
 import { nextTick } from 'vue'
@@ -14,12 +14,12 @@ const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
 
   class TestModel extends BaseModel {
     static fieldsDef = {
-      name: new Field()
+      name: new RenderableField()
     }
   }
 
   const model = new TestModel(modelData)
-  const field = model.getField('name') as Field
+  const field = model.getField('name') as RenderableField
 
   const waitForRender = async () => {
     await nextTick()
@@ -39,7 +39,7 @@ const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
     const spyInputRender = jest.spyOn(field, 'inputRender')
 
     const wrapper = mount(BaseInputFieldRender, {
-      propsData: { field: field }
+      props: { field: field }
     })
     expect(wrapper.text()).toBe('')
 
@@ -67,7 +67,7 @@ const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
     const spyValueSetter = jest.spyOn(field, 'valueSetter')
 
     const wrapper = mount(BaseInputFieldRender, {
-      propsData: { field: field }
+      props: { field: field }
     })
     await waitForRender()
     const inputElement = wrapper.get('input')
@@ -77,13 +77,15 @@ const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
 
     inputElement.setValue('Name 2')
 
+    await nextTick()
+
     expect(modelData.name).toBe('Name 2')
     expect(spyValueSetter).toBeCalledTimes(1)
   })
 
   it('should render correctly', async () => {
     const wrapper = mount(BaseInputFieldRender, {
-      propsData: { field: field }
+      props: { field: field }
     })
     await waitForRender()
     expect(wrapper.html()).toBe('<input type="text">')
@@ -91,7 +93,7 @@ const TestBaseInputFieldRender = (useAsyncComputed: boolean) => {
 
   it('should re-render on inputProps change', async () => {
     const wrapper = mount(BaseInputFieldRender, {
-      propsData: {
+      props: {
         field: field,
         disabled: true
       }

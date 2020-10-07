@@ -1,7 +1,7 @@
-import { Field } from '../fields/Field'
+import { RenderableField } from '../fields/RenderableField'
 
 export interface DisplayComponentProps {
-  field: Field
+  field: RenderableField
   renderProps: object | null
 }
 
@@ -10,7 +10,7 @@ export default {
    * Field instance
    */
   field: {
-    type: Field,
+    type: RenderableField,
     required: true
   },
 

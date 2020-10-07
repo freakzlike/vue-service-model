@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { Field } from '@/fields/Field'
+import { RenderableField } from '@/fields/RenderableField'
 import BaseDisplayFieldRender from '@/components/BaseDisplayFieldRender'
 import { BaseModel } from '@/models/BaseModel'
 import { nextTick } from 'vue'
@@ -14,12 +14,12 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
 
   class TestModel extends BaseModel {
     static fieldsDef = {
-      name: new Field()
+      name: new RenderableField()
     }
   }
 
   const model = new TestModel(modelData)
-  const field = model.getField('name') as Field
+  const field = model.getField('name') as RenderableField
 
   const waitForRender = async () => {
     await nextTick()
@@ -33,7 +33,7 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
     const spyDisplayRender = jest.spyOn(field, 'displayRender')
 
     const wrapper = mount(BaseDisplayFieldRender, {
-      propsData: { field }
+      props: { field }
     })
     expect(wrapper.text()).toBe('')
 
@@ -61,7 +61,7 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
   it('should render correctly', async () => {
     modelData.name = 'Name 1'
     const wrapper = mount(BaseDisplayFieldRender, {
-      propsData: { field }
+      props: { field }
     })
     await waitForRender()
     expect(wrapper.html()).toBe('<span>Name 1</span>')
@@ -71,7 +71,7 @@ const TestBaseDisplayFieldRender = (useAsyncComputed: boolean) => {
     const spyPrepareDisplayRender = jest.spyOn(field, 'prepareDisplayRender')
 
     const wrapper = mount(BaseDisplayFieldRender, {
-      propsData: {
+      props: {
         field,
         renderProps: {
           option: 5
